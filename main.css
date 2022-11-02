@@ -33,10 +33,58 @@ p
     display: table-cell;
     height: 100%;
     vertical-align: middle;
+    display: none;
 }
 
 a
 {
     color: cyan;
     text-decoration-line: none;
+}
+
+/* - - - - - - - - Splash Screen - - - - - - - - */
+.splash
+{
+    cursor: pointer;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    height: 100%;
+    width: 100%;
+    transform: translate(-50%,-50%);
+    background-color: rgba(0, 0, 0);
+    animation: fadeIn ease 1s;
+}
+
+.hidden
+{
+    animation: fadeOut ease 2s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+@keyframes fadeOut 
+{
+    0% 
+    {
+        opacity: 1;
+    }
+    95%
+    {
+        opacity: 0;
+    }
+    100%
+    {
+        display: none;
+    }
+}
+
+.splash-header
+{
+    height: 90%;
+    color: white;
+    font-family: consolas;
+    font-size: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
