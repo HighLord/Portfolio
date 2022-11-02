@@ -42,8 +42,9 @@ p
 {
     border: solid 1px;
     padding: 20px;
-    height: 100%;
-    width: 100%;
+    margin: 10px;
+    height: 96%;
+    width: 98%;
     display: none;
 }
 
