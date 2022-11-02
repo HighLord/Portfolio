@@ -48,19 +48,23 @@ p
     animation: gradient 15s ease infinite;
     border: solid 1px;
     padding: 20px;
-    margin-right: 25px;
-    margin-left: 10px;
-    margin-top: 10px;
+    margin-right: 35px;
+    margin-left: 20px;
+    margin-top: 20px;
     margin-bottom: 10px;
-    height: 96%;
+    height: 94%;
     display: none;
     
 }
-@media only screen and (max-width: 600px)
+@media screen and (max-width: 800px)
 {
     .container
     {
-        margin-bottom: 20px !important;
+        margin-right: 25px;
+        margin-left: 10px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        height: 90%;
     } 
 }
 
