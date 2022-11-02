@@ -1,3 +1,36 @@
-body{
-    background-color: lightcyan;
+body, html
+{
+    background-color: black;
+    color: aliceblue;
+    text-align: center;
+    height: 100%;
+
+}
+
+h1
+{
+    font-family: Montserrat, Helvetica, Arial, sans-serif;
+    font-size: 30px;
+    font-style: normal;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+}
+
+p
+{
+    font-size: 15px;
+    letter-spacing: 0.3px;
+}
+.main
+{
+    height: 100%;
+    width: 100%;
+    display: table;
+}
+
+.wrapper
+{
+    display: table-cell;
+    height: 100%;
+    vertical-align: middle;
 }
