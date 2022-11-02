@@ -97,15 +97,17 @@ a
 .section1
 {
     text-align: right;
-    margin-top: 160%;
+    position: absolute;
+    bottom: 0;
     padding-left: 70%;
 }
 @media screen and (max-width: 800px) 
 {
     .section1
     {
+   
         padding-left: 50%;
-        margin-top: 60%;
+
     }    
 }
 
