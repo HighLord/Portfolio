@@ -48,6 +48,8 @@ p
     font-size: 13px;
     letter-spacing: 0.3px;
     text-align: left;
+    font-weight: 700;
+    color: black;
 }
 
 .main
@@ -95,13 +97,14 @@ a
 .section1
 {
     text-align: right;
-    margin-top: 90%;
-    padding-left: 50%;
+    margin-top: 200%;
+    padding-left: 70%;
 }
 @media screen and (max-width: 800px) 
 {
     .section1
     {
+        padding-left: 50%;
         margin-top: 60%;
     }    
 }
