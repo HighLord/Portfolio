@@ -35,6 +35,7 @@ p
 
 .main
 {
+    position: fixed;
     width: 100%;
     height: 100%;
     position: relative;
@@ -42,7 +43,6 @@ p
 
 .container
 {
-    position: relative;
     background: linear-gradient(-45deg, #797979, #363234, #42515600, #bdbdbd52);
     background-size: 400% 100%;
     animation: gradient 15s ease infinite;
@@ -52,7 +52,7 @@ p
     margin-left: 10px;
     margin-top: 10px;
     margin-bottom: 10px;
-    height: 96%;
+    height: 94%;
     display: none;
     
 }
