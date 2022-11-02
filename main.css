@@ -37,9 +37,11 @@ p
     font-size: 13px;
     letter-spacing: 0.3px;
 }
+
 .main
 {
     border: solid 1px;
+    padding: 20px;
     height: 100%;
     width: 100%;
     display: none;
@@ -94,7 +96,7 @@ a
     height: 90%;
     color: white;
     font-family: consolas;
-    font-size: 26px;
+    font-size: 25px;
     display: flex;
     justify-content: center;
     align-items: center;
