@@ -94,7 +94,7 @@ a
     height: 90%;
     color: white;
     font-family: consolas;
-    font-size: 29px;
+    font-size: 28px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -104,5 +104,5 @@ a
 {
     font-family: 'Rockwell Extra Bold', 'Arial Narrow', Arial, 'Courier New', Courier,;
     font-weight: 100;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.4px;
 }
