@@ -1,9 +1,6 @@
 body, html
 {
     position: fixed;
-    max-height: 100%;
-    max-width: 100%;
-    height: 96%;
 }
 @keyframes gradient 
 {
@@ -43,9 +40,8 @@ p
     animation: gradient 15s ease infinite;
     border: solid 1px;
     padding: 20px;
-
-    height: 100%;
-    width: 92%;
+    margin: 2px;
+    widthd: 90%;
     display: none;
 }
 
