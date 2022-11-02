@@ -1,7 +1,7 @@
 window.onload = function()
 {
     var SplashScreen = document.querySelector('.splash');
-    var links = document.getElementsByClassName('main')[0];
+    var links = document.getElementsByClassName('container')[0];
     setTimeout(() => 
     {
         SplashScreen.style.opacity = 0;
