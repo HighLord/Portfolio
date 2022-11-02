@@ -1,10 +1,26 @@
 body, html
 {
-    background-color: black;
-    color: aliceblue;
+    background: linear-gradient(-45deg, #797979, #363234, #42515600, #bdbdbd52);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
     text-align: center;
     height: 100%;
 
+}
+@keyframes gradient 
+{
+    0%
+    {
+        background-position: 0% 50%;
+    }
+    50%
+    {
+        background-position: 100% 50%;
+    }
+    100%
+    {
+        background-position: 0% 50%;
+    }
 }
 
 h1
@@ -23,24 +39,19 @@ p
 }
 .main
 {
+    border: solid 1px;
     height: 100%;
     width: 100%;
-    display: table;
-}
-
-.wrapper
-{
-    display: table-cell;
-    height: 100%;
-    vertical-align: middle;
     display: none;
 }
 
 a
 {
-    color: cyan;
+    color: gray;
     text-decoration-line: none;
 }
+
+
 
 /* - - - - - - - - Splash Screen - - - - - - - - */
 .splash
@@ -87,4 +98,11 @@ a
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.fragile
+{
+    font-family: 'Rockwell Extra Bold', 'Arial Narrow', Arial, 'Courier New', Courier,;
+    font-weight: 100;
+    letter-spacing: 1.5px;
 }
