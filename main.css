@@ -98,15 +98,15 @@ a
 {
     text-align: right;
     position: absolute;
-    bottom: 0;
-    padding-left: 70%;
+    bottom: 10;
+    right: 0
 }
 @media screen and (max-width: 800px) 
 {
     .section1
     {
    
-        padding-left: 50%;
+        
 
     }    
 }
