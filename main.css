@@ -59,7 +59,7 @@ p
 
 .container
 {
-    background: linear-gradient(-45deg, #797979, #363234, #42515600, #bdbdbd52);
+    background: linear-gradient(-45deg, #797979, #494748, #42515600, #bdbdbd52);
     background-size: 400% 100%;
     animation: gradient 15s ease infinite;
     border: solid 1px;
@@ -95,7 +95,7 @@ a
 .section1
 {
     text-align: right;
-    margin-top: 80%;
+    margin-top: 90%;
     padding-left: 50%;
 }
 @media screen and (max-width: 800px) 
