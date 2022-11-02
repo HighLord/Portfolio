@@ -95,14 +95,14 @@ a
 .section1
 {
     text-align: right;
-    margin-top: 60%;
+    margin-top: 80%;
     padding-left: 50%;
 }
-@media screen and (min-width: 800px) 
+@media screen and (max-width: 800px) 
 {
     .section1
     {
-        margin-top: 80%;
+        margin-top: 60%;
     }    
 }
 
