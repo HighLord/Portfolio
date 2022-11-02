@@ -1,6 +1,7 @@
 body, html
 {
-    position: fixed;
+    position: relative;
+    width: 100%;
 }
 @keyframes gradient 
 {
@@ -35,13 +36,12 @@ p
 
 .main
 {
+    position: absolute;
     background: linear-gradient(-45deg, #797979, #363234, #42515600, #bdbdbd52);
     background-size: 400% 100%;
     animation: gradient 15s ease infinite;
     border: solid 1px;
     padding: 20px;
-    margin: 2px;
-    width: 92%;
     display: none;
 }
 
