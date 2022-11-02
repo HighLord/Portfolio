@@ -1,7 +1,7 @@
 body, html
 {
     background: linear-gradient(-45deg, #797979, #363234, #42515600, #bdbdbd52);
-    background-size: 400% 400%;
+    background-size: 400% 100%;
     animation: gradient 15s ease infinite;
     text-align: center;
     height: 100%;
@@ -42,9 +42,9 @@ p
 {
     border: solid 1px;
     padding: 20px;
-    margin: 10px;
-    height: 96%;
-    width: 98%;
+    margin: 0px;
+    height: 100%;
+    width: 100%;
     display: none;
 }
 
