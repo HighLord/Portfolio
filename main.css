@@ -91,6 +91,12 @@ a
     text-decoration-line: none;
 }
 
+.section1
+{
+    text-align: right;
+    margin-top: 60%;
+    padding-left: 50%;
+}
 
 
 /* - - - - - - - - Splash Screen - - - - - - - - */
