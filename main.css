@@ -98,6 +98,13 @@ a
     margin-top: 60%;
     padding-left: 50%;
 }
+@media screen and (min-width: 800px) 
+{
+    .section1
+    {
+        margin-top: 80%;
+    }    
+}
 
 
 /* - - - - - - - - Splash Screen - - - - - - - - */
