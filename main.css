@@ -97,15 +97,15 @@ a
 .section1
 {
     text-align: right;
-    margin-top: 150%;
+    transform: translate(0, 500%);
     padding-left: 70%;
 }
 @media screen and (max-width: 800px) 
 {
     .section1
     {
+        transform: translate(0, 200%);
         padding-left: 50%;
-        margin-top: 60%;
     }    
 }
 
