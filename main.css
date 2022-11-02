@@ -2,6 +2,7 @@ body, html
 {  
     position: relative;
     height: 100%;
+    background-color: rgba(4, 4, 4, 0.639);
 }
 @keyframes gradient 
 {
@@ -36,6 +37,7 @@ p
 
 .main
 {
+    background-color: rgba(4, 4, 4, 0.639);
     width: 100%;
     height: 100%;
     position: fixed;
@@ -47,11 +49,13 @@ p
     background-size: 400% 100%;
     animation: gradient 15s ease infinite;
     border: solid 1px;
+    border-color: azure;
+    color: gray;
     padding: 20px;
-    margin-right: 35px;
-    margin-left: 20px;
-    margin-top: 20px;
-    margin-bottom: 10px;
+    margin-right: 40px;
+    margin-left: 25px;
+    margin-top: 25px;
+    margin-bottom: 5px;
     height: 94%;
     display: none;
     
@@ -115,7 +119,7 @@ a
 .splash-header
 {
     height: 90%;
-    color: white;
+    color: white !important;
     font-family: consolas;
     font-size: 25px;
     display: flex;
