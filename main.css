@@ -1,6 +1,6 @@
 body, html
 {
-    width: 98%;
+    width: 98.2%;
     position: fixed;
 }
 @keyframes gradient 
@@ -42,7 +42,10 @@ p
     animation: gradient 15s ease infinite;
     border: solid 1px;
     padding: 20px;
-    margin-right: 6px;
+    margin-right: 10px;
+    margin-left: 6px;
+    margin-top: 6px;
+    margin-bottom: 10px;
     display: none;
     
 }
