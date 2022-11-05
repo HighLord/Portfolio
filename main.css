@@ -100,8 +100,8 @@ a
     position: absolute;
     text-align: right;
     bottom: 0px;
-    padding-left: 82%;
-    margin: 20px;
+    padding-left: 80%;
+    margin: 10px;
 }
 @media screen and (max-width: 800px) 
 {
