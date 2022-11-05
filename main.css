@@ -45,10 +45,19 @@ h1
 
 h4
 {
-    margin-top: -15px;
+    margin-top: -20px;
+    margin-left: 1px;
     color: black;
     font-weight: 600;
 }
+@media screen and (max-width: 800px) 
+{
+    h4
+    {
+        margin-top: -15px;
+    }    
+}
+
 
 p
 {
