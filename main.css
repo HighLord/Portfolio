@@ -101,12 +101,15 @@ a
     text-align: right;
     bottom: 0px;
     padding-left: 80%;
-    margin: 10px;
+    margin-bottom: 20px;
+    margin-right: 30px;
 }
 @media screen and (max-width: 800px) 
 {
     .section1
     {
+        margin-bottom: 10px;
+        margin-right: 20px;
         padding-left: 50%;
     }    
 }
