@@ -100,7 +100,6 @@ a
     position: absolute;
     text-align: right;
     bottom: 0px;
-    margin-top: 160%;
     padding-left: 70%;
 }
 @media screen and (max-width: 800px) 
@@ -108,7 +107,6 @@ a
     .section1
     {
         padding-left: 50%;
-        margin-top: 60%;
     }    
 }
 
