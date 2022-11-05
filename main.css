@@ -76,10 +76,10 @@ p
     border-color: black;
     color: #2a2a2a;
     padding: 40px;
-    margin-right: 40px;
-    margin-left: 25px;
-    margin-top: 25px;
-    margin-bottom: 5px;
+    margin-right: 45px;
+    margin-left: 30px;
+    margin-top: 30px;
+    margin-bottom: 15px;
     height: 94%;
     display: none;
     
@@ -92,7 +92,7 @@ p
         margin-right: 25px;
         margin-left: 10px;
         margin-top: 10px;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
         height: 90%;
     } 
 }
