@@ -45,11 +45,18 @@ h4
 
 p
 {
-    font-size: 13px;
+    font-size: 15px;
     letter-spacing: 0.3px;
     text-align: left;
     font-weight: 700;
     color: black;
+}
+@media screen and (max-width: 800px) 
+{
+    p
+    {
+        font-size: 13px;
+    }    
 }
 
 .main
@@ -102,7 +109,7 @@ a
     bottom: 0px;
     padding-left: 70%;
     margin-bottom: 20px;
-    margin-right: 30px;
+    margin-right: 40px;
 }
 @media screen and (max-width: 800px) 
 {
