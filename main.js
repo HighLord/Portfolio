@@ -29,4 +29,10 @@ window.onload = function()
         const disable = enabled.getAttribute('class') === 'fa-solid fa-square dcode' ? 'fa-solid fa-square lcode' : 'fa-solid fa-square dcode';
         disabled.setAttribute('class', disable);
     })
+
+    const contact = document.getElementsByClassName('contact');
+    contact.addEventListener('click', () =>
+    {
+        window.history.pushState('contact', 'Contact Me', '/contact.html');
+    });
 };
