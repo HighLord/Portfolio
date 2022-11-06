@@ -205,9 +205,9 @@ a
 div.display
 {
     position: absolute;
+    transform-origin: 0 0;
     transform: rotate(270deg);
-    bottom: 0px;
-    left: 0px;
-    margin-bottom: 70px;
-    margin-left: -33px;
+    bottom: -13px;
+    left: -18px;
+    display: inline-block;
 }
