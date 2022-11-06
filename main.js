@@ -18,6 +18,6 @@ window.onload = function()
 {
     let width = screen.width;
     let height = screen.height;
-    console.log(width);
-    console.log(height);
+    alert(width);
+    alert(height);
 }
