@@ -199,3 +199,15 @@ a
     font-weight: 100;
     letter-spacing: 1.4px;
 }
+
+/* - - - - - - - - Display Div - - - - - - - - */
+
+div.display
+{
+    position: absolute;
+    transform: rotate(270deg);
+    bottom: 0px;
+    left: 0px;
+    margin-bottom: 10vh;
+    margin-left: -6.7vw;
+}
