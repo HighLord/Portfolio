@@ -123,7 +123,10 @@ p
 {
     .container
     {
-        height: 92% !important;
+        margin-right: 40px;
+        margin-left: 25;
+        margin-top: 30px;
+        height: 94% !important;
     }
 }
 
