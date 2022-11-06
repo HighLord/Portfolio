@@ -94,7 +94,7 @@ p
     position: relative;
     background: linear-gradient(-45deg, #797979, #565455, #576a7100, #bdbdbd52);
     background-size: 400% 100%;
-    animation: gradient 15s ease infinite;
+    animation: gradient 20s ease infinite;
     border: solid 1px;
     border-color: black;
     color: #2a2a2a;
@@ -102,12 +102,12 @@ p
     margin-right: 30px;
     margin-left: 15px;
     margin-top: 20px;
-    margin-bottom: 25px;
+    margin-bottom: 0px;
     height: 82%;
     display: none;
     
 }
-@media screen and (max-width: 800px)
+@media screen and (max-width: 200px)
 {
     .container
     {
