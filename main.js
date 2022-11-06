@@ -30,7 +30,7 @@ window.onload = function()
         disabled.setAttribute('class', disable);
     })
 
-    const contact = document.getElementsByClassName('contact');
+    const contact = document.getElementsByClassName('contact')[0];
     contact.addEventListener('click', () =>
     {
         window.history.pushState('contact', 'Contact Me', '/contact.html');
