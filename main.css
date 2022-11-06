@@ -91,7 +91,7 @@ p
 .container
 {
     position: relative;
-    background: linear-gradient(-45deg, #bbbbbb, #747172, #596a7100, #cbcbcb52);
+    background: linear-gradient(-45deg, #bbbbbb, #757172a9, #596a7100, #e2e2e252);
     background-size: 400% 100%;
     animation: gradient 20s ease infinite;
     border: solid 1px;
@@ -224,13 +224,12 @@ div.display
 .dark
 {
     animation: fadeIns ease 3s;
-    bsackground-color: #0b0a0b;
     color: white !important;
     animation-fill-mode: forwards;
 }
 @keyframes fadeIns 
 {
-    20%{opacity: 0.2;}40%{opacity: 0.4; background-color: #565455;}60%{opacity: 0.6; background-color: #565455;}80%{opacity: 0.8; background-color: #565455;}100%{opacity: 1; background-color: #565455;}
+    20%{opacity: 0.2;}40%{opacity: 0.4; background-color: #2d2d2d;}60%{opacity: 0.6; background-color: #191919;}80%{opacity: 0.8; background-color: #0d0d0d;}100%{opacity: 1; background-color: #000000;}
 }
 
 
