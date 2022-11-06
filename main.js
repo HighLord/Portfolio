@@ -12,4 +12,14 @@ window.onload = function()
             SplashScreen.style.display = "none";
         }, 1500);
     }, 2000);
-}
+
+    $('.display').click(function()
+    {
+        $('body').style('background', 'black');
+    });
+    document.getElementsByClassName("display").addEventListener("click", function()
+    {
+        document.getElementsByTagName("body").style.background = "black"; 
+       
+    });
+};
