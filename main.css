@@ -224,6 +224,8 @@ div.display
     bottom: -13px;
     left: -18px;
     display: inline-block;
+    font-weight: 100;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .dark
