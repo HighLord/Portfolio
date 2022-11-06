@@ -33,6 +33,6 @@ window.onload = function()
     const contact = document.getElementsByClassName('contact')[0];
     contact.addEventListener('click', () =>
     {
-        window.history.replaceState('contact', 'Contact Me', '/contact.html');
+        window.history.pushState('contact', 'Contact Me', '/contact.html');
     });
 };
