@@ -14,10 +14,10 @@ window.onload = function()
     }, 2000);
 }
 
-window.onload = function()
+document.onload = function()
 {
-    let width = screen.width;
-    let height = screen.height;
+    var width = screen.width;
+    var height = screen.height;
     alert(width);
     alert(height);
 }
