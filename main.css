@@ -119,7 +119,7 @@ p
         height: 88%;
     } 
 }
-@media screen and (max-height: 1600px) screen and (max-width: 800)
+@media screen and (max-height > 800px), screen and (max-width < 1280)
 {
     .container
     {
