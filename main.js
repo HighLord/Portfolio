@@ -1,9 +1,5 @@
 window.onload = function()
 {
-    var width = screen.width;
-    var height = screen.height;
-    alert(width);
-    alert(height);
     var SplashScreen = document.querySelector('.splash');
     var links = document.getElementsByClassName('container')[0];
     setTimeout(() => 
