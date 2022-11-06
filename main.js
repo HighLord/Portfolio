@@ -30,9 +30,21 @@ window.onload = function()
         disabled.setAttribute('class', disable);
     })
 
+    function goTo(page, title, url) 
+    {
+        if ("undefined" !== typeof history.pushState)
+        {
+            history.pushState({page: page},title,url);
+        }
+        else
+        {
+            window.location.assign(url);
+        }
+    }
+
     const contact = document.getElementsByClassName('contact')[0];
     contact.addEventListener('click', () =>
     {
-        window.history.pushState('{}', null, '/contact.html');
+        goTo("Contact", "Contact", "contact.html");
     });
 };
