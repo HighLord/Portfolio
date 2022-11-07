@@ -24,15 +24,13 @@ window.onload = function()
     {
         body.style.background = 'black';
         const set_color = body.getAttribute('class') === 'dark' ? 'light' : 'dark';
-        
-        var cons = container.style.getPropertyValue('background-image');
-        console.log(cons);
-
-
-        const set_bg = window.getComputedStyle(container).getPropertyValue('background-image') === 'linear-gradient(-45deg, #a8acb5, #8889c47e, #5d3f4364, #d1d0d0e0, rgba(255, 255, 255, 0.861))' ? 'linear-gradient(-45deg, #130606, #261b1bbe, #040345de, #020223c4, rgba(53, 10, 10, 0.818))' : 'linear-gradient(-45deg, #a8acb5, #8889c47e, #5d3f4364, #d1d0d0e0, rgba(255, 255, 255, 0.861))';
         body.setAttribute('class', set_color);
-        container.style.setPropertyValue('background-image', set_bg, null);
-        container.style.setAttribute('backgroundImage', set_bg);
+        
+        //var cons = container.style.getPropertyValue('background-image');
+        //console.log(cons);
+        //const set_bg = window.getComputedStyle(container).getPropertyValue('background-image') === 'linear-gradient(-45deg, rgb(168, 176, 196), rgba(106, 106, 107, 0.978), rgba(93, 63, 81, 0.634), rgba(227, 227, 227, 0.527), rgba(160, 166, 168, 0.627))' ? 'linear-gradient(-45deg, rgb(139, 26, 26), rgba(52, 122, 182, 0.745), rgba(22, 20, 156, 0.871), rgba(51, 198, 169, 0.769), rgba(17, 4, 4, 0.818))' : 'linear-gradient(-45deg, rgb(168, 176, 196), rgba(106, 106, 107, 0.978), rgba(93, 63, 81, 0.634), rgba(227, 227, 227, 0.527), rgba(160, 166, 168, 0.627))';
+        //container.style.setPropertyValue('background-image', set_bg, null);
+        //container.style.setAttribute('backgroundImage', set_bg);
         const set_border = border.getAttribute('class') === 'border container' ? 'no-border container' : 'border container';
         border.setAttribute('class', set_border);
         const enable = enabled.getAttribute('class') === 'fa-solid fa-square lcode' ? 'fa-solid fa-square dcode' : 'fa-solid fa-square lcode';
