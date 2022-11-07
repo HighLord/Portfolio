@@ -2,8 +2,9 @@ body, html
 {  
     position: relative;
     height: 100%;
-    color: black;
+    color: rgb(0, 0, 0);
 }
+
 @keyframes gradient 
 {
     0%
@@ -96,7 +97,7 @@ p
 .container
 {
     position: relative;
-    background: linear-gradient(-45deg, #ffffff8b, #92929282, #00000082, #0041c339, rgba(221, 0, 59, 0.204));
+    background: linear-gradient(-45deg, #a8acb5, #8889c47e, #5d3f4364, #d1d0d0e0, rgba(255, 255, 255, 0.861));
     background-size: 400% 100%;
     animation: gradient 20s ease infinite;
     border: solid 1px;
@@ -107,9 +108,9 @@ p
     margin-top: 20px;
     margin-bottom: 0px;
     height: 82%;
-    display: none;
-    
+    display: none;    
 }
+
 @media screen and (max-width: 800px)
 {
     .container
@@ -135,8 +136,12 @@ p
 
 a
 {
-    color: gray;
+    color: grey;
     text-decoration-line: none;
+}
+a:hover
+{
+    color: goldenrod;
 }
 
 .section1
@@ -170,7 +175,6 @@ a
     width: 100%;
     transform: translate(-50%,-50%);
     background-color: rgba(0, 0, 0);
-    animation: fadeIn ease 1s;
 }
 
 .hidden
@@ -228,15 +232,27 @@ div.display
     font-family: 'Courier New', Courier, monospace;
 }
 
+.light
+{
+    animation: fades ease 2s;
+    color: rgb(0, 0, 0) !important;
+    animation-fill-mode: forwards;
+    
+}
+@keyframes fades 
+{
+    20%{opacity: 0.2;}40%{opacity: 0.4; background-color: #818181;}60%{opacity: 0.6; background-color: #d4d4d4;}80%{opacity: 0.8; background-color: #f4f4f4;}100%{opacity: 1; background-color: #ffffff;}
+}
+
 .dark
 {
-    animation: fadeIns ease 3s;
+    animation: fadeIns ease 2s;
     color: white !important;
     animation-fill-mode: forwards;
 }
 @keyframes fadeIns 
 {
-    20%{opacity: 0.2;}40%{opacity: 0.4; background-color: #2d2d2d;}60%{opacity: 0.6; background-color: #191919;}80%{opacity: 0.8; background-color: #0d0d0d;}100%{opacity: 1; background-color: #000000;}
+    20%{opacity: 0.2;}40%{opacity: 0.4; background-color: #000000;}60%{opacity: 0.6; background-color: #000000;}80%{opacity: 0.8; background-color: #000000;}100%{opacity: 1; background-color: #000000;}
 }
 
 
