@@ -24,13 +24,21 @@ window.onload = function()
     {
         body.style.background = 'black';
         const set_color = body.getAttribute('class') === 'dark' ? 'light' : 'dark';
-        if (container.style.backgroundImage == 'linear-gradient(-45deg, #a8acb5, #8889c47e, #5d3f4364, #d1d0d0e0, rgba(255, 255, 255, 0.861))')
+        if (window.getComputedStyle)
         {
-            alert(container.style.backgroundImage);
+            style = window.getComputedStyle('container').getPropertyValue('background-image');
         }
         else
         {
-            alert(container.style.backgroundImage);
+            style = container.currentStyle;
+        }
+        if (container.window.getComputedStyle(container) === 'linear-gradient(-45deg, #a8acb5, #8889c47e, #5d3f4364, #d1d0d0e0, rgba(255, 255, 255, 0.861))')
+        {
+            alert(style);
+        }
+        else
+        {
+            alert(style);
         }
         const set_bg = container.getAttribute('style.backgroundImage') === 'linear-gradient(-45deg, #a8acb5, #8889c47e, #5d3f4364, #d1d0d0e0, rgba(255, 255, 255, 0.861))' ? 'linear-gradient(-45deg, #130606, #261b1bbe, #040345de, #020223c4, rgba(53, 10, 10, 0.818))' : 'linear-gradient(-45deg, #a8acb5, #8889c47e, #5d3f4364, #d1d0d0e0, rgba(255, 255, 255, 0.861))';
         body.setAttribute('class', set_color);
