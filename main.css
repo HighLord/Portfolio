@@ -96,7 +96,7 @@ p
 .container
 {
     position: relative;
-    background: linear-gradient(-45deg, #cecece, #505050a9, #596a71a1, #dededeb2);
+    background: linear-gradient(-45deg, #ffffff8b, #92929282, #00000082, #0041c339, rgba(221, 0, 59, 0.204));
     background-size: 400% 100%;
     animation: gradient 20s ease infinite;
     border: solid 1px;
