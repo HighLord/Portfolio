@@ -25,7 +25,7 @@ window.onload = function()
     {
         body.style.background = 'black';
         const set_color = body.getAttribute('class') === 'dark' ? 'light' : 'dark';
-        if (container.style.background == 'linear-gradient(-45deg, #a8acb5, #8889c47e, #5d3f4364, #d1d0d0e0, rgba(255, 255, 255, 0.861))')
+        if (container.style.backgroundColor == 'linear-gradient(-45deg, #a8acb5, #8889c47e, #5d3f4364, #d1d0d0e0, rgba(255, 255, 255, 0.861))')
         {
             alert('yes');
         }
