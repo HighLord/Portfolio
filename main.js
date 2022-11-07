@@ -24,25 +24,15 @@ window.onload = function()
     {
         body.style.background = 'black';
         const set_color = body.getAttribute('class') === 'dark' ? 'light' : 'dark';
-        if (window.getComputedStyle)
-        {
-            style = window.getComputedStyle('container').getPropertyValue('background-image');
-        }
-        else
-        {
-            style = container.currentStyle;
-        }
-        if (container.window.getComputedStyle(container) === 'linear-gradient(-45deg, #a8acb5, #8889c47e, #5d3f4364, #d1d0d0e0, rgba(255, 255, 255, 0.861))')
-        {
-            alert(style);
-        }
-        else
-        {
-            alert(style);
-        }
-        const set_bg = container.getAttribute('style.backgroundImage') === 'linear-gradient(-45deg, #a8acb5, #8889c47e, #5d3f4364, #d1d0d0e0, rgba(255, 255, 255, 0.861))' ? 'linear-gradient(-45deg, #130606, #261b1bbe, #040345de, #020223c4, rgba(53, 10, 10, 0.818))' : 'linear-gradient(-45deg, #a8acb5, #8889c47e, #5d3f4364, #d1d0d0e0, rgba(255, 255, 255, 0.861))';
+        
+        var cons = container.style.getPropertyValue('background-image');
+        console.log(cons);
+
+
+        const set_bg = window.getComputedStyle(container).getPropertyValue('background-image') === 'linear-gradient(-45deg, #a8acb5, #8889c47e, #5d3f4364, #d1d0d0e0, rgba(255, 255, 255, 0.861))' ? 'linear-gradient(-45deg, #130606, #261b1bbe, #040345de, #020223c4, rgba(53, 10, 10, 0.818))' : 'linear-gradient(-45deg, #a8acb5, #8889c47e, #5d3f4364, #d1d0d0e0, rgba(255, 255, 255, 0.861))';
         body.setAttribute('class', set_color);
-        container.setAttribute('style.backgroundColor', set_bg);
+        container.style.setPropertyValue('background-image', set_bg, null);
+        container.style.setAttribute('backgroundImage', set_bg);
         const set_border = border.getAttribute('class') === 'border container' ? 'no-border container' : 'border container';
         border.setAttribute('class', set_border);
         const enable = enabled.getAttribute('class') === 'fa-solid fa-square lcode' ? 'fa-solid fa-square dcode' : 'fa-solid fa-square lcode';
