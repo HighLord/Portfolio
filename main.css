@@ -97,7 +97,7 @@ p
 .container
 {
     position: relative;
-    background: linear-gradient(-45deg, rgb(168, 176, 196), rgba(106, 106, 107, 0.978), rgba(93, 63, 81, 0.634), rgba(227, 227, 227, 0.527), rgba(160, 166, 168, 0.627));
+    background: linear-gradient(-45deg, rgb(67, 105, 201), rgba(155, 155, 155, 0.978), rgba(121, 74, 102, 0.89), rgba(227, 227, 227, 0.696), rgba(224, 228, 255, 0.815));
     background-size: 400% 100%;
     animation: gradient 20s ease infinite;
     border: solid 1px;
