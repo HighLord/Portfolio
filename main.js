@@ -53,6 +53,9 @@ window.onload = function()
     const contact = document.getElementsByClassName('contact')[0];
     contact.addEventListener('click', () =>
     {
-        goTo("Contact", "Contact", "contact.html");
+        //goTo("Contact", "Contact", "contact.html");
+        $("#test").load("contact.html #test");
     });
+
+
 };
