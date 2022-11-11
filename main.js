@@ -50,12 +50,26 @@ window.onload = function()
         }
     }
 
-    const contact = document.getElementsByClassName('contact')[0];
+    var times;
+    var section = document.getElementsByClassName('section1')[0];
+    
+    var home = document.getElementById('home');
+    var project = document.getElementById('project');
+    var info = document.getElementById('info');
+    var contact = document.getElementById('contact');
     contact.addEventListener('click', () =>
     {
-        //goTo("Contact", "Contact", "contact.html");
-        $("#test").load("contact.html #test");
+        if (times){}else
+        {
+            $.get("contact.html", function(data)
+            {
+                var data = $($.parseHTML(data));
+                section.innerHTML = data.find("#changes").html();
+                home.innerHTML = data.find("#home").html();
+                project.innerHTML = data.find("#project").html();
+                info.innerHTML = data.find("#info").html();
+                contact.innerHTML = data.find("#contact").html();
+            })
+        }
     });
-
-
 };
