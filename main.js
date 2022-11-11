@@ -66,8 +66,8 @@ window.onload = function()
 
     home.addEventListener('click', () =>
     {
-        if (times == 1){}else
-        {
+        //if (times == 1){}else
+        //{
             $.get("index.html", function(data)
             {
                 var data = $($.parseHTML(data));
@@ -81,12 +81,12 @@ window.onload = function()
                 $('#contact').css('font-size', '15px');
                 times = 1;
             })
-        }
+        //}
     });
     contact.addEventListener('click', () =>
     {
-        if (times == 4){}else
-        {
+        //if (times == 4){}else
+        //{
             $.get("contact.html", function(data)
             {
                 var data = $($.parseHTML(data));
@@ -100,6 +100,6 @@ window.onload = function()
                 $('#contact').css('font-size', '20px');
                 times = 4;
             })
-        }
+        //}
     });
 };
