@@ -15,12 +15,6 @@ window.onload = function()
         }, 1500);
     }, 2000);
 
-    if (typeof(Storage) !== "undefined"){var enableStorage = 1}else{var enableStorage = 0};
-    if (enableStorage == 1)
-    {
-        sessionStorage.setItem
-    }
-
     var check;
     const container = document.styleSheets[0].cssRules[12].style;
     const border = document.getElementsByTagName('div')[2];
@@ -79,7 +73,7 @@ window.onload = function()
                 contact.innerHTML = data.find("#contact").html();
                 $('#home').css('font-size', '20px');
                 $('#project').css('font-size', '15px');
-                $('#info').css('font-size', '20px');
+                $('#info').css('font-size', '15px');
                 $('#contact').css('font-size', '15px');
                 times = 1;
             });  
