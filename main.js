@@ -50,6 +50,14 @@ window.onload = function()
         }
     }
 
+    window.onpopstate = function(e)
+    {
+        if(e.state)
+        {
+            document.getElementById("container").innerHTML = e.state.html;
+        }
+    }
+
     var times;
     var section = document.getElementsByClassName('section1')[0];
     
