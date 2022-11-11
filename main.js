@@ -87,7 +87,7 @@ window.onload = function()
     });
     info.addEventListener('click', () =>
 {  
-    if (times == 1){}else
+    if (times == 3){}else
     {
         $.get("info.html", function(data)
         {
@@ -102,7 +102,7 @@ window.onload = function()
             $('#project').css('font-size', '15px');
             $('#info').css('font-size', '20px');
             $('#contact').css('font-size', '15px');
-            times = 1;
+            times = 3;
         });  
     };
 });
