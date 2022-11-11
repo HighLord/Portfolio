@@ -40,9 +40,9 @@ window.onload = function()
 
     function goTo(page, title, url) 
     {
-        if ("undefined" !== typeof history.pushState)
+        if ("undefined" !== typeof history.replaceState)
         {
-            history.pushState({page: page},title,url);
+            history.replaceState({page: page},title,url);
         }
         else
         {
@@ -52,10 +52,8 @@ window.onload = function()
 
     window.onpopstate = function(e)
     {
-        if(e.state)
-        {
-            document.getElementById("container").innerHTML = e.state.html;
-        }
+        console.log(e.state);
+        console.log(e.state.html);
     }
 
     var times;
