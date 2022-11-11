@@ -78,11 +78,34 @@ window.onload = function()
                 info.innerHTML = data.find("#info").html();
                 contact.innerHTML = data.find("#contact").html();
                 $('#home').css('font-size', '20px');
+                $('#project').css('font-size', '15px');
+                $('#info').css('font-size', '20px');
                 $('#contact').css('font-size', '15px');
                 times = 1;
             });  
         };
     });
+    info.addEventListener('click', () =>
+{  
+    if (times == 1){}else
+    {
+        $.get("index.html", function(data)
+        {
+            var data = $($.parseHTML(data));
+            goTo("Home", "Home", "info.html");
+            section.innerHTML = data.find("#changes").html();
+            home.innerHTML = data.find("#home").html();
+            project.innerHTML = data.find("#project").html();
+            info.innerHTML = data.find("#info").html();
+            contact.innerHTML = data.find("#contact").html();
+            $('#home').css('font-size', '15px');
+            $('#project').css('font-size', '15px');
+            $('#info').css('font-size', '20px');
+            $('#contact').css('font-size', '15px');
+            times = 1;
+        });  
+    };
+});
     contact.addEventListener('click', () =>
     {
         if (times == 4){}else
@@ -97,6 +120,8 @@ window.onload = function()
                 info.innerHTML = data.find("#info").html();
                 contact.innerHTML = data.find("#contact").html();
                 $('#home').css('font-size', '15px');
+                $('#project').css('font-size', '15px');
+                $('#info').css('font-size', '15px');
                 $('#contact').css('font-size', '20px');
                 times = 4;
             });
