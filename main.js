@@ -59,7 +59,7 @@ window.onload = function()
     var contact = document.getElementById('contact');
     contact.addEventListener('click', () =>
     {
-        if (times){}else
+        if (times == 1){}else
         {
             $.get("contact.html", function(data)
             {
@@ -69,6 +69,10 @@ window.onload = function()
                 project.innerHTML = data.find("#project").html();
                 info.innerHTML = data.find("#info").html();
                 contact.innerHTML = data.find("#contact").html();
+                $('#home').css('font-size', '15px');
+                $('#contact').css('font-size', '20px');
+                console.log(contact.innerHTML);
+                times = 1;
             })
         }
     });
