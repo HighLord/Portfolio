@@ -62,12 +62,11 @@ h4
 
 h5
 {
-    display: inline-flexbox;
+    display: flow-root;
     font-weight: 600;
     font-size: 15px;
     margin-top: 10px;
     margin-bottom: 10px;
-    scursor: pointer;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
