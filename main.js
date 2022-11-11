@@ -89,7 +89,7 @@ window.onload = function()
 {  
     if (times == 1){}else
     {
-        $.get("index.html", function(data)
+        $.get("info.html", function(data)
         {
             var data = $($.parseHTML(data));
             goTo("Home", "Home", "info.html");
