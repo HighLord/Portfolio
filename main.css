@@ -68,12 +68,14 @@ h5
     margin-top: 10px;
     margin-bottom: 10px;
     cursor: pointer;
-    background-color: transparent;
 }
 h5:hover
 {
-    background-color: transparent;
     color: grey;
+}
+h5::selection
+{
+    background: transparent;
 }
 
 p
