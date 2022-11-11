@@ -65,7 +65,7 @@ window.onload = function()
             $.get("index.html", function(data)
             {
                 var data = $($.parseHTML(data));
-                goTo("Home", "Home", "index.html");
+                goTo("Home", "Home", "/");
                 section.innerHTML = data.find("#changes").html();
                 home.innerHTML = data.find("#home").html();
                 project.innerHTML = data.find("#project").html();
