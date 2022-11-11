@@ -50,12 +50,6 @@ window.onload = function()
         }
     }
 
-    window.onpopstate = function(e)
-    {
-        console.log(e.state);
-        console.log(e.state.html);
-    }
-
     var times;
     var section = document.getElementsByClassName('section1')[0];
     
@@ -65,11 +59,17 @@ window.onload = function()
     var contact = document.getElementById('contact');
 
     home.addEventListener('click', () =>
-    {
+    {  
+        console.log('works');  
         //if (times == 1){}else
         //{
-            $.get("index.html", function(data)
+            $.get("/index.html", function(data)
             {
+                console.log('works 2');
+                alert("works");
+            });
+        });
+                /** 
                 var data = $($.parseHTML(data));
                 goTo("Home", "Home", "index.html");
                 section.innerHTML = data.find("#changes").html();
@@ -80,13 +80,14 @@ window.onload = function()
                 $('#home').css('font-size', '20px');
                 $('#contact').css('font-size', '15px');
                 times = 1;
+                
             })
         //}
     });
     contact.addEventListener('click', () =>
     {
-        //if (times == 4){}else
-        //{
+        if (times == 4){}else
+        {
             $.get("contact.html", function(data)
             {
                 var data = $($.parseHTML(data));
@@ -100,6 +101,6 @@ window.onload = function()
                 $('#contact').css('font-size', '20px');
                 times = 4;
             })
-        //}
-    });
+        }
+    }); */
 };
