@@ -65,6 +65,7 @@ window.onload = function()
             $.get("index.html", function(data)
             {
                 var data = $($.parseHTML(data));
+                goTo("Home", "Home", "index.html");
                 section.innerHTML = data.find("#changes").html();
                 home.innerHTML = data.find("#home").html();
                 project.innerHTML = data.find("#project").html();
@@ -83,6 +84,7 @@ window.onload = function()
             $.get("contact.html", function(data)
             {
                 var data = $($.parseHTML(data));
+                goTo("Contact", "Contact", "contact.html");
                 section.innerHTML = data.find("#changes").html();
                 home.innerHTML = data.find("#home").html();
                 project.innerHTML = data.find("#project").html();
