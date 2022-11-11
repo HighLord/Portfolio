@@ -67,13 +67,14 @@ h5
     font-size: 15px;
     margin-top: 10px;
     margin-bottom: 10px;
-    cursor: pointer;
+    scursor: pointer;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
 }
 h5:hover
 {
+    cursor: pointer;
     color: grey;
 }
 
