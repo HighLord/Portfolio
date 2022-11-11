@@ -60,16 +60,10 @@ window.onload = function()
 
     home.addEventListener('click', () =>
     {  
-        console.log('works');  
-        //if (times == 1){}else
-        //{
-            $.get("/index.html", function(data)
+        if (times == 1){}else
+        {
+            $.get("index.html", function(data)
             {
-                console.log('works 2');
-                alert("works");
-            });
-        });
-                /** 
                 var data = $($.parseHTML(data));
                 goTo("Home", "Home", "index.html");
                 section.innerHTML = data.find("#changes").html();
@@ -79,10 +73,9 @@ window.onload = function()
                 contact.innerHTML = data.find("#contact").html();
                 $('#home').css('font-size', '20px');
                 $('#contact').css('font-size', '15px');
-                times = 1;
-                
-            })
-        //}
+                times = 1;  
+            });
+        };
     });
     contact.addEventListener('click', () =>
     {
@@ -100,7 +93,7 @@ window.onload = function()
                 $('#home').css('font-size', '15px');
                 $('#contact').css('font-size', '20px');
                 times = 4;
-            })
-        }
-    }); */
+            });
+        };
+    });
 };
