@@ -57,9 +57,28 @@ window.onload = function()
     var project = document.getElementById('project');
     var info = document.getElementById('info');
     var contact = document.getElementById('contact');
-    contact.addEventListener('click', () =>
+
+    home.addEventListener('click', () =>
     {
         if (times == 1){}else
+        {
+            $.get("index.html", function(data)
+            {
+                var data = $($.parseHTML(data));
+                section.innerHTML = data.find("#changes").html();
+                home.innerHTML = data.find("#home").html();
+                project.innerHTML = data.find("#project").html();
+                info.innerHTML = data.find("#info").html();
+                contact.innerHTML = data.find("#contact").html();
+                $('#home').css('font-size', '20px');
+                $('#contact').css('font-size', '15px');
+                times = 1;
+            })
+        }
+    });
+    contact.addEventListener('click', () =>
+    {
+        if (times == 4){}else
         {
             $.get("contact.html", function(data)
             {
@@ -71,8 +90,7 @@ window.onload = function()
                 contact.innerHTML = data.find("#contact").html();
                 $('#home').css('font-size', '15px');
                 $('#contact').css('font-size', '20px');
-                console.log(contact.innerHTML);
-                times = 1;
+                times = 4;
             })
         }
     });
