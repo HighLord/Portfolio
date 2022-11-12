@@ -10,7 +10,7 @@ window.onload = function()
             $('body>*:not(.notify)').css('filter', 'blur(5px)');
             setTimeout(() => {
                 $('body>*:not(.notify)').css('filter', 'blur(0px)'); 
-                $(notification).css('visibility', 'hidden');  
+                $(notification).css('display', 'none');  
             }, 3000);
         });
         
