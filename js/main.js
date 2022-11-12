@@ -84,10 +84,10 @@ window.onload = function()
     {  
         if (times == 2){}else
         {
-            $.get("project.html", function(data)
+            $.get("/static/project.html", function(data)
             {
                 var data = $($.parseHTML(data));
-                goTo("Home", "Home", "project.html");
+                goTo("Home", "Home", "/static/project.html");
                 section.innerHTML = data.find("#changes").html();
                 section.setAttribute('class', 'section1 sec_class');
                 home.innerHTML = data.find("#home").html();
@@ -106,10 +106,10 @@ window.onload = function()
     {  
         if (times == 3){}else
         {
-            $.get("info.html", function(data)
+            $.get("/static/info.html", function(data)
             {
                 var data = $($.parseHTML(data));
-                goTo("Home", "Home", "info.html");
+                goTo("Home", "Home", "/static/info.html");
                 section.innerHTML = data.find("#changes").html();
                 section.setAttribute('class', 'section1');
                 home.innerHTML = data.find("#home").html();
@@ -128,10 +128,10 @@ window.onload = function()
     {
         if (times == 4){}else
         {
-            $.get("contact.html", function(data)
+            $.get("/static/contact.html", function(data)
             {
                 var data = $($.parseHTML(data));
-                goTo("Contact", "Contact", "contact.html");
+                goTo("Contact", "Contact", "/static/contact.html");
                 section.innerHTML = data.find("#changes").html();
                 section.setAttribute('class', 'section1');
                 home.innerHTML = data.find("#home").html();
