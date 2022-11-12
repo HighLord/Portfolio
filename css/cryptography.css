@@ -2,6 +2,7 @@ body
 {
     background-color: rgb(14, 25, 61);
     color: white;
+    box-sizing: border-box;
 }
 
 h1
@@ -38,4 +39,33 @@ i.fa-bell
     50%  { opacity: 1;} 
     51%  { opacity: 0;} 
     100% { opacity: 0;}      
+}
+
+div.notify
+{
+    width: 100%;
+    z-index: 10;
+    justify-content: center;
+    display: flex;
+    height: 100%;
+}
+div.notify span
+{
+    display: none;
+    border-color: white;
+    border-radius: 15px 5px;
+    padding: 20px;
+    border: solid 1px;
+    text-align: center;
+    margin: auto;
+    font-size: 15px;
+    line-height: 1.3;
+    height: 180px;
+    width: 320px;
+    filter: blur(0px);
+}
+span.notify-text a
+{
+    color: coral;
+    text-decoration: none;
 }
