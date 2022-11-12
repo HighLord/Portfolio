@@ -85,6 +85,7 @@ p
     text-align: left;
     font-weight: 700;
 }
+
 @media screen and (max-width: 800px) 
 {
     p
@@ -177,10 +178,9 @@ a:hover
 
 .sec_class
 {
-    display: inline-block;
     text-align: right;
     width: 100%;
-    max-width: 260px;
+    max-width: 220px;
     white-space: nowrap;
 }
 
