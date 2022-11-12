@@ -114,7 +114,7 @@ p
     margin-top: 20px;
     margin-bottom: 0px;
     height: 82%;
-    display: none;    
+    display: none;   
 }
 
 @media screen and (max-width: 800px)
@@ -152,6 +152,7 @@ a:hover
 
 .section1
 {
+    display: block;
     position: absolute;
     text-align: right;
     bottom: 0px;
@@ -176,10 +177,11 @@ a:hover
 
 .sec_class
 {
+    display: inline-block;
     text-align: right;
     width: 100%;
-    max-width: 250px;
-    gwhite-space: nowrap;
+    max-width: 260px;
+    white-space: nowrap;
 }
 
 
