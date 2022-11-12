@@ -67,6 +67,7 @@ window.onload = function()
                 var data = $($.parseHTML(data));
                 goTo("Home", "Home", "/");
                 section.innerHTML = data.find("#changes").html();
+                section.setAttribute('class', 'section1');
                 home.innerHTML = data.find("#home").html();
                 project.innerHTML = data.find("#project").html();
                 info.innerHTML = data.find("#info").html();
@@ -88,7 +89,7 @@ window.onload = function()
                 var data = $($.parseHTML(data));
                 goTo("Home", "Home", "project.html");
                 section.innerHTML = data.find("#changes").html();
-                //section.setAttribute('class', sec_class);
+                section.setAttribute('class', 'section1 sec_class');
                 home.innerHTML = data.find("#home").html();
                 project.innerHTML = data.find("#project").html();
                 info.innerHTML = data.find("#info").html();
@@ -110,6 +111,7 @@ window.onload = function()
                 var data = $($.parseHTML(data));
                 goTo("Home", "Home", "info.html");
                 section.innerHTML = data.find("#changes").html();
+                section.setAttribute('class', 'section1');
                 home.innerHTML = data.find("#home").html();
                 project.innerHTML = data.find("#project").html();
                 info.innerHTML = data.find("#info").html();
@@ -131,6 +133,7 @@ window.onload = function()
                 var data = $($.parseHTML(data));
                 goTo("Contact", "Contact", "contact.html");
                 section.innerHTML = data.find("#changes").html();
+                section.setAttribute('class', 'section1');
                 home.innerHTML = data.find("#home").html();
                 project.innerHTML = data.find("#project").html();
                 info.innerHTML = data.find("#info").html();
