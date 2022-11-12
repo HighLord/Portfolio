@@ -176,9 +176,10 @@ a:hover
 
 .sec_class
 {
+    text-align: right;
     width: 100%;
     max-width: 250px;
-    white-space: nowrap;
+    gwhite-space: nowrap;
 }
 
 
