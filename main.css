@@ -173,6 +173,12 @@ a:hover
         min-width: 120px;
     } 
 }
+.sec_class
+{
+    width: 70%;
+    max-width: 260px;
+    text-align: left;
+}
 
 
 /* - - - - - - - - Splash Screen - - - - - - - - */

@@ -88,6 +88,7 @@ window.onload = function()
                 var data = $($.parseHTML(data));
                 goTo("Home", "Home", "project.html");
                 section.innerHTML = data.find("#changes").html();
+                //section.setAttribute('class', sec_class);
                 home.innerHTML = data.find("#home").html();
                 project.innerHTML = data.find("#project").html();
                 info.innerHTML = data.find("#info").html();
