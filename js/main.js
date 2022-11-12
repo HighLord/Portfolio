@@ -62,7 +62,7 @@ window.onload = function()
     {  
         if (times == 1){}else
         {
-            $.get("index.html", function(data)
+            $.get("/", function(data)
             {
                 var data = $($.parseHTML(data));
                 goTo("Home", "Home", "/");
