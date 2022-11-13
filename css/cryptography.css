@@ -14,7 +14,7 @@ h1
 i.fa-bell
 {
     cursor: pointer;
-    font-size: 25px;
+    font-size: 22px;
     display: inline-flex;
     position: absolute;
     right: 20px;
@@ -29,7 +29,8 @@ i.fa-bell
     right: 10px;
     top: 10px;
     color: white;
-    padding: 0px 5px;
+    padding: 1px 5px;
+    font-size: 12px;
     background-color: red;
     border-radius: 50%; 
     animation: zoom 3s 3s both infinite;
@@ -45,8 +46,8 @@ i.fa-bell
 
 div.notify
 {
+    position: relative;
     width: 100%;
-    z-index: 10;
     justify-content: center;
     display: flex;
     height: 100%;
@@ -70,4 +71,26 @@ span.notify-text a
 {
     color: coral;
     text-decoration: none;
+}
+
+div.crypt
+{
+    position: absolute;
+    z-index: 9;
+    top: 50px;
+    width: 100%;
+    padding: 5px;
+    
+}
+textarea
+{
+    width: 90%;
+    padding: 5px;
+}
+input
+{
+    margin-top: 10px;
+    height: 40px;
+    width: 90%;
+    padding: 5px;
 }
