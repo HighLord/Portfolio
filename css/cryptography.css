@@ -13,6 +13,7 @@ h1
 
 i.fa-bell
 {
+    cursor: pointer;
     font-size: 25px;
     display: inline-flex;
     position: absolute;
@@ -22,6 +23,7 @@ i.fa-bell
 
 .count
 {
+    cursor: pointer;
     position: absolute;
     z-index: 1;
     right: 10px;
