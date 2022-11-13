@@ -22,8 +22,10 @@
         </span>
     </div>
     <div class="crypt">
-    <textarea id="encode" name="encode" rows="6" cols="50" placeholder="Data to encode"></textarea>
-    <input type="text" name="private" id="private" placeholder="Enter a private key">
+    <textarea id="encode" name="encode" rows="6" cols="50" placeholder="Data to encrypt" required></textarea>
+    <input type="text" name="private" id="private" placeholder="Enter a private key" required>
+    <input type="number" name="expire" id="expire" step="1" min="1" placeholder="Time to expire (in minutes)" required>
+    <button type="submit">Encrypt</button>
     </div>
 </body>
 
