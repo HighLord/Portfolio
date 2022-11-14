@@ -4,12 +4,16 @@ body
     color: white;
     box-sizing: border-box;
     height: 100%;
+    position: fixed;
 }
 
 h1
 {
-    text-align: center;
+    position: fixed;
     font-size: 20px;
+    margin: auto;
+    padding: auto;
+    right: 40%;
 }
 
 i.fa-bell

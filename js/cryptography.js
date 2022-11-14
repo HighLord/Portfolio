@@ -28,7 +28,7 @@ window.onload = function()
     });
 
     $('#suben').click($.fn.my = function(e)
-    {
+    {   
         if($('form')[0].checkValidity())
         {
             $('#suben').unbind('click');
@@ -47,6 +47,10 @@ window.onload = function()
                     var data = response.data;
                     document.getElementById("show").innerHTML = data;
                     $('#show').css('display', 'block');
+                    $('#suben').bind('click', function()
+                    {
+                        $(this).my();
+                    });
                 }
             })
         }
