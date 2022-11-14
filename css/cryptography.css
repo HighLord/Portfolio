@@ -55,8 +55,10 @@ div.notify
 }
 div.notify span
 {
+    background-color: black;
+    color: white;
     display: none;
-    border-color: white;
+    border-color: black;
     border-radius: 15px 5px;
     padding: 20px;
     border: solid 1px;
@@ -74,7 +76,7 @@ span.notify-text a
     text-decoration: none;
 }
 
-div.crypt
+div.encrypt
 {
     position: absolute;
     z-index: 9;
@@ -83,6 +85,15 @@ div.crypt
     padding: 5px;
     
 }
+div.decrypt
+{
+    position: absolute;
+    z-index: 9;
+    width: 100%;
+    padding: 5px;
+    bottom: 50px;
+}
+
 textarea
 {
     width: 90%;
@@ -101,4 +112,9 @@ button
     padding: 10px 20px;
     border: solid 1px;
     border-radius: 5px;
+}
+
+#show, #shown
+{
+    display: none;
 }

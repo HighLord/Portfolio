@@ -21,13 +21,22 @@
             Although this code is(should be) used at the back end, I am providing a simple user interface so you see how it works!
         </span>
     </div>
-    <div class="crypt">
-    <form action="https://github.webapps.com.ng/cryptography.php" method="post">
-    <textarea id="encode" name="encode" rows="6" cols="50" placeholder="Data to encrypt" required oninvalid="this.setCustomValidity('Please enter the data you want to encrypt')" oninput="this.setCustomValidity('')"></textarea>
-    <input type="text" name="private" id="private" placeholder="Enter a private key" required oninvalid="this.setCustomValidity('Please enter a private key')" oninput="this.setCustomValidity('')">
-    <input type="number" name="expire" id="expire" step="1" min="1" placeholder="Time to expire (in minutes)" required oninvalid="this.setCustomValidity('Please enter how long you want the data to be valid')" oninput="this.setCustomValidity('')">
-    <button type="submit" value="Encrypt">Encrypt</button>
-    </form>
+    <div class="encrypt">
+        <form action="https://github.webapps.com.ng/cryptography.php" method="post">
+            <textarea id="encode" name="encode" rows="6" cols="50" placeholder="Data to encrypt" required oninvalid="this.setCustomValidity('Please enter the data you want to encrypt')" oninput="this.setCustomValidity('')"></textarea>
+            <input type="text" name="private" id="private" placeholder="Enter a private key" required oninvalid="this.setCustomValidity('Please enter a private key')" oninput="this.setCustomValidity('')">
+            <input type="number" name="expire" id="expire" step="1" min="1" placeholder="Time to expire (in minutes)" required oninvalid="this.setCustomValidity('Please enter how long you want the data to be valid')" oninput="this.setCustomValidity('')">
+            <button type="submit" value="Encrypt">Encrypt</button>
+            <textarea id="show" name="show" rows="15" cols="50"></textarea>
+        </form>
+    </div>
+    <div class="decrypt">
+        <form action="https://github.webapps.com.ng/cryptography.php" method="post">
+            <textarea id="decode" name="decode" rows="6" cols="50" placeholder="Data to decrypt" required oninvalid="this.setCustomValidity('Please enter the data you want to decrypt')" oninput="this.setCustomValidity('')"></textarea>
+            <input type="text" name="public" id="public" placeholder="Enter the private key for this data" required oninvalid="this.setCustomValidity('Please enter a private key')" oninput="this.setCustomValidity('')">
+            <button type="submit" value="Decrypt">Decrypt</button>
+            <textarea id="shown" name="shown" rows="15" cols="50"></textarea>
+        </form>
     </div>
 </body>
 
