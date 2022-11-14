@@ -5,15 +5,16 @@ body
     box-sizing: border-box;
     height: 100%;
     width: 100%;
-    position: fixed;
+    position: absolute;
 }
 
 h1
 {
-    position: fixed;
+    position: absolute;
     font-size: 20px;
     margin: auto;
     padding: auto;
+    top: 5px;
 }
 
 i.fa-bell
