@@ -27,11 +27,11 @@ window.onload = function()
         });
     });
 
-    $('#sub_en').click($.fn.my = function(e)
+    $('#suben').click($.fn.my = function(e)
     {
         if($('form')[0].checkValidity())
         {
-            $('#sub_en').unbind('click');
+            $('#suben').unbind('click');
             $.ajax
             ({
                 url: "https://github.webapps.com.ng/cryptography.php",
@@ -49,7 +49,7 @@ window.onload = function()
                 }
             })
         }
-    })
+    });
 
 
 }
