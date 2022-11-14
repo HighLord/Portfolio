@@ -31,7 +31,7 @@ window.onload = function()
     {   
         if($('form')[0].checkValidity())
         {
-            $('#suben').unbind('click');
+            //$('#suben').unbind('click');
             $.ajax
             ({
                 url: "https://github.webapps.com.ng/cryptography.php",
@@ -44,17 +44,31 @@ window.onload = function()
                 success:
                 function(response)
                 {
+                    console.log('test');
                     var status = response.Status;
                     var data = response.data;
                     document.getElementById("show").innerHTML = data;
-                    $('#show').css('display', 'block');
+                    $('.show').css('display', 'block');
+                    $('#suben').bind('click', function()
+                    {
+                        $(this).my();
+                    });
+                },
+                error:
+                function(response)
+                {
+                    var status = response.Status;
+                    var data = response.data;
+                    console.log('test2');
+                    document.getElementById("show").innerHTML = data;
+                    $('.show').css('display', 'block');
                     $('#suben').bind('click', function()
                     {
                         $(this).my();
                     });
                 }
-            })
-        }
+            });
+        };
     });
 
 
