@@ -31,7 +31,7 @@ window.onload = function()
     {   
         if($('form')[0].checkValidity())
         {
-            //$('#suben').unbind('click');
+            $('#suben').unbind('click');
             $.ajax
             ({
                 url: "https://github.webapps.com.ng/cryptography.php",
