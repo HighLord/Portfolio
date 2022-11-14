@@ -13,7 +13,7 @@ window.onload = function()
             {
                 if (amount == 1)
                 {
-                    $('.notify').css('z-index', '0');
+                    $('.notify').css('z-index', '1');
                     $('body>*:not(.notify, .fa-bell, .count)').css('filter', 'blur(5px)');
                     amount = 2
                 }

@@ -51,12 +51,13 @@ i.fa-bell
 
 div.notify
 {
-    position: fixed;
-    width: 95%;
+    position: relative;
+    width: 100%;
     justify-content: center;
     display: flex;
-    height: 95%;
     z-index: 0;
+    height: 0px;
+    top: 30%;
 }
 div.notify span
 {
