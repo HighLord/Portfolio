@@ -16,8 +16,7 @@ i.fa-bell
 {
     cursor: pointer;
     font-size: 22px;
-    display: inline-flex;
-    position: absolute;
+    position: fixed;
     right: 20px;
     top: 10px;
 }
@@ -25,7 +24,7 @@ i.fa-bell
 .count
 {
     cursor: pointer;
-    position: absolute;
+    position: fixed;
     z-index: 1;
     right: 10px;
     top: 10px;
@@ -47,7 +46,7 @@ i.fa-bell
 
 div.notify
 {
-    position: relative;
+    position: fixed;
     width: 100%;
     justify-content: center;
     display: flex;
