@@ -51,8 +51,9 @@ i.fa-bell
 
 div.notify
 {
+    margin: auto;
     position: relative;
-    width: 100%;
+    width: 90%;
     justify-content: center;
     display: flex;
     z-index: 0;
