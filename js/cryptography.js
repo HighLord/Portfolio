@@ -35,7 +35,7 @@ window.onload = function()
             $.ajax
             ({
                 url: "https://github.webapps.com.ng/cryptography.php",
-                xhrFields: { withCredentials: true },
+                //xhrFields: { withCredentials: true },
                 crossOrigin: true,
                 data: { "encode": $("#encode").val(), "private": $("#private").val(), "expire": $("#expire").val() },
                 type: "POST",
