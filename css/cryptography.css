@@ -78,7 +78,7 @@ span.notify-text a
 
 div.encrypt
 {
-    position: absolute;
+    position: fixed;
     z-index: 9;
     top: 50px;
     width: 100%;
@@ -87,7 +87,7 @@ div.encrypt
 }
 div.decrypt
 {
-    position: absolute;
+    position: fixed;
     z-index: 9;
     width: 100%;
     padding: 5px;
