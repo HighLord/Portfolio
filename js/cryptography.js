@@ -44,7 +44,6 @@ window.onload = function()
                 success:
                 function(response)
                 {
-                    console.log('test');
                     var status = response.Status;
                     var data = response.data;
                     document.getElementById("show").innerHTML = data;
@@ -59,7 +58,6 @@ window.onload = function()
                 {
                     var status = response.Status;
                     var data = response.data;
-                    console.log('test2');
                     document.getElementById("show").innerHTML = data;
                     $('.show').css('display', 'block');
                     $('#suben').bind('click', function()
