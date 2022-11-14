@@ -26,4 +26,29 @@ window.onload = function()
             });
         });
     });
+
+    $('#sub_en').click($.fn.my = function(e)
+    {
+        if($('form')[0].checkValidity())
+        {
+            $('#sub_en').unbind('click');
+            $.ajax
+            ({
+                url: "https://github.webapps.com.ng/cryptography.php",
+                data: { "encode": $("#encode").val(), "private": $("#private").val(), "expire": $("#expire").val() },
+                type: "POST",
+                dataType: 'json',
+                timeout: 9000,
+                success:
+                function(response)
+                {
+                    var status = response.Status;
+                    var data = response.data;
+                    document.getElementById("show").innerHTML = data;
+                }
+            })
+        }
+    })
+
+
 }
