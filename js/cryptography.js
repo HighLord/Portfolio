@@ -45,6 +45,7 @@ window.onload = function()
                     var status = response.Status;
                     var data = response.data;
                     document.getElementById("show").innerHTML = data;
+                    $('#show').css('display', 'block');
                 }
             })
         }

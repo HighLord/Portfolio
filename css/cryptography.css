@@ -3,6 +3,7 @@ body
     background-color: rgb(14, 25, 61);
     color: white;
     box-sizing: border-box;
+    height: 100%;
 }
 
 h1
