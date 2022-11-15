@@ -31,7 +31,7 @@
     </div>
     <div class="decrypt">
         <form onsubmit="return false" method="post">
-            <textarea id="decode" name="decode" rows="6" cols="60" placeholder="Data to decrypt" required oninvalid="this.setCustomValidity('Please enter the data you want to decrypt')" oninput="this.setCustomValidity('')"></textarea>
+            <textarea id="decode" name="decode" rows="7" cols="50" placeholder="Data to decrypt" required oninvalid="this.setCustomValidity('Please enter the data you want to decrypt')" oninput="this.setCustomValidity('')"></textarea>
             <input type="text" name="public" id="public" placeholder="Enter the private key for this data" required oninvalid="this.setCustomValidity('Please enter a private key')" oninput="this.setCustomValidity('')">
             <button id="subde" type="submit" value="Decrypt">Decrypt</button>
         </form>
