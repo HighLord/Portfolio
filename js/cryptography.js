@@ -46,9 +46,7 @@ window.onload = function()
                 {
                     var status = response.Status;
                     var data = response.data;
-                    console.log(data);
-                    document.getElementById("show").innerHTML = data;
-                    $('.show').css('display', 'block');
+                    document.getElementById("decode").value = data;
                     $('#suben').bind('click', function()
                     {
                         $(this).my();
@@ -59,7 +57,7 @@ window.onload = function()
                 {
                     var status = response.Status;
                     var data = response.data;
-                    document.getElementById("show").innerHTML = "An error has occured. Please try again!";
+                    document.getElementById("decode").value = "An error has occured. Please try again!";
                     $('.show').css('display', 'block');
                     $('#suben').bind('click', function()
                     {
@@ -89,10 +87,13 @@ window.onload = function()
                 {
                     var status = response.Status;
                     var data = response.data;
-                    document.getElementById("show").innerHTML = data;
+                    var expired = response.isDataExpired;
+                    if (expired == "yes")
+                    {alert("The data entered has expired");}else{alert("The data entered is still valid");};
+                    document.getElementById("decode").value = data;
                     console.log(data);
                     $('.show').css('display', 'block');
-                    $('#suben').bind('click', function()
+                    $('#subde').bind('click', function()
                     {
                         $(this).my();
                     });
@@ -102,9 +103,8 @@ window.onload = function()
                 {
                     var status = response.Status;
                     var data = response.data;
-                    document.getElementById("show").innerHTML = "An error has occured. Please try again!";
-                    $('.show').css('display', 'block');
-                    $('#suben').bind('click', function()
+                    document.getElementById("decode").value = "An error has occured. Please try again!";
+                    $('#subde').bind('click', function()
                     {
                         $(this).my();
                     });
