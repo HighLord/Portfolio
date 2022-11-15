@@ -58,7 +58,6 @@ window.onload = function()
                     var status = response.Status;
                     var data = response.data;
                     document.getElementById("decode").value = "An error has occured. Please try again!";
-                    $('.show').css('display', 'block');
                     $('#suben').bind('click', function()
                     {
                         $(this).my();
@@ -72,7 +71,7 @@ window.onload = function()
     {   
         if($('form')[1].checkValidity())
         {
-            $('#suben').unbind('click');
+            $('#subde').unbind('click');
             $.ajax
             ({
                 url: "https://github.webapps.com.ng/cryptography.php",
@@ -85,14 +84,11 @@ window.onload = function()
                 success:
                 function(response)
                 {
-                    var status = response.Status;
                     var data = response.data;
                     var expired = response.isDataExpired;
                     if (expired == "Yes")
                     {alert("The data entered has expired");}else{alert("The data entered is still valid");};
                     document.getElementById("decode").value = data;
-                    console.log(data);
-                    $('.show').css('display', 'block');
                     $('#subde').bind('click', function()
                     {
                         $(this).my();
