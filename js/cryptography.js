@@ -79,7 +79,7 @@ window.onload = function()
                 url: "https://github.webapps.com.ng/cryptography.php",
                 xhrFields: { withCredentials: false },
                 crossOrigin: true,
-                data: { "decode": $("#encode").val(), "public": $("#public").val() },
+                data: { "decode": $("#encode").val(), "private": $("#public").val() },
                 type: "POST",
                 dataType: 'json',
                 timeout: 9000,
