@@ -87,7 +87,7 @@ window.onload = function()
                     var data = response.data;
                     var expired = response.isDataExpired;
                     if (expired == "Yes")
-                    {alert("The data entered has expired");}else{alert("The data entered is still valid");};
+                    {alert("The data entered has expired");}else if (expired == "NoP"){alert("The data entered is still valid");};
                     document.getElementById("decode").value = data;
                     $('#subde').bind('click', function()
                     {
