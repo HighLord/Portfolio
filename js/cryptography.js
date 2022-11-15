@@ -58,7 +58,7 @@ window.onload = function()
                 {
                     var status = response.Status;
                     var data = response.data;
-                    document.getElementById("show").innerHTML = data;
+                    document.getElementById("show").innerHTML = "An error has occured. Please try again!";
                     $('.show').css('display', 'block');
                     $('#suben').bind('click', function()
                     {
@@ -69,5 +69,45 @@ window.onload = function()
         };
     });
 
-
+    $('#subde').click($.fn.my = function(e)
+    {   
+        if($('form')[0].checkValidity())
+        {
+            $('#suben').unbind('click');
+            $.ajax
+            ({
+                url: "https://github.webapps.com.ng/cryptography.php",
+                xhrFields: { withCredentials: false },
+                crossOrigin: true,
+                data: { "decode": $("#encode").val(), "public": $("#public").val() },
+                type: "POST",
+                dataType: 'json',
+                timeout: 9000,
+                success:
+                function(response)
+                {
+                    var status = response.Status;
+                    var data = response.data;
+                    document.getElementById("show").innerHTML = data;
+                    $('.show').css('display', 'block');
+                    $('#suben').bind('click', function()
+                    {
+                        $(this).my();
+                    });
+                },
+                error:
+                function(response)
+                {
+                    var status = response.Status;
+                    var data = response.data;
+                    document.getElementById("show").innerHTML = "An error has occured. Please try again!";
+                    $('.show').css('display', 'block');
+                    $('#suben').bind('click', function()
+                    {
+                        $(this).my();
+                    });
+                }
+            });
+        }
+    });
 }
