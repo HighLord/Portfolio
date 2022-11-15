@@ -88,7 +88,7 @@ window.onload = function()
                     var status = response.Status;
                     var data = response.data;
                     var expired = response.isDataExpired;
-                    if (expired == "yes")
+                    if (expired == "Yes")
                     {alert("The data entered has expired");}else{alert("The data entered is still valid");};
                     document.getElementById("decode").value = data;
                     console.log(data);
