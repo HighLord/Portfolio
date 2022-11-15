@@ -71,7 +71,7 @@ window.onload = function()
 
     $('#subde').click($.fn.my = function(e)
     {   
-        if($('form')[0].checkValidity())
+        if($('form')[1].checkValidity())
         {
             $('#suben').unbind('click');
             $.ajax
