@@ -119,6 +119,10 @@ button
     border: solid 1px;
     border-radius: 5px;
 }
+button:hover
+{
+    box-shadow: 3px 3px 3px white;
+}
 
 div.show
 {
