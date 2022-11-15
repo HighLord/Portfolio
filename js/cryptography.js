@@ -44,7 +44,6 @@ window.onload = function()
                 success:
                 function(response)
                 {
-                    var status = response.Status;
                     var data = response.data;
                     document.getElementById("decode").value = data;
                     $('#suben').bind('click', function()
@@ -55,7 +54,6 @@ window.onload = function()
                 error:
                 function(response)
                 {
-                    var status = response.Status;
                     var data = response.data;
                     document.getElementById("decode").value = "An error has occured. Please try again!";
                     $('#suben').bind('click', function()
@@ -67,7 +65,7 @@ window.onload = function()
         };
     });
 
-    $('#subde').click($.fn.my = function(e)
+    $('#subde').click($.fn.mys = function(e)
     {   
         if($('form')[1].checkValidity())
         {
@@ -91,13 +89,12 @@ window.onload = function()
                     document.getElementById("decode").value = data;
                     $('#subde').bind('click', function()
                     {
-                        $(this).my();
+                        $(this).mys();
                     });
                 },
                 error:
                 function(response)
                 {
-                    var status = response.Status;
                     var data = response.data;
                     document.getElementById("decode").value = "An error has occured. Please try again!";
                     $('#subde').bind('click', function()
