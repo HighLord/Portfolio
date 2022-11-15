@@ -46,6 +46,7 @@ window.onload = function()
                 {
                     var status = response.Status;
                     var data = response.data;
+                    console.log(data);
                     document.getElementById("show").innerHTML = data;
                     $('.show').css('display', 'block');
                     $('#suben').bind('click', function()
@@ -89,6 +90,7 @@ window.onload = function()
                     var status = response.Status;
                     var data = response.data;
                     document.getElementById("show").innerHTML = data;
+                    console.log(data);
                     $('.show').css('display', 'block');
                     $('#suben').bind('click', function()
                     {
