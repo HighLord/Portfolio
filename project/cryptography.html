@@ -30,6 +30,7 @@
         </form>
     </div>
     <div class="decrypt">
+        <section></section>
         <form onsubmit="return false" method="post">
             <textarea id="decode" name="decode" rows="12" cols="50" placeholder="Data to decrypt" required oninvalid="this.setCustomValidity('Please enter the data you want to decrypt')" oninput="this.setCustomValidity('')"></textarea>
             <input type="text" name="public" id="public" placeholder="Enter the private key for this data" required oninvalid="this.setCustomValidity('Please enter a private key')" oninput="this.setCustomValidity('')">

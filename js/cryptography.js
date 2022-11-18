@@ -3,6 +3,7 @@ window.onload = function()
     const bell = document.getElementsByClassName('fa-bell')[0];
     const count = document.getElementsByClassName('count')[0];
     const body = document.getElementsByTagName('body')[0];
+    const output = document.getElementsByTagName('section')[0];
     const notification = document.getElementsByClassName('notify-text')[0];
     var amount = 1;
     [bell, count].forEach((element) =>
@@ -54,7 +55,6 @@ window.onload = function()
                 error:
                 function(response)
                 {
-                    var data = response.data;
                     document.getElementById("decode").value = "An error has occured. Please try again!";
                     $('#suben').bind('click', function()
                     {
@@ -83,9 +83,11 @@ window.onload = function()
                 function(response)
                 {
                     var data = response.data;
+                    var Status = response.Status;
+                    if (Status !== '200'){output.innerHTML = ''};
                     var expired = response.isDataExpired;
                     if (expired == "Yes")
-                    {alert("The data entered has expired");}else if (expired == "No"){alert("The data entered is still valid");};
+                    {output.innerHTML = "The data entered has expired";}else if (expired == "No"){output.innerHTML = "The data entered is still valid";};
                     document.getElementById("decode").value = data;
                     $('#subde').bind('click', function()
                     {
@@ -95,11 +97,10 @@ window.onload = function()
                 error:
                 function(response)
                 {
-                    var data = response.data;
                     document.getElementById("decode").value = "An error has occured. Please try again!";
                     $('#subde').bind('click', function()
                     {
-                        $(this).my();
+                        $(this).mys();
                     });
                 }
             });
