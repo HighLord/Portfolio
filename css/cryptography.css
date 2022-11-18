@@ -145,10 +145,8 @@ div.show {
     display: none;
 }
 section {
-    border: solid 1px;
     width: 88%;
     padding: 5px;
-    position: relative;
     margin-bottom: 10px;
-    max-height: 5%;
+    max-height: 10%;
 }
