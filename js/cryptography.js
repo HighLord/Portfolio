@@ -47,6 +47,7 @@ window.onload = function()
                 {
                     var data = response.data;
                     document.getElementById("decode").value = data;
+                    output.innerHTML = 'The encrypted data will expire in '+ ("#expire").val() +' minutes';
                     $('#suben').bind('click', function()
                     {
                         $(this).my();
@@ -56,6 +57,7 @@ window.onload = function()
                 function(response)
                 {
                     document.getElementById("decode").value = "An error has occured. Please try again!";
+                    output.innerHTML = '';
                     $('#suben').bind('click', function()
                     {
                         $(this).my();
@@ -98,6 +100,7 @@ window.onload = function()
                 function(response)
                 {
                     document.getElementById("decode").value = "An error has occured. Please try again!";
+                    output.innerHTML = '';
                     $('#subde').bind('click', function()
                     {
                         $(this).mys();
