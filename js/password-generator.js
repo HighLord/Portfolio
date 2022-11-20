@@ -22,7 +22,7 @@ window.onload = function()
                     if (document.getElementById("alert").checked === true)
                     {
                         data = data.substring(0, 16);
-                        console.log(data);
+
                     }
                     result.innerHTML = data;
                     $(result).bind('click', () => 
