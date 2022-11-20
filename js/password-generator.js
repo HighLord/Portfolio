@@ -23,7 +23,7 @@ window.onload = function()
                     $(result).bind('click', () => 
                     {
                         var aux = document.createElement("input");
-                        aux.setAttribute("value", result.innerHTML);
+                        aux.setAttribute("value", data);
                         document.body.appendChild(aux);
                         aux.select();
                         document.execCommand("copy");
