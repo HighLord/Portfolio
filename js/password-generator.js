@@ -20,11 +20,14 @@ window.onload = function()
                 {
                     var data = response.data;
                     result.innerHTML = data;
-                    $(result).bind('click', function()
+                    $(result).bind('click', () => 
                     {
-                        //result.select();
-                        //result.setSelectionRange(0, 99999);
-                        navigator.clipboard.writeText(result.innerHTML);
+                        var aux = document.createElement("input");
+                        aux.setAttribute("value", result.innerHTML);
+                        document.body.appendChild(aux);
+                        aux.select();
+                        document.execCommand("copy");
+                        document.body.removeChild(aux);
                         result.innerHTML = "password has been copied successfully";
                     });
                 },
