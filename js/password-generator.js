@@ -19,13 +19,14 @@ window.onload = function()
                 function(response)
                 {
                     var data = response.data;
+                    if (document.getElementById("alert").checked === true)
+                    {
+                        data = data.substring(0, 16);
+                        console.log(data);
+                    }
                     result.innerHTML = data;
                     $(result).bind('click', () => 
                     {
-                        if (document.getElementById('alert1').checked === false)
-                        {
-                            data = string.substring(0, 16);
-                        }
                         var aux = document.createElement("input");
                         aux.setAttribute("value", data);
                         document.body.appendChild(aux);
