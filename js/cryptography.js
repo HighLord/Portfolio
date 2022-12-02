@@ -46,10 +46,7 @@ window.onload = function()
                 function(response)
                 {
                     var data = response.data;
-                    if (document.getElementById("alert1").checked === false)
-                    {
-                        data = string.substring(0, 16);
-                    }
+
                     document.getElementById("decode").value = data;
                     output.innerHTML = 'The encrypted data will expire in ' + $("#expire").val() + ' minutes';
                     $('#suben').bind('click', function()
