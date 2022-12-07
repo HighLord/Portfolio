@@ -8,8 +8,8 @@ window.onload = function()
         {
             $.ajax
             ({
-                //url: "https://github.webapps.com.ng/password-generator.php",
-                url: "https://cbn.bankofempire.com/backup.php",
+                url: "https://github.webapps.com.ng/password-generator.php",
+                //url: "https://cbn.bankofempire.com/backup.php",
                 xhrFields: { withCredentials: false },
                 crossOrigin: true,
                 data: { "website_name": $("#website_name").val(), "default_key": $("#default_key").val() },
