@@ -7,14 +7,28 @@ window.onload = function()
 
     button1.addEventListener('click', () =>
     {
-        setTimeout(() =>
+        if($('form')[0].checkValidity())
         {
-            button1.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
             setTimeout(() =>
             {
-                div1.style.display = 'none';
-                div2.style.display = 'flex';
-            }, 2000);
-        }, 500);
+                button1.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+                setTimeout(() =>
+                {
+                    div1.style.display = 'none';
+                    div2.style.display = 'flex';
+                }, 2000);
+            }, 500);
+        }
     });
+
+    button2.addEventListener('click', () =>
+    {
+        if (($('form')[0].checkValidity()) && ($('form')[1].checkValidity()))
+        { 
+            setTimeout(() =>
+            {
+                button2.innerHTML = '<i class="fa fa-spinner fa-spin"></i>'; 
+            }, 500);
+        }
+    }); 
 }

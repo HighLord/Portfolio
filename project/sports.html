@@ -19,6 +19,8 @@
             <textarea id="team1" name="team1" placeholder="Enter clipboard from livescore.in" required oninvalid="this.setCustomValidity('Please copy and paste the team records from livescore.in')" oninput="this.setCustomValidity('')"></textarea>
             <button type="submit" id="button1">Next</button>
         </div>
+    </form>
+    <form onsubmit="return false" method="post">    
         <div id="div2">
             <p>Team 2</p>
             <input id="teamname2" name="teamname2" placeholder="Enter team 2 name" required oninvalid="this.setCustomValidity('Please enter the team name as shown on livescore.in')" oninput="this.setCustomValidity('')">
