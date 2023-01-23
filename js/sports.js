@@ -8,14 +8,28 @@ window.onload = function()
     var div1 = document.getElementById('div1');
     var div2 = document.getElementById('div2');
     var button2 = document.getElementById('button2');
+    var clear = document.getElementById('clear');
+    var back = document.getElementById('back');
 
     teamname1.addEventListener('input', () =>
     {
-        team1.placeholder = "Enter " + teamname1.value + " records from livescore.in";
+        team1.placeholder = "Enter " + teamname1.value + "'s records from livescore.in";
     });
     teamname2.addEventListener('input', () =>
     {
-        team2.placeholder = "Enter " + teamname2.value + " records from livescore.in";
+        team2.placeholder = "Enter " + teamname2.value + "'s records from livescore.in";
+    });
+    back.addEventListener('click', () => 
+    {
+        div1.style.display = 'flex';
+        div2.style.display = 'none';
+    });
+    clear.addEventListener('click', () =>
+    {
+        teamname1.value = '';
+        team1.value = '';
+        teamname2.value = '';
+        team2.value = ''; 
     });
 
     button1.addEventListener('click', () =>
@@ -29,6 +43,7 @@ window.onload = function()
                 {
                     div1.style.display = 'none';
                     div2.style.display = 'flex';
+                    button1.innerHTML = 'Next';
                 }, 1000);
             }, 300);
         }
@@ -41,7 +56,7 @@ window.onload = function()
             setTimeout(() =>
             {
                 button2.innerHTML = '<i class="fa fa-spinner fa-spin"></i>'; 
-            }, 500);
+            }, 300);
 
             var team1value = teamname1.value;
             var matches1 = team1.value;
@@ -60,6 +75,7 @@ window.onload = function()
                 success:
                 function(response)
                 {
+                    button2.innerHTML = 'Submit';
                     var data = response.data;
                     alert(data);
                 },

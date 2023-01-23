@@ -17,7 +17,10 @@
             <p>Team 1</p>
             <input id="teamname1" name="teamname1" placeholder="Enter team 1 name" required oninvalid="this.setCustomValidity('Please enter the team name as shown on livescore.in')" oninput="this.setCustomValidity('')">
             <textarea id="team1" name="team1" placeholder="Enter records from livescore.in" required oninvalid="this.setCustomValidity('Please copy and paste the team records from livescore.in')" oninput="this.setCustomValidity('')"></textarea>
-            <button type="submit" id="button1">Next</button>
+            <div id="stdiv">
+                <button type="button" id="clear">Clear</button>
+                <button type="submit" id="button1">Next</button>
+            </div>
         </div>
     </form>
     <form onsubmit="return false" method="post">    
@@ -25,7 +28,10 @@
             <p>Team 2</p>
             <input id="teamname2" name="teamname2" placeholder="Enter team 2 name" required oninvalid="this.setCustomValidity('Please enter the team name as shown on livescore.in')" oninput="this.setCustomValidity('')">
             <textarea id="team2" name="team2" placeholder="Enter records from livescore.in" required oninvalid="this.setCustomValidity('Please copy and paste the team records from livescore.in')" oninput="this.setCustomValidity('')"></textarea>
-            <button type="submit" id="button2">submit</button>
+            <div id="stdiv">
+                <button type="button" id="back">Back</button>
+                <button type="submit" id="button2">Submit</button>
+            </div>
         </div>
     </form>
     
