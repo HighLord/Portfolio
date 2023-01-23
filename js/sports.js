@@ -1,6 +1,6 @@
 window.onload = function()
 {
-    var button1 = getElementById('button1');
+    var button1 = document.getElementById('button1');
 
     button1.addEventListener('click', () =>
     {
