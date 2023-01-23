@@ -18,6 +18,9 @@ div{
     align-items: center;
     justify-content: center; 
 }
+#div2{
+    display: none;
+}
 input{   
     padding: 13px;
     border-radius: 20px;
