@@ -21,15 +21,33 @@ window.onload = function()
     });
     back.addEventListener('click', () => 
     {
-        div1.style.display = 'flex';
-        div2.style.display = 'none';
+        setTimeout(() =>
+        {
+            teamname1.style.transform = 'translateX(0px)';
+            teamname2.style.transform = 'translate(0px, 0%)';
+            setTimeout(() =>
+            {
+                team1.style.transform = 'translateX(0px)';
+                team2.style.transform = 'translate(0px, 0%)';
+                setTimeout(() =>
+                {
+                    
+                    button1.style.transform = 'translateX(0px)';
+                    clear.style.transform = 'translateX(0px)';
+                    button2.style.transform = 'translate(0px, 0%)';
+                    back.style.transform = 'translate(0px, 0%)';
+                }, 400);
+            }, 200);
+        }, 100);
     });
     clear.addEventListener('click', () =>
     {
         teamname1.value = '';
         team1.value = '';
         teamname2.value = '';
-        team2.value = ''; 
+        team2.value = '';
+        team1.placeholder = "Enter records from livescore.in"; 
+        team2.placeholder = "Enter records from livescore.in"; 
     });
 
     button1.addEventListener('click', () =>
@@ -41,12 +59,31 @@ window.onload = function()
                 button1.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
                 setTimeout(() =>
                 {
-                    div1.style.display = 'none';
-                    div2.style.display = 'flex';
                     button1.innerHTML = 'Next';
+                    teamname2.value = '';
+                    team2.value = ''; 
+                    team2.placeholder = "Enter records from livescore.in";
+                    setTimeout(() =>
+                    {
+                        teamname1.style.transform = 'translateX(-800px)';
+                        teamname2.style.transform = 'translate(-800px, 0%)';
+                        setTimeout(() =>
+                        {
+                            team1.style.transform = 'translateX(-800px)';
+                            team2.style.transform = 'translate(-800px, 0%)';
+                            setTimeout(() =>
+                            {
+                                
+                                button1.style.transform = 'translateX(-800px)';
+                                clear.style.transform = 'translateX(-800px)';
+                                button2.style.transform = 'translate(-800px, 0%)';
+                                back.style.transform = 'translate(-800px, 0%)';
+                            }, 400);
+                        }, 200);
+                    }, 100);
                 }, 1000);
-            }, 300);
-        }
+            }, 700);
+        };
     });
 
     button2.addEventListener('click', () =>
