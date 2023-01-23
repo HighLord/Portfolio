@@ -4,6 +4,6 @@ window.onload = function()
 
     button1.addEventListener('click', () =>
     {
-        button1.innerHtml ='<i class="fa-duotone fa-spinner-third"></i>';
+        button1.innerHtml ='<i class="fa-duotone fa-spinner-third fa-spin"></i>';
     });
 }
