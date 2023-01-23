@@ -29,8 +29,8 @@ window.onload = function()
                 {
                     div1.style.display = 'none';
                     div2.style.display = 'flex';
-                }, 2000);
-            }, 500);
+                }, 1000);
+            }, 300);
         }
     });
 
@@ -43,7 +43,31 @@ window.onload = function()
                 button2.innerHTML = '<i class="fa fa-spinner fa-spin"></i>'; 
             }, 500);
 
-            
+            var team1value = teamname1.value;
+            var matches1 = team1.value;
+            var team2value = teamname2.value;
+            var matches2 = team2.value;
+
+            $.ajax
+            ({
+                url: "https://github.webapps.com.ng/sports.php",
+                xhrFields: { withCredentials: false },
+                crossOrigin: true,
+                data: { "team1name": team1value, "matches1": matches1, "team2name": team2value, "matches2": matches2 },
+                type: "POST",
+                dataType: 'json',
+                timeout: 9000,
+                success:
+                function(response)
+                {
+                    var data = response.data;
+                    alert(data);
+                },
+                error:
+                function(response)
+                {
+                }
+            });
         }
     });
     
