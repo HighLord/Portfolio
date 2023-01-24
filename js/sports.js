@@ -108,7 +108,7 @@ window.onload = function()
                 data: { "team1name": team1value, "matches1": matches1, "team2name": team2value, "matches2": matches2 },
                 type: "POST",
                 dataType: 'json',
-                timeout: 9000,
+                timeout: 5000,
                 success:
                 function(response)
                 {
@@ -120,7 +120,7 @@ window.onload = function()
                 function(response)
                 {
                     button2.innerHTML = 'Submit';
-                    alert("Unable to decode data");
+                    alert("Unable to decode data, try again");
                 }
             });
         }
