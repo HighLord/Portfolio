@@ -5,11 +5,10 @@ window.onload = function()
     var team1 = document.getElementById('team1');
     var team2 = document.getElementById('team2');
     var button1 = document.getElementById('button1');
-    var div1 = document.getElementById('div1');
-    var div2 = document.getElementById('div2');
     var button2 = document.getElementById('button2');
     var clear = document.getElementById('clear');
     var back = document.getElementById('back');
+    var result = document.getElementsByTagName('h3')[0];
 
     teamname1.addEventListener('input', () =>
     {
@@ -48,6 +47,8 @@ window.onload = function()
         team2.value = '';
         team1.placeholder = "Enter records from livescore.in"; 
         team2.placeholder = "Enter records from livescore.in"; 
+        result.style.color = "white";
+        result.innerHTML = "Basketball Predictions";
     });
 
     button1.addEventListener('click', () =>
@@ -108,19 +109,21 @@ window.onload = function()
                 data: { "team1name": team1value, "matches1": matches1, "team2name": team2value, "matches2": matches2 },
                 type: "POST",
                 dataType: 'json',
-                timeout: 5000,
+                timeout: 6000,
                 success:
                 function(response)
                 {
                     button2.innerHTML = 'Submit';
                     var data = response.data;
-                    alert(data);
+                    result.style.color = "aquamarine";
+                    result.innerHTML = data;
                 },
                 error:
                 function(response)
                 {
                     button2.innerHTML = 'Submit';
-                    alert("Unable to decode data, try again");
+                    result.style.color = "rgb(224, 59, 44)";
+                    result.innerHTML = "Unable to decode data, try again";
                 }
             });
         }

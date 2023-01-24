@@ -11,7 +11,7 @@ h3{
     text-align: center;
 }
 #spin{
-    position: fixed;
+    position: absolute;
     top: 48%;
     left: 48%;
     font-size: x-large;
@@ -26,7 +26,6 @@ div{
     transition: all 1s;
 }
 #div2{
-    display: nonse;
     transform: translate(800px, -100%);
 }
 #stdiv{
@@ -62,6 +61,5 @@ button{
     width: 100px;
     display: flex;
     flex: 1;
-    justify-content: center;
-    
+    justify-content: center;   
 }
