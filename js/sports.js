@@ -114,16 +114,39 @@ window.onload = function()
                 function(response)
                 {
                     button2.innerHTML = 'Submit';
+                    result.innerHTML = '';
                     var data = response.data;
                     result.style.color = "aquamarine";
-                    result.innerHTML = data;
+                    let i = 0;
+                    let intervalid = setInterval(() =>
+                    {
+                        if (i < data.length)
+                        {
+                            result.innerHTML += data[i];
+                            i++;
+                        }else{
+                            clearInterval(intervalid);
+                        }
+                    }, 50);
                 },
                 error:
                 function(response)
                 {
                     button2.innerHTML = 'Submit';
                     result.style.color = "red";
-                    result.innerHTML = "Unable to decode data, try again";
+                    result.innerHTML = '';
+                    let i = 0;
+                    let data = "Unable to decode data, try again";
+                    let intervalid = setInterval(() =>
+                    {
+                        if (i < data.length)
+                        {
+                            result.innerHTML += data[i];
+                            i++;
+                        }else{
+                            clearInterval(intervalid);
+                        }
+                    }, 50);
                 }
             });
         }

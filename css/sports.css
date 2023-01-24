@@ -7,11 +7,13 @@ body
     position: fixed;
 }
 span{
+    transition: all 1s;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 h3{ 
+    transition: all 1s;
     max-width: 310px;
     height: 40px;
     font-size: 13px;
