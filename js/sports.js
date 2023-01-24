@@ -120,7 +120,7 @@ window.onload = function()
                 function(response)
                 {
                     button2.innerHTML = 'Submit';
-                    alert(Unable to decode data);
+                    alert("Unable to decode data");
                 }
             });
         }
