@@ -122,7 +122,7 @@ window.onload = function()
                 function(response)
                 {
                     button2.innerHTML = 'Submit';
-                    result.style.color = "rgb(224, 59, 44)";
+                    result.style.color = "red";
                     result.innerHTML = "Unable to decode data, try again";
                 }
             });
