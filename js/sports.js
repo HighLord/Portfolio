@@ -83,7 +83,7 @@ window.onload = function()
                         }, 200);
                     }, 100);
                 }, 1000);
-            }, 700);
+            }, 100);
         };
     });
 
@@ -94,7 +94,7 @@ window.onload = function()
             setTimeout(() =>
             {
                 button2.innerHTML = '<i class="fa fa-spinner fa-spin"></i>'; 
-            }, 300);
+            }, 100);
 
             var team1value = teamname1.value;
             var matches1 = team1.value;
