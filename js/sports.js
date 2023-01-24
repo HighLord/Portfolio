@@ -61,7 +61,7 @@ window.onload = function()
                 {
                     button1.innerHTML = 'Next';
                     teamname2.value = '';
-                    team2.value = ''; 
+                    team2.value = team1.value; 
                     team2.placeholder = "Enter records from livescore.in";
                     setTimeout(() =>
                     {
@@ -119,6 +119,8 @@ window.onload = function()
                 error:
                 function(response)
                 {
+                    button2.innerHTML = 'Submit';
+                    alert(Unable to decode data);
                 }
             });
         }
