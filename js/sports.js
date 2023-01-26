@@ -96,17 +96,14 @@ window.onload = function()
                 button2.innerHTML = '<i class="fa fa-spinner fa-spin"></i>'; 
             }, 100);
 
-            var team1value = teamname1.value;
-            var matches1 = team1.value;
-            var team2value = teamname2.value;
-            var matches2 = team2.value;
+            var matches = team1.value;
 
             $.ajax
             ({
                 url: "https://github.webapps.com.ng/sports.php",
                 xhrFields: { withCredentials: false },
                 crossOrigin: true,
-                data: { "team1name": team1value, "matches1": matches1, "team2name": team2value, "matches2": matches2 },
+                data: { "matches": matches },
                 type: "POST",
                 dataType: 'json',
                 timeout: 6000,
