@@ -17,24 +17,19 @@
     <i id="spin" class="fa fa-spinner fa-spin"></i>
     <form onsubmit="return false" method="post">
         <div id="div1">
-            <input id="teamname1" name="teamname1" placeholder="Will detect team name" readonly>
-            <textarea id="team1" name="team1" placeholder="Enter records from livescore.in" required oninvalid="this.setCustomValidity('Please copy and paste the team records from livescore.in')" oninput="this.setCustomValidity('')"></textarea>
+            <textarea id="team" name="team" placeholder="Enter records from livescore.in" required oninvalid="this.setCustomValidity('Please copy and paste the team records from livescore.in')" oninput="this.setCustomValidity('')"></textarea>
             <div id="stdiv">
                 <button type="button" id="clear">Clear</button>
-                <button type="submit" id="button1">Next</button>
+                <button type="submit" id="button">Analyse</button>
             </div>
         </div>
-    </form>
-    <form onsubmit="return false" method="post">    
-        <div id="div2">
-            <input id="teamname2" name="teamname2" placeholder="Will detect team name" readonly>
-            <textarea id="team2" name="team2" placeholder="Enter records from livescore.in" required oninvalid="this.setCustomValidity('Please copy and paste the team records from livescore.in')" oninput="this.setCustomValidity('')"></textarea>
-            <div id="stdiv">
-                <button type="button" id="back">Back</button>
-                <button type="submit" id="button2">Submit</button>
-            </div>
+    </form>   
+    <div id="div2">
+        <h3 id="result">result matters</h3>
+        <div id="stdiv">
+            <button type="button" id="back">Back</button>
         </div>
-    </form>
+    </div>
     
 </body>
 </html>
