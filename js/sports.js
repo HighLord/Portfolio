@@ -43,7 +43,7 @@ window.onload = function()
                     data: { "matches": matches },
                     type: "POST",
                     dataType: 'json',
-                    timeout: 6000,
+                    timeout: 8000,
                     success:
                     function(response)
                     {
