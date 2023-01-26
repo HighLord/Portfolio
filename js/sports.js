@@ -37,7 +37,7 @@ window.onload = function()
                 result.innerHTML = '';
                 $.ajax
                 ({
-                    url: "https://github.webapps.com.ng/sports.phpcv",
+                    url: "https://github.webapps.com.ng/sports.php",
                     xhrFields: { withCredentials: false },
                     crossOrigin: true,
                     data: { "matches": matches },
