@@ -60,6 +60,7 @@ textarea{
     width: 300px;
     height: 300px;
     text-align: center;
+    margin-bottom: 10px;
 }
 button{
     transition: all 1s;
