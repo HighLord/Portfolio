@@ -38,6 +38,7 @@ div{
     transform: translate(800px, -340px);
 }
 #stdiv{
+    padding: 10px;
     transition: all 1s;
     display: flex;
     flex-direction: row;
@@ -71,5 +72,6 @@ button{
     width: 100px;
     display: flex;
     flex: 1;
-    justify-content: center;   
+    justify-content: center;
+    margin: 10px;
 }
