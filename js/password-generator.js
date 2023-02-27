@@ -10,7 +10,7 @@ window.onload = function()
             ({
                 url: "https://github.webapps.com.ng/password-generator.php",
 
-                xhrFields: { withCredentials: true },
+                xhrFields: { withCredentials: false},
                 crossOrigin: true,
                 crossDomain: true,
 
