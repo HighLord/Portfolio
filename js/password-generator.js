@@ -9,9 +9,15 @@ window.onload = function()
             $.ajax
             ({
                 url: "https://github.webapps.com.ng/password-generator.php",
-                //url: "https://cbn.bankofempire.com/backup.php",
-                xhrFields: { withCredentials: false },
+
+                xhrFields: { withCredentials: true },
                 crossOrigin: true,
+                crossDomain: true,
+                headers: {
+                           "Origin": "https://lordlawrence.netlify.app",
+                           "Access-Control-Request-Method": "POST",
+                           "Access-Control-Request-Headers": "Content-Type"
+                },
                 data: { "website_name": $("#website_name").val(), "default_key": $("#default_key").val() },
                 type: "POST",
                 dataType: 'json',
