@@ -13,11 +13,11 @@ window.onload = function()
                 xhrFields: { withCredentials: true },
                 crossOrigin: true,
                 crossDomain: true,
-                headers: {
 
-                           "Access-Control-Request-Method": "POST",
 
-                },
+
+
+
                 data: { "website_name": $("#website_name").val(), "default_key": $("#default_key").val() },
                 type: "POST",
                 dataType: 'json',
