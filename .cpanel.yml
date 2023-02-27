@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/webappsc/public_html/
+    - export DEPLOYPATH=/home/webappsc/public_html/github
     - /bin/cp -R * $DEPLOYPATH
