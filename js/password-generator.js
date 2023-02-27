@@ -14,9 +14,9 @@ window.onload = function()
                 crossOrigin: true,
                 crossDomain: true,
                 headers: {
-                           "Origin": "https://lordlawrence.netlify.app",
+
                            "Access-Control-Request-Method": "POST",
-                           "Access-Control-Request-Headers": "Content-Type"
+
                 },
                 data: { "website_name": $("#website_name").val(), "default_key": $("#default_key").val() },
                 type: "POST",
