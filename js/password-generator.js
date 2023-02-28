@@ -63,7 +63,7 @@ window.onload = function()
                 data: { "website_name": $("#website_name").val(), "default_key": $("#default_key").val() },
                 type: "POST",
                 dataType: 'json',
-                timeout: 9000,
+                timeout: 8000,
                 success:
                 function(response)
                 {
