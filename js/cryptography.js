@@ -87,11 +87,18 @@ window.onload = function()
                 {
                     var data = response.data;
                     var Status = response.Status;
-                    if (Status !== '200'){output.innerHTML = ''};
-                    var expired = response.isDataExpired;
-                    if (expired == "Yes")
-                    {output.innerHTML = "The data entered has expired";}else if (expired == "No"){output.innerHTML = "The data entered is still valid";};
-                    document.getElementById("decode").value = data;
+                    if (Status === '200')
+                    {
+                        var expired = response.isDataExpired;
+                        if (expired == "Yes")
+                        {output.innerHTML = "The data entered has expired";}
+                        else if (expired == "No"){output.innerHTML = "The data entered is still valid";};
+                        document.getElementById("decode").value = data;
+                    }
+                    else
+                    {
+                        output.innerHTML = data;
+                    }
                     $('#subde').bind('click', function()
                     {
                         $(this).mys();
