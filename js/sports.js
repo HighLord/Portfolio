@@ -16,6 +16,7 @@ window.onload = function()
             {
                 team.value = clipboardText;
                 console.log("test");
+                alert("warning");
             }).catch(function(error) 
             {
                 console.error('Failed to read clipboard contents: ', error);
