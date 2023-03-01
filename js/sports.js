@@ -84,7 +84,7 @@ window.onload = function()
                         circle.style.transform = 'translate(-1000px, 0%)';
                         percentage.style.transform = 'translate(-1000px, 0%)';  
                         var data = response.data;
-                        percentage.innerHTML = response.percent;
+                        percentage.innerHTML = response.percent + '%';
                         if (response.percent == 0)
                         {percentage.style.color = "red";}else{percentage.style.color = "green";}
                         result.style.color = "aquamarine";
