@@ -19,7 +19,7 @@ window.onload = function()
         }
         else
         {
-            words = "on to trim password to 16  byte characters";
+            words = "on to trim password to 16 characters";
         }
         let i = 0;
         intervalid = setInterval(() =>
