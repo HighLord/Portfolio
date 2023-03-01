@@ -68,3 +68,11 @@ button{
     justify-content: center;
     margin: 10px;
 }
+.fa-circle
+{
+    position: fixed;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    top: 35%;
+}
