@@ -8,15 +8,16 @@ window.onload = function()
     var intervalid;
 
 // Add an event listener for the click and touchstart events
-    team.addEventListener('click', () =>
+    team.addEventListener('focus', () =>
     {
         if (navigator.clipboard) 
         {
             navigator.clipboard.readText().then(function(clipboardText) 
             {
-                team.value = clipboardText;
-                console.log("test");
-                alert("warning");
+                if (team.value === "")
+                {
+                    team.value = clipboardText;
+                }
             }).catch(function(error) 
             {
                 console.error('Failed to read clipboard contents: ', error);

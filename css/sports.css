@@ -75,4 +75,5 @@ button{
     flex-direction: row;
     align-items: center;
     top: 35%;
+    z-index: -20;
 }
