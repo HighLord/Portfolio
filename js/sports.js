@@ -5,7 +5,9 @@ window.onload = function()
     var clear = document.getElementById('clear');
     var back = document.getElementById('back');
     var result = document.getElementById('result');
+    var circle = document.getElementsByClassName('fa-regular')[0];
     var intervalid;
+    var percentage = document.getElementById('percent');
 
 // Add an event listener for the click and touchstart events
     team.addEventListener('focus', () =>
@@ -40,6 +42,8 @@ window.onload = function()
                 clear.style.transform = 'translateX(0px)';
                 result.style.transform = 'translate(0px, 0%)';
                 back.style.transform = 'translate(0px, 0%)';
+                circle.style.transform = 'translate(0px, 0%)';
+                percentage.style.transform = 'translate(0px, 0%)';
                 clearInterval(intervalid);
             }, 200);
         }, 100);
@@ -48,6 +52,7 @@ window.onload = function()
     {
         team.value = '';
         result.innerHTML = '';
+        percentage.innerHTML = '';
         clearInterval(intervalid);
     });
 
@@ -60,6 +65,7 @@ window.onload = function()
                 var matches = team.value;
                 button.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
                 result.innerHTML = '';
+                percentage.innerHTML = '';
                 $.ajax
                 ({
                     url: "https://github.webapps.com.ng/sports.php",
@@ -75,6 +81,9 @@ window.onload = function()
                         button.innerHTML = 'Analyse';
                         team.style.transform = 'translateX(-1000px)';
                         var data = response.data;
+                        percentage.innerHTML = response.percent;
+                        if (response.percent == 0)
+                        {percentage.style.color = "red";}else{percentage.style.color = "green";}
                         result.style.color = "aquamarine";
                         let i = 0;
                         intervalid = setInterval(() =>
@@ -93,6 +102,8 @@ window.onload = function()
                             clear.style.transform = 'translateX(-1000px)';
                             result.style.transform = 'translate(-1000px, 0%)';
                             back.style.transform = 'translate(-1000px, 0%)';
+                            circle.style.transform = 'translate(-1000px, 0%)';
+                            percentage.style.transform = 'translate(-1000px, 0%)';
                         }, 100);
                     },  
                     error:
@@ -119,6 +130,8 @@ window.onload = function()
                             clear.style.transform = 'translateX(-1000px)';
                             result.style.transform = 'translate(-1000px, 0%)';
                             back.style.transform = 'translate(-1000px, 0%)';
+                            circle.style.transform = 'translate(-1000px, 0%)';
+                            percentage.style.transform = 'translate(-1000px, 0%)';
                         }, 100);
                     }
                 });
