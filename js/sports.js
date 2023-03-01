@@ -36,14 +36,14 @@ window.onload = function()
         setTimeout(() =>
         {
             team.style.transform = 'translateX(0px)';
+            result.style.transform = 'translate(0px, 0%)';
+            circle.style.transform = 'translate(0px, 0%)';
+            percentage.style.transform = 'translate(0px, 0%)';
             setTimeout(() =>
             {
                 button.style.transform = 'translateX(0px)';
                 clear.style.transform = 'translateX(0px)';
-                result.style.transform = 'translate(0px, 0%)';
                 back.style.transform = 'translate(0px, 0%)';
-                circle.style.transform = 'translate(0px, 0%)';
-                percentage.style.transform = 'translate(0px, 0%)';
                 clearInterval(intervalid);
             }, 200);
         }, 100);
@@ -80,6 +80,9 @@ window.onload = function()
                     {
                         button.innerHTML = 'Analyse';
                         team.style.transform = 'translateX(-1000px)';
+                        result.style.transform = 'translate(-1000px, 0%)';
+                        circle.style.transform = 'translate(-1000px, 0%)';
+                        percentage.style.transform = 'translate(-1000px, 0%)';  
                         var data = response.data;
                         percentage.innerHTML = response.percent;
                         if (response.percent == 0)
@@ -100,10 +103,7 @@ window.onload = function()
                         {
                             button.style.transform = 'translateX(-1000px)';
                             clear.style.transform = 'translateX(-1000px)';
-                            result.style.transform = 'translate(-1000px, 0%)';
                             back.style.transform = 'translate(-1000px, 0%)';
-                            circle.style.transform = 'translate(-1000px, 0%)';
-                            percentage.style.transform = 'translate(-1000px, 0%)';
                         }, 100);
                     },  
                     error:
