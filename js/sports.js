@@ -5,6 +5,7 @@ window.onload = function()
     var clear = document.getElementById('clear');
     var back = document.getElementById('back');
     var result = document.getElementById('result');
+    var intervalid;
 
     back.addEventListener('click', () => 
     {
@@ -17,6 +18,7 @@ window.onload = function()
                 clear.style.transform = 'translateX(0px)';
                 result.style.transform = 'translate(0px, 0%)';
                 back.style.transform = 'translate(0px, 0%)';
+                clearInterval(intervalid);
             }, 200);
         }, 100);
     });
@@ -24,6 +26,7 @@ window.onload = function()
     {
         team.value = '';
         result.innerHTML = '';
+        clearInterval(intervalid);
     });
 
     button.addEventListener('click', () =>
@@ -52,7 +55,7 @@ window.onload = function()
                         var data = response.data;
                         result.style.color = "aquamarine";
                         let i = 0;
-                        let intervalid = setInterval(() =>
+                        intervalid = setInterval(() =>
                         {
                             if (i < data.length)
                             {
@@ -64,10 +67,10 @@ window.onload = function()
                         }, 50);
                         setTimeout(() =>
                         {
-                            button.style.transform = 'translateX(-800px)';
-                            clear.style.transform = 'translateX(-800px)';
-                            result.style.transform = 'translate(-800px, 0%)';
-                            back.style.transform = 'translate(-800px, 0%)';
+                            button.style.transform = 'translateX(-1000px)';
+                            clear.style.transform = 'translateX(-1000px)';
+                            result.style.transform = 'translate(-1000px, 0%)';
+                            back.style.transform = 'translate(-1000px, 0%)';
                         }, 100);
                     },  
                     error:
@@ -76,7 +79,7 @@ window.onload = function()
                         button.innerHTML = 'Analyse';
                         result.style.color = "red";
                         let i = 0;
-                        team.style.transform = 'translateX(-800px)';
+                        team.style.transform = 'translateX(-1000px)';
                         let data = "Unable to decode data, try again";
                         let intervalid = setInterval(() =>
                         {
@@ -90,10 +93,10 @@ window.onload = function()
                         }, 50);
                         setTimeout(() =>
                         {
-                            button.style.transform = 'translateX(-800px)';
-                            clear.style.transform = 'translateX(-800px)';
-                            result.style.transform = 'translate(-800px, 0%)';
-                            back.style.transform = 'translate(-800px, 0%)';
+                            button.style.transform = 'translateX(-1000px)';
+                            clear.style.transform = 'translateX(-1000px)';
+                            result.style.transform = 'translate(-1000px, 0%)';
+                            back.style.transform = 'translate(-1000px, 0%)';
                         }, 100);
                     }
                 });
