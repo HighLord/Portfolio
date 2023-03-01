@@ -7,6 +7,26 @@ window.onload = function()
     var result = document.getElementById('result');
     var intervalid;
 
+// Add an event listener for the click and touchstart events
+    team.addEventListener('click', () =>
+    {
+        if (navigator.clipboard) 
+        {
+            navigator.clipboard.readText().then(function(clipboardText) 
+            {
+                team.value = clipboardText;
+                console.log("test");
+            }).catch(function(error) 
+            {
+                console.error('Failed to read clipboard contents: ', error);
+            });
+        } 
+        else 
+        {
+            console.warn('Clipboard API is not supported in this browser.');   
+        }
+    });
+
     back.addEventListener('click', () => 
     {
         setTimeout(() =>
