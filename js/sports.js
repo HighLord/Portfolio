@@ -51,7 +51,7 @@ window.onload = function()
                     function(response)
                     {
                         button.innerHTML = 'Analyse';
-                        team.style.transform = 'translateX(-800px)';
+                        team.style.transform = 'translateX(-1000px)';
                         var data = response.data;
                         result.style.color = "aquamarine";
                         let i = 0;
