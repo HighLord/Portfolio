@@ -20,7 +20,7 @@ h3{
     text-align: center;
 }
 div{
-    height: 92%;
+    height: 80%;
     display: flex;
     flex-direction: column;
     gap: 0rem;
@@ -28,7 +28,7 @@ div{
     transition: all 1s;
 }
 #div2{
-    transform: translate(1000px, -359px);
+    transform: translate(1000px, -330px);
 }
 #stdiv{
     padding: 0px;
