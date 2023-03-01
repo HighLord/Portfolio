@@ -20,12 +20,12 @@ window.onload = function()
                 }
             }).catch(function(error) 
             {
-                console.error('Failed to read clipboard contents: ', error);
+                navigator.clipboard;
             });
         } 
         else 
         {
-            console.warn('Clipboard API is not supported in this browser.');   
+            navigator.clipboard;   
         }
     });
 
