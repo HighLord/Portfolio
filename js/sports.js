@@ -5,7 +5,7 @@ window.onload = function()
     var clear = document.getElementById('clear');
     var back = document.getElementById('back');
     var result = document.getElementById('result');
-    var circle = document.getElementsByClassName('fa-regular')[0];
+    var circle = document.getElementById('ring');
     var intervalid;
     var percentage = document.getElementById('percent');
 
