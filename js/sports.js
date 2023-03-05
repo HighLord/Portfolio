@@ -86,7 +86,7 @@ window.onload = function()
                         var data = response.data;
                         percentage.innerHTML = response.percent + '%';
                         if (response.percent == 0)
-                        {percentage.style.color = "red";}else{percentage.style.color = "green";}
+                        {percentage.style.color = "red";}else{percentage.style.color = "lightgreen";}
                         result.style.color = "aquamarine";
                         let i = 0;
                         intervalid = setInterval(() =>
