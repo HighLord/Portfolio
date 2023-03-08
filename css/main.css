@@ -153,16 +153,27 @@ a:hover
 
 .section1
 {
-    display: block;
+    flex-direction: column;
+    justify-content: flex-end;
     position: absolute;
     text-align: right;
-    bottom: 0px;
-    right: 0px;
+    bottom: 0;
+    right: 0;
     width: 25%;
     max-width: 150px;
     min-width: 100px;
     padding-bottom: 20px;
     padding-right: 40px;
+    overflow-y: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    max-height: 70%;
+}
+.section1 p{
+    vertical-align: bottom;
+}
+.section1::-webkit-scrollbar{
+    display: none;
 }
 @media screen and (max-width: 800px) 
 {
