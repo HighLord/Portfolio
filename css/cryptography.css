@@ -120,6 +120,7 @@ textarea {
     width: 90%;
     max-width: 450px;
     padding: 5px;
+    outline: none;
 }
 
 input {
