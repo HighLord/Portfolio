@@ -1,0 +1,31 @@
+<div class="book">
+  <div class="cover">
+    <h1>My Diary</h1>
+  </div>
+  <div class="page" id="home">
+    <h2>Welcome!</h2>
+    <p>What would you like to do?</p>
+    <button onclick="showViewLogs()">View Past Diary Logs</button>
+    <button onclick="showWriteNew()">Write a New Diary Entry</button>
+  </div>
+  <div class="page" id="viewLogs">
+    <h2>View Past Diary Logs</h2>
+    <form onsubmit="return showDiaryEntry()">
+      <label for="date">Enter the date of the diary entry you want to view:</label>
+      <input type="date" id="date" name="date">
+      <input type="submit" value="View">
+    </form>
+  </div>
+  <div class="page" id="writeNew">
+    <h2>Write a New Diary Entry</h2>
+    <form onsubmit="return saveDiaryEntry()">
+      <label for="date">Date:</label>
+      <input type="date" id="date" name="date" value="2023-03-29" readonly>
+      <br>
+      <label for="note">Note:</label>
+      <textarea id="note" name="note"></textarea>
+      <br>
+      <input type="submit" value="Save">
+    </form>
+  </div>
+</div>
