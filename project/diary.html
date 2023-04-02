@@ -4,43 +4,48 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width" initial-scale="1.0">
-  <link rel='stylesheet' type='text /css' media='screen' href='/css/diary.css'>
+  <link rel='stylesheet' type='text/css' media='screen' href='/css/diary.css'>
   <script src="https: //code.jquery.com/jquery-3.6.1.min.js" crossorigin="anonymous"></script>
   <script src=' /js/diary.js'></script>
   <title>My diary</title>
 </head>
 
 <body>
+  <h3>My Diary</h3>
   <div class="book">
-    <div class="cover">
-      <h1>My Diary</h1>
-    </div>
-    <div class="page" id="home">
-      <h2>Welcome!</h2>
-      <p>What would you like to do?</p>
-      <button onclick="showViewLogs()">View Past Diary Logs</button>
-      <button onclick="showWriteNew()">Write a New Diary Entry</button>
-    </div>
-    <div class="page" id="viewLogs">
-      <h2>View Past Diary Logs</h2>
+    <div class="lines"></div>
+    <ul class="list">
+      <li>
+        <h5>Welcome!</h5>
+      </li>
+      <li>
+        <p>What would you like to do?</p>
+      </li>
+      <li><button onclick="showViewLogs()">View Past Diary Logs</button>
+        <button onclick="showWriteNew()">Write a New Diary Entry</button>
+      </li>
+      <li>
+        <h5>View Past Diary Logs</h5>
+      </li>
       <form onsubmit="return showDiaryEntry()">
-        <label for="date">Enter the date of the diary entry you want to view:</label>
-        <input type="date" id="date" name="date">
-        <input type="submit" value="View">
+        <li><label for="date">Enter the date of the diary entry you want to view:</label></li>
+        <li><input type="date" id="date" name="date">
+          <input type="submit" value="View">
+        </li>
       </form>
-    </div>
-    <div class="page" id="writeNew">
-      <h2>Write a New Diary Entry</h2>
+      <li>
+        <h5>Write a New Diary Entry</h5>
+      </li>
       <form onsubmit="return saveDiaryEntry()">
-        <label for="date">Date:</label>
-        <input type="date" id="date" name="date" value="2023-03-29" readonly>
-        <br>
-        <label for="note">Note:</label>
-        <textarea id="note" name="note"></textarea>
-        <br>
-        <input type="submit" value="Save">
+        <li><label for="date">Date:</label>
+          <input type="date" id="date" name="date" value="2023-03-29" readonly>
+        </li>
+        <li><label for="note">Note:</label>
+          <textarea id="note" name="note"></textarea>
+        </li>
+        <li><input type="submit" value="Save"></li>
       </form>
-    </div>
+    </ul>
   </div>
 </body>
 
