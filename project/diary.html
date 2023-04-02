@@ -15,15 +15,25 @@
   <div class="book">
     <div class="lines"></div>
     <ul class="list">
-      <li>
-        <h5>Welcome!</h5>
-      </li>
-      <li>
-        <p>What would you like to do?</p>
-      </li>
-      <li><button onclick="showViewLogs()">View Past Diary Logs</button>
-        <button onclick="showWriteNew()">Write a New Diary Entry</button>
-      </li>
+
+      <section id="welcome-section">
+        <li style="text-align:center;">
+          <h5>Welcome!</h5><br>
+          <p>What would you like to do?</p>
+        </li>
+      </section>
+
+      <section id="login-section">
+        <li style="text-align:center;"><button onclick="login()">Login</button>
+          <button onclick="register()">Register</button>
+        </li>
+      </section>
+
+      <section id="view-create">
+        <li style="text-align:center;"><button onclick="showViewLogs()">Recent Logs</button>
+          <button onclick="showWriteNew()">New Entry</button></li>
+      </section>
+      
       <li>
         <h5>View Past Diary Logs</h5>
       </li>
@@ -41,9 +51,12 @@
           <input type="date" id="date" name="date" value="2023-03-29" readonly>
         </li>
         <li><label for="note">Note:</label>
-          <textarea id="note" name="note"></textarea>
+          <div>
+            <div class="test"></div>
+            <textarea class="line" id="note" name="note">trying to test this textarea i am working on and see if it blends well together.</textarea>
+          </div>
         </li>
-        <li><input type="submit" value="Save"></li>
+        <input style="float: right; display: flex; flex-direction:column; justify-content: end;" type="submit" value="Save">
       </form>
     </ul>
   </div>
