@@ -68,7 +68,6 @@ window.onload = function()
                     function(response)
                     {
                         var data = response.data;
-                        console.log(data);
                         data = data.substring(0, 16);
                         showLogin();
                         password.value = data;
