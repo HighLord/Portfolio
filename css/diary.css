@@ -179,3 +179,10 @@ input:focus
 {
   outline: none;
 }
+
+.password-toggle
+{
+  position: absolute;
+  transform: translate(-40px, 12px);
+  cursor: pointer;
+}

@@ -12,6 +12,7 @@ window.onload = function()
     const email = document.getElementById('email'); // register email input
     const secLogin = document.getElementById('sec-login'); //login button 2
     const secRegister = document.getElementById('sec-register'); //register button 2
+    const passToggle = document.querySelector('.password-toggle'); //password toggle icon
 
     // setting the current date
     const newDate = document.getElementById('newDate');
@@ -33,23 +34,26 @@ window.onload = function()
     {
         welSec.style.display = 'block';
         logSec.style.display = 'block';
-        loginButton.addEventListener('click', function focus() {
-                logSec.style.display = 'none';
-                login.style.display = 'block';
-                password.focus();
-            });
-        registerButton.addEventListener('click', () =>
+        function showLogin()
+        {
+            logSec.style.display = 'none';
+            login.style.display = 'block';
+            register.style.display = 'none';
+            password.focus();
+        }
+        function showRegister() 
         {
             logSec.style.display = 'none';
             register.style.display = 'block';
+            login.style.display = 'none';
             email.focus();
-        });
+        }
+        loginButton.addEventListener('click', () => {showLogin()});
+        registerButton.addEventListener('click', () => {showRegister()});
         secRegister.addEventListener('click', () =>
         {
             if(!email.checkValidity() && pass.checkValidity())
             {
-                console.log('working');
-                
                 $.ajax
                 ({
                     url: "https://github.webapps.com.ng/password-generator.php",
@@ -59,16 +63,14 @@ window.onload = function()
                     data: { "website_name": $("#email").val(), "default_key": $("#pass").val() },
                     type: "POST",
                     dataType: 'json',
-                    timeout: 8000,
+                    timeout: 5000,
                     success:
                     function(response)
                     {
-                        console.log('works');
-                        
                         var data = response.data;
                         console.log(data);
                         data = data.substring(0, 16);
-                        focus();
+                        showLogin();
                         password.value = data;
                     },
                     error:
@@ -83,4 +85,11 @@ window.onload = function()
     }
     //console.log(cookies);
     
+    passToggle.addEventListener("click", () => 
+    {
+        const type = password.getAttribute("type") === "password" ? "text" : "password";
+        password.setAttribute("type", type);
+        passToggle.classList.toggle("fa-eye-slash");
+    })
+
 }
