@@ -158,3 +158,12 @@ textarea.line::-webkit-scrollbar-track {
 textarea.line::first-line {
   text-indent: 10%;
 }
+
+#newDate{
+  border: 0;
+  background-color: #f5f5f5;
+}
+#newDate:focus
+{
+  outline: none;
+}

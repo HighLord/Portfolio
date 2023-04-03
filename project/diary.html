@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width" initial-scale="1.0">
   <link rel='stylesheet' type='text/css' media='screen' href='/css/diary.css'>
   <script src="https: //code.jquery.com/jquery-3.6.1.min.js" crossorigin="anonymous"></script>
-  <script src=' /js/diary.js'></script>
+  <script src='/js/diary.js'></script>
   <title>My diary</title>
 </head>
 
@@ -16,48 +16,52 @@
     <div class="lines"></div>
     <ul class="list">
 
-      <section id="welcome-section">
+      <section id="welcome-section" style="display: none;">
         <li style="text-align:center;">
           <h5>Welcome!</h5><br>
           <p>What would you like to do?</p>
         </li>
       </section>
 
-      <section id="login-section">
+      <section id="login-section" style="display: none;">
         <li style="text-align:center;"><button onclick="login()">Login</button>
           <button onclick="register()">Register</button>
         </li>
       </section>
 
-      <section id="view-create">
+      <section id="view-create" style="display: none;">
         <li style="text-align:center;"><button onclick="showViewLogs()">Recent Entry</button>
           <button onclick="showWriteNew()">New Entry</button></li>
       </section>
-      
+      <section id="past-logs" style="display: none;">
       <li>
         <h5>View Past Diary Logs</h5>
       </li>
       <form onsubmit="return showDiaryEntry()">
         <li>Enter the date of the diary entry:</li>
-        <li><input type="date" id="date" name="date">
+        <li><input type="date" id="pastDate" name="pastDate">
           <input type="submit" value="View">
         </li>
       </form>
+      </section>
+
+      <section id="new-log" style="display: none;">
       <li>
         <h5>Write a New Diary Entry</h5>
       </li>
       <form onsubmit="return saveDiaryEntry()">
         <li><label for="date">Date:</label>
-          <input type="date" id="date" name="date" value="2023-03-29" readonly>
+          <input type="date" id="newDate" name="newDate" readonly>
         </li>
-        <li><label for="note">Note:</label>
+        <li>
           <div>
             <div class="test"></div>
-            <textarea class="line" id="note" name="note">trying to test this textarea i am working on and see if it blends well together.</textarea>
+            <textarea class="line" id="note" name="note"></textarea>
           </div>
         </li>
-        <input style="float: right; display: flex; flex-direction:column; justify-content: end;" type="submit" value="Save">
+        <input style="float: left;" type="submit" value="Save">
       </form>
+      </section>
     </ul>
   </div>
 </body>
