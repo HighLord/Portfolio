@@ -22,10 +22,25 @@
           <p>What would you like to do?</p>
         </li>
       </section>
+      
+      <section id="login-section" style="display: none;"><br><br><br>
+        <li style="text-align:center;"><button id="login-act"">Login</button>
+          <button id="register-act">Register</button>
+        </li>
+      </section>
 
-      <section id="login-section" style="display: none;">
-        <li style="text-align:center;"><button onclick="login()">Login</button>
-          <button onclick="register()">Register</button>
+      <section id="login" style="display: none;">
+        <li style="text-align: center;"><br><br><br>
+          <input type="password" id="password" name="password">
+          <button id="sec-login">Login</button>
+        </li>
+      </section>
+
+      <section id="register" style="display: none;">
+        <li style="text-align: center;"><br>
+          <input type="email" id="email" name="email" placeholder="Email"><br><br>
+          <input type="pass" id="pass" name="pass" placeholder="Password"><br><br>
+          <button id="sec-register">Register</button>
         </li>
       </section>
 
