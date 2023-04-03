@@ -25,22 +25,22 @@
       
       <section id="login-section" style="display: none;"><br><br><br>
         <li style="text-align:center;"><button id="login-act"">Login</button>
-          <button id="register-act">Register</button>
+          <button id="register-act">Get Access Key</button>
         </li>
       </section>
 
       <section id="login" style="display: none;">
         <li style="text-align: center;"><br><br><br>
-          <input type="password" id="password" name="password" placeholder="default key">
+          <input type="password" id="password" name="password" placeholder="Access key" required oninvalid="this.setCustomValidity('Please enter your access key')" oninput="this.setCustomValidity('')">
           <button id="sec-login">Login</button>
         </li>
       </section>
 
       <section id="register" style="display: none;">
         <li style="text-align: center;"><br>
-          <input type="email" id="email" name="email" placeholder="Email"><br><br>
-          <input type="pass" id="pass" name="pass" placeholder="Password"><br><br>
-          <button id="sec-register">Register</button>
+          <input type="email" id="email" name="email" placeholder="Email" required oninvalid="this.setCustomValidity('Please enter your email address')" oninput="this.setCustomValidity('')"><br><br>
+          <input type="Password" id="pass" name="pass" placeholder="Password" required oninvalid="this.setCustomValidity('Please enter your password')" oninput="this.setCustomValidity('')"><br><br>
+          <button id="sec-register">Get Access Key</button>
         </li>
       </section>
 
