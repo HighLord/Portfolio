@@ -14,6 +14,7 @@ window.onload = function()
     const secRegister = document.getElementById('sec-register'); //register button 2
     const passToggle = document.querySelector('.password-toggle'); //password toggle icon
     const reloadBtn = document.getElementsByClassName('fa-home')[0];// home button
+    const viewCreate = document.getElementById('view-create');// view past logs
 
     // setting the current date
     const newDate = document.getElementById('newDate');
@@ -165,8 +166,26 @@ window.onload = function()
             else
             {
                 secLogin.innerHTML = '<i class="fa fa-spinner fa-pulse fa-fw"></i>';
+                setTimeout(() => 
+                {
+                    showToast("You've been logged in successfully", "success");
+                    setTimeout(() =>
+                    {
+                        loggedIn();
+                    }, 2000);
+                }, 3000);
             
             }
         });
     }
+    function loggedIn()
+        {
+            secLogin.innerHTML = 'Login';
+            welSec.style.display = 'block';
+            logSec.style.display = 'none';
+            login.style.display = 'none';
+            register.style.display = 'none';
+            viewCreate.style.display = 'block';
+            
+        }
 }
