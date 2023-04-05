@@ -208,7 +208,6 @@ i.fa-home:hover
   border: 2px solid #333;
   border-radius: 5px;
   padding: 10px;
-  max-width: 80%;
   text-align: center;
   z-index: 9999;
   opacity: 0;
@@ -233,5 +232,4 @@ i.fa-home:hover
 
 .toast--exit {
   top: -100px;
-  opacity: 0;
 }

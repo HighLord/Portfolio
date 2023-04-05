@@ -43,7 +43,8 @@ window.onload = function()
         document.body.appendChild(toast);
 
         const toasts = document.querySelectorAll('.toast');
-        const toastHeight = toast.offsetHeight;
+        const toastHeight = toast.offsetHeight + 1;
+        console.log(toastHeight);
         const numToasts = toasts.length;
         for (let i = 0; i < numToasts; i++) {
             toasts[i].style.top = `${i * toastHeight}px`;
@@ -65,8 +66,8 @@ window.onload = function()
               for (let i = 0; i < newNumToasts; i++) {
                 newToasts[i].style.top = `${i * toastHeight}px`;
               }
-            }, 500);
-        }, 5000);
+            }, 1000);
+        }, 4000);
       }
       
     // read cookies
@@ -117,7 +118,7 @@ window.onload = function()
                     {
                         var data = response.data;
                         data = data.substring(0, 16);
-                        showLogin();
+                        //showLogin();
                         showToast("Access Key has been derived successfully. Please Login!", "success");
                         password.value = data;
                     },
