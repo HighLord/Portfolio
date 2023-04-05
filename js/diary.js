@@ -28,6 +28,47 @@ window.onload = function()
     var hash = url.hash;
     //console.log(hash);
 
+    // Create toast messages */
+    function showToast(message, type) {
+        const toast = document.createElement('div');
+        toast.innerText = message;
+        toast.classList.add('toast');
+      
+        if (type === 'success') {
+          toast.classList.add('toast--success');
+        } else if (type === 'error') {
+          toast.classList.add('toast--error');
+        }
+      
+        document.body.appendChild(toast);
+
+        const toasts = document.querySelectorAll('.toast');
+        const toastHeight = toast.offsetHeight;
+        const numToasts = toasts.length;
+        for (let i = 0; i < numToasts; i++) {
+            toasts[i].style.top = `${i * toastHeight}px`;
+        }
+
+      
+        setTimeout(() => {
+          toast.classList.add('toast--active');
+        }, 100);
+      
+        setTimeout(() => {
+            toast.classList.add('toast--exit');
+        
+            // shift all existing toasts back up by the height of the removed toast
+            setTimeout(() => {
+              toast.remove();
+              const newToasts = document.querySelectorAll('.toast');
+              const newNumToasts = newToasts.length;
+              for (let i = 0; i < newNumToasts; i++) {
+                newToasts[i].style.top = `${i * toastHeight}px`;
+              }
+            }, 500);
+        }, 5000);
+      }
+      
     // read cookies
     var cookies = document.cookie;
     if (cookies === '')
@@ -77,11 +118,13 @@ window.onload = function()
                         var data = response.data;
                         data = data.substring(0, 16);
                         showLogin();
+                        showToast("Access Key has been derived successfully. Please Login!", "success");
                         password.value = data;
                     },
                     error:
-                    function(response)
+                    function()
                     {
+                        showToast("A network error has occurred. Please try again!", "error");
                         secRegister.innerHTML = 'Get Access Key';
                     }
                 });

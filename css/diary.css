@@ -187,3 +187,51 @@ input:focus
   transform: translate(-40px, 12px);
   cursor: pointer;
 }
+
+i.fa-home
+{
+  transform: translate(-35px, 35px);
+  color: #b82121;
+}
+i.fa-home:hover
+{
+  color: white;
+}
+/**** Toast Notification message **/
+
+.toast {
+  position: fixed;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f5f5f5;
+  border: 2px solid #333;
+  border-radius: 5px;
+  padding: 10px;
+  max-width: 80%;
+  text-align: center;
+  z-index: 9999;
+  opacity: 0;
+  transition: all 0.5s ease;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.toast--success {
+  border-color: green;
+}
+
+.toast--error {
+  border-color: red;
+}
+
+.toast--active {
+  top: 10px;
+  opacity: 1;
+}
+
+.toast--exit {
+  top: -100px;
+  opacity: 0;
+}
