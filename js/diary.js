@@ -69,10 +69,8 @@ window.onload = function()
             }, 1000);
         }, 4000);
       }
-      
-    // read cookies
-    const cookies = document.cookie;
-
+    
+    // Set the reload button
     function reload()
     {
         welSec.style.display = 'block';
@@ -82,6 +80,18 @@ window.onload = function()
     }
 
     reloadBtn.addEventListener('click', () => {reload();});
+
+    // handling the password eye
+    passToggle.addEventListener("click", () => 
+    {
+        const type = password.getAttribute("type") === "password" ? "text" : "password";
+        const eye = passToggle.getAttribute("class") === "fas fa-eye password-toggle" ? "fas fa-eye-slash password-toggle" : "fas fa-eye password-toggle";
+        password.setAttribute("type", type);
+        passToggle.setAttribute("class", eye);
+    })
+
+    // read cookies
+    const cookies = document.cookie;
 
     if (cookies === '')
     {
@@ -103,7 +113,7 @@ window.onload = function()
         }
         loginButton.addEventListener('click', () => {showLogin()});
         registerButton.addEventListener('click', () => {showRegister()});
-        secRegister.addEventListener('click', () =>
+        secRegister.addEventListener('click', () => //handling the access key
         {
             if (!email.checkValidity())
             {
@@ -143,15 +153,20 @@ window.onload = function()
                 });
             }
         });
-    }
-    //console.log(cookies);
     
-    passToggle.addEventListener("click", () => 
-    {
-        const type = password.getAttribute("type") === "password" ? "text" : "password";
-        const eye = passToggle.getAttribute("class") === "fas fa-eye password-toggle" ? "fas fa-eye-slash password-toggle" : "fas fa-eye password-toggle";
-        password.setAttribute("type", type);
-        passToggle.setAttribute("class", eye);
-    })
+    //console.log(cookies);
 
+        secLogin.addEventListener('click', () => //handling the Login
+        {
+            if (!password.checkValidity())
+            {
+                password.reportValidity();
+            } 
+            else
+            {
+                secLogin.innerHTML = '<i class="fa fa-spinner fa-pulse fa-fw"></i>';
+            
+            }
+        });
+    }
 }
