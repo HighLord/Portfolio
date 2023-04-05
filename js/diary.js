@@ -54,6 +54,7 @@ window.onload = function()
         {
             if(!email.checkValidity() && pass.checkValidity())
             {
+                secRegister.innerHTML = '<i class="fa fa-spinner fa-pulse fa-fw"></i>';
                 $.ajax
                 ({
                     url: "https://github.webapps.com.ng/password-generator.php",
@@ -88,7 +89,7 @@ window.onload = function()
     {
         const type = password.getAttribute("type") === "password" ? "text" : "password";
         password.setAttribute("type", type);
-        passToggle.classList.toggle("fa-eye-slash");
+        passToggle.classList.toggle("fa-eye-slash", true);
     })
 
 }
