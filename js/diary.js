@@ -52,7 +52,7 @@ window.onload = function()
         registerButton.addEventListener('click', () => {showRegister()});
         secRegister.addEventListener('click', () =>
         {
-            if(!email.checkValidity() && pass.checkValidity())
+            if((email.checkValidity()) && (pass.checkValidity()))
             {
                 secRegister.innerHTML = '<i class="fa fa-spinner fa-pulse fa-fw"></i>';
                 $.ajax
