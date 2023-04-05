@@ -13,7 +13,7 @@ window.onload = function()
     const secLogin = document.getElementById('sec-login'); //login button 2
     const secRegister = document.getElementById('sec-register'); //register button 2
     const passToggle = document.querySelector('.password-toggle'); //password toggle icon
-    const button1 = document.querySelectorAll('.fa-home');// home button
+    const reloadBtn = document.getElementsByClassName('fa-home')[0];// home button
 
     // setting the current date
     const newDate = document.getElementById('newDate');
@@ -71,7 +71,8 @@ window.onload = function()
       }
       
     // read cookies
-    var cookies = document.cookie;
+    const cookies = document.cookie;
+
     function reload()
     {
         welSec.style.display = 'block';
@@ -79,7 +80,9 @@ window.onload = function()
         login.style.display = 'none';
         register.style.display = 'none';
     }
-    button1.addEventListener('click', () => {reload()});
+
+    reloadBtn.addEventListener('click', () => {reload();});
+
     if (cookies === '')
     {
         welSec.style.display = 'block';
@@ -146,8 +149,9 @@ window.onload = function()
     passToggle.addEventListener("click", () => 
     {
         const type = password.getAttribute("type") === "password" ? "text" : "password";
+        const eye = passToggle.getAttribute("class") === "fas fa-eye password-toggle" ? "fas fa-eye-slash password-toggle" : "fas fa-eye password-toggle";
         password.setAttribute("type", type);
-        passToggle.classList.toggle("fa-eye-slash", true);
+        passToggle.setAttribute("class", eye);
     })
 
 }
