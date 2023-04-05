@@ -52,7 +52,13 @@ window.onload = function()
         registerButton.addEventListener('click', () => {showRegister()});
         secRegister.addEventListener('click', () =>
         {
-            if((email.checkValidity()) && (pass.checkValidity()))
+            if (!email.checkValidity())
+            {
+                email.reportValidity();
+            } else if (!pass.checkValidity())
+            {
+                pass.reportValidity();
+            } else
             {
                 secRegister.innerHTML = '<i class="fa fa-spinner fa-pulse fa-fw"></i>';
                 $.ajax
@@ -76,8 +82,7 @@ window.onload = function()
                     error:
                     function(response)
                     {
-                        console.log("error");
-                       // document.getElementsByClassName("password")[0].innerHTML = "An error has occured please reload and try again";
+                        secRegister.innerHTML = 'Get Access Key';
                     }
                 });
             }
