@@ -13,6 +13,7 @@ window.onload = function()
     const secLogin = document.getElementById('sec-login'); //login button 2
     const secRegister = document.getElementById('sec-register'); //register button 2
     const passToggle = document.querySelector('.password-toggle'); //password toggle icon
+    const button1 = document.querySelectorAll('.fa-home');// home button
 
     // setting the current date
     const newDate = document.getElementById('newDate');
@@ -44,7 +45,6 @@ window.onload = function()
 
         const toasts = document.querySelectorAll('.toast');
         const toastHeight = toast.offsetHeight + 1;
-        console.log(toastHeight);
         const numToasts = toasts.length;
         for (let i = 0; i < numToasts; i++) {
             toasts[i].style.top = `${i * toastHeight}px`;
@@ -72,6 +72,14 @@ window.onload = function()
       
     // read cookies
     var cookies = document.cookie;
+    function reload()
+    {
+        welSec.style.display = 'block';
+        logSec.style.display = 'block';
+        login.style.display = 'none';
+        register.style.display = 'none';
+    }
+    button1.addEventListener('click', () => {reload()});
     if (cookies === '')
     {
         welSec.style.display = 'block';
@@ -118,9 +126,10 @@ window.onload = function()
                     {
                         var data = response.data;
                         data = data.substring(0, 16);
-                        //showLogin();
+                        showLogin();
                         showToast("Access Key has been derived successfully. Please Login!", "success");
                         password.value = data;
+                        secRegister.innerHTML = 'Get Access Key';
                     },
                     error:
                     function()
