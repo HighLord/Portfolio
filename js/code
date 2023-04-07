@@ -1,0 +1,73 @@
+
+function decrypt($base)
+{
+    $ciphering = "AES-256-CTR";
+    $iv_length = openssl_cipher_iv_length($ciphering);
+    $options = 2;
+    $private_key = md5("webapps.com.ng");
+    $decryption = openssl_decrypt($base, $ciphering, $private_key, $options, $iv_length);
+    return $decryption;
+}
+
+function data($hash, $string)
+{
+    $ciphering = "AES-256-CTR";
+    $iv_length = openssl_cipher_iv_length($ciphering);
+    $options = 2;
+    $private_key = md5($hash);
+    $encryption = openssl_decrypt($string, $ciphering, $private_key, $options, $iv_length);
+    return $encryption;  
+}
+
+function validate($token)
+{
+    $token = json_decode(base64_decode($token));
+    $hash_key = $token->dynamic_key;
+    $data = $token->data;
+    
+    $dynamic_key = decrypt($hash_key);
+    
+    $data = data($dynamic_key, $data);
+    $data = json_decode($data);
+    
+    $md5 = $data->md5;
+    $email = $data->data->email;
+    $password = $data->data->password;
+    $validity = $data->validity;
+    $randomizer = $data->randomizer;
+    date_default_timezone_set("Africa/Lagos");
+    $current_date = strtotime(date("Y-m-d H:i:s"));
+    $dynamic_key_md5 = md5($dynamic_key);
+    
+    if ($dynamic_key_md5 !== $randomizer || $md5 !== md5($message.$validity.$randomizer))
+    {
+        $response = array
+        (
+            "Status"=>"400",      
+            "data"=>"You are not Authorized to access this endpoint"
+        );
+        $datas = json_encode($response);
+        die($datas);
+    }
+    if ($current_date > $validity)
+    {
+        $response = array
+        (
+            "Status"=>"401",      
+            "data"=>"Your Authorization has expired"
+        );
+        $datas = json_encode($response);
+        die($datas);
+    }
+    header('Authorization: Confirmed');
+    $response = array
+    (
+        "Status"=>"200",
+        //"isDataExpired"=> $float,
+        "email"=> $email,
+        "password"=>$password
+    );
+    $datas = json_encode($response);
+    echo($datas);
+    
+}

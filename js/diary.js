@@ -15,6 +15,7 @@ window.onload = function()
     const passToggle = document.querySelector('.password-toggle'); //password toggle icon
     const reloadBtn = document.getElementsByClassName('fa-home')[0];// home button
     const viewCreate = document.getElementById('view-create');// view past logs
+    const cookies = document.cookie;// read cookies
 
     // setting the current date
     const newDate = document.getElementById('newDate');
@@ -74,10 +75,14 @@ window.onload = function()
     // Set the reload button
     function reload()
     {
-        welSec.style.display = 'block';
-        logSec.style.display = 'block';
-        login.style.display = 'none';
-        register.style.display = 'none';
+        if (cookies === '')
+        {
+            welSec.style.display = 'block';
+            logSec.style.display = 'block';
+            login.style.display = 'none';
+            register.style.display = 'none';
+            viewCreate.style.display = 'none';
+        }
     }
 
     reloadBtn.addEventListener('click', () => {reload();});
@@ -92,8 +97,6 @@ window.onload = function()
     })
 
     // read cookies
-    const cookies = document.cookie;
-
     if (cookies === '')
     {
         welSec.style.display = 'block';
