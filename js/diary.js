@@ -130,11 +130,11 @@ window.onload = function()
                 secRegister.innerHTML = '<i class="fa fa-spinner fa-pulse fa-fw"></i>';
                 $.ajax
                 ({
-                    url: "https://github.webapps.com.ng/password-generator.php",
+                    url: "https://github.webapps.com.ng/diary.php",
                     xhrFields: { withCredentials: false},
                     crossOrigin: true,
                     crossDomain: true,
-                    data: { "website_name": $("#email").val(), "default_key": $("#pass").val() },
+                    data: { "email": $("#email").val(), "password": $("#pass").val() },
                     type: "POST",
                     dataType: 'json',
                     timeout: 5000,
@@ -145,7 +145,14 @@ window.onload = function()
                         data = data.substring(0, 16);
                         showLogin();
                         showToast("Access Key has been derived successfully. Please Login!", "success");
-                        password.value = data;
+                        //password.value = data;
+                        var now = new Date();
+                        var time = now.getTime();
+                        var expireTime = time + 1 * 1 * 1 * 1 * 1000; // 1 day in milliseconds
+                        now.setTime(expireTime);
+
+                        document.cookie = '' + data + ';expires=' + now.toGMTString() + ';path=/';
+
                         secRegister.innerHTML = 'Get Access Key';
                     },
                     error:
@@ -158,7 +165,10 @@ window.onload = function()
             }
         });
     
-    //console.log(cookies);
+    console.log(cookies);
+    }
+    else
+    if (cookies !== ''){
 
         secLogin.addEventListener('click', () => //handling the Login
         {
@@ -169,6 +179,35 @@ window.onload = function()
             else
             {
                 secLogin.innerHTML = '<i class="fa fa-spinner fa-pulse fa-fw"></i>';
+                $.ajax
+                ({
+                    url: "https://github.webapps.com.ng/diary.php",
+                    xhrFields: { withCredentials: false},
+                    crossOrigin: true,
+                    crossDomain: true,
+                    Headers: {"authorization": document.cookie},
+                    //data: { "website_name": $("#email").val(), "default_key": $("#pass").val() },
+                    type: "GET",
+                    dataType: 'json',
+                    timeout: 5000,
+                    success:
+                    function(response)
+                    {
+                        var data = response.data;
+                        data = data.substring(0, 16);
+                        showLogin();
+                        showToast("Access Key has been derived successfully. Please Login!", "success");
+                        //password.value = data;
+                        alert(data);
+                        secRegister.innerHTML = 'Get Access Key';
+                    },
+                    error:
+                    function()
+                    {
+                        showToast("A network error has occurred. Please try again!", "error");
+                        secRegister.innerHTML = 'Get Access Key';
+                    }
+                });
                 setTimeout(() => 
                 {
                     showToast("You've been logged in successfully", "success");
