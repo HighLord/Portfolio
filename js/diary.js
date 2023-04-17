@@ -130,15 +130,8 @@ window.onload = function()
                     {
                         var data = response.data;
                         showToast("Access Key has been derived successfully. Login in!", "success");
-                        var now = new Date();
-                        var time = now.getTime();
-                        var expireTime = time + 1 * 1 * 1 * 1 * 1000; // 1 day in milliseconds
-                        now.setTime(expireTime);
-
                         document.cookie = "Authorization=" + data + "; max-age=60; path=/";
-                        cookies = document.cookie
-                        console.log(cookies);
-                        
+                        loggedIn();
                         secRegister.innerHTML = 'Get Access Key';
                     },
                     error:
@@ -150,8 +143,6 @@ window.onload = function()
                 });
             }
         });
-    
-    console.log(cookies);
     }
     else
     if (cookies !== '')
