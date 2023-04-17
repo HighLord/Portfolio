@@ -8,6 +8,33 @@ window.onload = function()
     var circle = document.getElementById('ring');
     var intervalid;
     var percentage = document.getElementById('percent');
+    const bell = document.getElementsByClassName('fa-bell')[0];
+    const count = document.getElementsByClassName('count')[0];
+    const notification = document.getElementsByClassName('notify-text')[0];
+
+    var amount = 1;
+    [bell, count].forEach((element) =>
+    {
+        element.addEventListener('click', () =>
+        {
+            $(notification).toggle('500', function()
+            {
+                if (amount == 1)
+                {
+                    $('.notify').css('z-index', '1');
+                    $('body>*:not(.notify, .fa-bell, .count)').css('filter', 'blur(5px)');
+                    amount = 2
+                }
+                else
+                {
+                    $('.notify').css('z-index', '0');
+                    $('body>*:not(.notify)').css('filter', 'blur(0px)');
+                    amount = 1;
+                }
+            });
+        });
+    });
+
 
 // Add an event listener for the click and touchstart events
     team.addEventListener('focus', () =>
