@@ -43,13 +43,15 @@
         <li style="text-align:center;"><button onclick="showViewLogs()">Recent Entry</button>
           <button onclick="showWriteNew()">New Entry</button></li>
       </section>
+
       <section id="past-logs" style="display: none;">
       <li>
         <h5>View Past Diary Logs</h5>
       </li>
       <form onsubmit="return showDiaryEntry()">
         <li>Enter the date of the diary entry:</li>
-        <li><input type="date" id="pastDate" name="pastDate">
+        <li>
+          <input type="date" id="pastDate" name="pastDate">
           <input type="submit" value="View">
         </li>
       </form>

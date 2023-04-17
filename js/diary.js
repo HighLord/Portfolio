@@ -5,13 +5,13 @@ window.onload = function()
     const logSec = document.getElementById('login-section'); //login or register section
     const registerButton = document.getElementById('register-act'); //register button 1
     const register = document.getElementById('register'); // register form section
-    const password = document.getElementById('password'); // login password input
     const pass = document.getElementById('pass'); // register password input
     const email = document.getElementById('email'); // register email input
     const secRegister = document.getElementById('sec-register'); //register button 2
     const passToggle = document.querySelector('.password-toggle'); //password toggle icon
     const reloadBtn = document.getElementsByClassName('fa-home')[0];// home button
-    const viewCreate = document.getElementById('view-create');// view past logs
+    const viewCreate = document.getElementById('view-create');// view or create past logs
+    const view = document.getElementById('past-logs');
     var cookies = document.cookie;// read cookies
 
     // setting the current date
@@ -78,6 +78,12 @@ window.onload = function()
             logSec.style.display = 'block';
             register.style.display = 'none';
             viewCreate.style.display = 'none';
+        }else
+        {
+            welSec.style.display = 'block';
+            logSec.style.display = 'none';
+            register.style.display = 'none';
+            viewCreate.style.display = 'block';
         }
     }
 
@@ -129,7 +135,7 @@ window.onload = function()
                     function(response)
                     {
                         var data = response.data;
-                        showToast("Access Key has been derived successfully. Login in!", "success");
+                        showToast("Success. You are now logged in!", "success");
                         document.cookie = "Authorization=" + data + "; max-age=60; path=/";
                         loggedIn();
                         secRegister.innerHTML = 'Get Access Key';
@@ -147,6 +153,7 @@ window.onload = function()
     else
     if (cookies !== '')
     {
+        alert(cookies);
 
     }
             
@@ -157,5 +164,12 @@ window.onload = function()
         register.style.display = 'none';
         viewCreate.style.display = 'block';
         
+    }
+    
+    function showViewLogs()
+    {
+        welSec.style.display = 'none';
+        view.style.display = 'block';
+        viewCreate.style.display = 'none';
     }
 }
