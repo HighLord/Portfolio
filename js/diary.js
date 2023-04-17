@@ -3,19 +3,16 @@ window.onload = function()
     // Getting html vars
     const welSec = document.getElementById('welcome-section'); //welcome section
     const logSec = document.getElementById('login-section'); //login or register section
-    const loginButton = document.getElementById('login-act'); //login button 1
-    const login = document.getElementById('login'); // login form section
     const registerButton = document.getElementById('register-act'); //register button 1
     const register = document.getElementById('register'); // register form section
     const password = document.getElementById('password'); // login password input
     const pass = document.getElementById('pass'); // register password input
     const email = document.getElementById('email'); // register email input
-    const secLogin = document.getElementById('sec-login'); //login button 2
     const secRegister = document.getElementById('sec-register'); //register button 2
     const passToggle = document.querySelector('.password-toggle'); //password toggle icon
     const reloadBtn = document.getElementsByClassName('fa-home')[0];// home button
     const viewCreate = document.getElementById('view-create');// view past logs
-    const cookies = document.cookie;// read cookies
+    var cookies = document.cookie;// read cookies
 
     // setting the current date
     const newDate = document.getElementById('newDate');
@@ -79,7 +76,6 @@ window.onload = function()
         {
             welSec.style.display = 'block';
             logSec.style.display = 'block';
-            login.style.display = 'none';
             register.style.display = 'none';
             viewCreate.style.display = 'none';
         }
@@ -90,9 +86,9 @@ window.onload = function()
     // handling the password eye
     passToggle.addEventListener("click", () => 
     {
-        const type = password.getAttribute("type") === "password" ? "text" : "password";
-        const eye = passToggle.getAttribute("class") === "fas fa-eye password-toggle" ? "fas fa-eye-slash password-toggle" : "fas fa-eye password-toggle";
-        password.setAttribute("type", type);
+        const type = pass.getAttribute("type") === "password" ? "text" : "password";
+        const eye = passToggle.getAttribute("class") === "fa fa-eye password-toggle" ? "fa fa-eye-slash password-toggle" : "fa fa-eye password-toggle";
+        pass.setAttribute("type", type);
         passToggle.setAttribute("class", eye);
     })
 
@@ -101,21 +97,12 @@ window.onload = function()
     {
         welSec.style.display = 'block';
         logSec.style.display = 'block';
-        function showLogin()
-        {
-            logSec.style.display = 'none';
-            login.style.display = 'block';
-            register.style.display = 'none';
-            password.focus();
-        }
         function showRegister() 
         {
             logSec.style.display = 'none';
             register.style.display = 'block';
-            login.style.display = 'none';
             email.focus();
         }
-        loginButton.addEventListener('click', () => {showLogin()});
         registerButton.addEventListener('click', () => {showRegister()});
         secRegister.addEventListener('click', () => //handling the access key
         {
@@ -142,17 +129,16 @@ window.onload = function()
                     function(response)
                     {
                         var data = response.data;
-                        data = data.substring(0, 16);
-                        showLogin();
-                        showToast("Access Key has been derived successfully. Please Login!", "success");
-                        //password.value = data;
+                        showToast("Access Key has been derived successfully. Login in!", "success");
                         var now = new Date();
                         var time = now.getTime();
                         var expireTime = time + 1 * 1 * 1 * 1 * 1000; // 1 day in milliseconds
                         now.setTime(expireTime);
 
-                        document.cookie = '' + data + ';expires=' + now.toGMTString() + ';path=/';
-
+                        document.cookie = "Authorization=" + data + "; max-age=60; path=/";
+                        cookies = document.cookie
+                        console.log(cookies);
+                        
                         secRegister.innerHTML = 'Get Access Key';
                     },
                     error:
@@ -168,66 +154,17 @@ window.onload = function()
     console.log(cookies);
     }
     else
-    if (cookies !== ''){
+    if (cookies !== '')
+    {
 
-        secLogin.addEventListener('click', () => //handling the Login
-        {
-            if (!password.checkValidity())
-            {
-                password.reportValidity();
-            } 
-            else
-            {
-                secLogin.innerHTML = '<i class="fa fa-spinner fa-pulse fa-fw"></i>';
-                $.ajax
-                ({
-                    url: "https://github.webapps.com.ng/diary.php",
-                    xhrFields: { withCredentials: false},
-                    crossOrigin: true,
-                    crossDomain: true,
-                    Headers: {"authorization": document.cookie},
-                    //data: { "website_name": $("#email").val(), "default_key": $("#pass").val() },
-                    type: "GET",
-                    dataType: 'json',
-                    timeout: 5000,
-                    success:
-                    function(response)
-                    {
-                        var data = response.data;
-                        data = data.substring(0, 16);
-                        showLogin();
-                        showToast("Access Key has been derived successfully. Please Login!", "success");
-                        //password.value = data;
-                        alert(data);
-                        secRegister.innerHTML = 'Get Access Key';
-                    },
-                    error:
-                    function()
-                    {
-                        showToast("A network error has occurred. Please try again!", "error");
-                        secRegister.innerHTML = 'Get Access Key';
-                    }
-                });
-                setTimeout(() => 
-                {
-                    showToast("You've been logged in successfully", "success");
-                    setTimeout(() =>
-                    {
-                        loggedIn();
-                    }, 2000);
-                }, 3000);
-            
-            }
-        });
     }
-    function loggedIn()
-        {
-            secLogin.innerHTML = 'Login';
-            welSec.style.display = 'block';
-            logSec.style.display = 'none';
-            login.style.display = 'none';
-            register.style.display = 'none';
-            viewCreate.style.display = 'block';
             
-        }
+    function loggedIn()
+    {
+        welSec.style.display = 'block';
+        logSec.style.display = 'none';
+        register.style.display = 'none';
+        viewCreate.style.display = 'block';
+        
+    }
 }

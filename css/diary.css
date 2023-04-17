@@ -184,7 +184,7 @@ input:focus
 {
   color: #a09898;
   position: absolute;
-  transform: translate(-40px, 7px);
+  transform: translate(105px, -31px);
   cursor: pointer;
 }
 

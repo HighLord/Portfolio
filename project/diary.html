@@ -25,24 +25,17 @@
       </section>
       
       <section id="login-section" style="display: none;"><br><br><br>
-        <li style="text-align:center;"><button id="login-act"">Login</button>
-          <button id="register-act">Get Access Key</button>
-        </li>
-      </section>
-
-      <section id="login" style="display: none;">
-        <li style="text-align: center;"><br><br><br>
-          <input type="password" id="password" name="access_key" placeholder="Access key" required oninvalid="this.setCustomValidity('Please enter your access key')" oninput="this.setCustomValidity('')">
-          <i class="fas fa-eye password-toggle"></i>
-          <button type="submit" onsubmit="return false" id="sec-login">Login</button>
+        <li style="text-align:center;">
+          <button id="register-act">Get Access</button>
         </li>
       </section>
 
       <section id="register" style="display: none;">
         <li style="text-align: center;"><br>
           <input type="email" id="email" name="email" placeholder="Email" required oninvalid="this.setCustomValidity('Please enter your email address')" oninput="this.setCustomValidity('')"><br><br>
-          <input type="Password" id="pass" name="pass" placeholder="Password" required oninvalid="this.setCustomValidity('Please enter your password')" oninput="this.setCustomValidity('')"><br><br>
-          <button type="submit" id="sec-register">Get Access Key</button>
+          <input type="password" id="pass" name="pass" placeholder="Password" required oninvalid="this.setCustomValidity('Please enter your password')" oninput="this.setCustomValidity('')"><br><br>
+          <i class="fa fa-eye password-toggle"></i>
+          <button type="submit" id="sec-register" onsubmit="return false">Get Access</button>
         </li>
       </section>
 
