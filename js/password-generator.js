@@ -13,8 +13,8 @@ window.onload = function()
 
     passToggle.addEventListener("click", () => 
     {
-        const type = pass.getAttribute("type") === "password" ? "text" : "password";
-        const eye = passToggle.getAttribute("class") === "fa fa-eye password-toggle" ? "fa fa-eye-slash password-toggle" : "fa fa-eye password-toggle";
+        const type = pass.getAttribute("type") === "text" ? "password" : "text";
+        const eye = passToggle.getAttribute("class") === "fa fa-eye-slash password-toggle" ? "fa fa-eye password-toggle" : "fa fa-eye-slash password-toggle";
         pass.setAttribute("type", type);
         passToggle.setAttribute("class", eye);
     })
