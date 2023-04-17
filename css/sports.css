@@ -5,6 +5,7 @@ body
     height: 100%;
     width: 100%;
     position: fixed;
+    left: -5px;
 }
 #span{
     transition: all 1s;
@@ -113,7 +114,7 @@ div.notify {
     display: flex;
     z-index: 0;
     height: 50px;
-    top: 39%;
+    top: 35%;
     left: 0%;
     
 }
@@ -121,7 +122,7 @@ div.notify {
 div.notify span {
     background-color: rgb(79, 50, 156);
     color: white;
-    gdisplay: none;
+    display: none;
     border-color: black;
     border-radius: 15px 5px;
     padding: 20px 10px;
