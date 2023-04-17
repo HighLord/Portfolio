@@ -108,12 +108,14 @@ button{
 div.notify {
     margin: auto;
     position: relative;
-    width: 90%;
+    width: 100%;
     justify-content: center;
     display: flex;
     z-index: 0;
-    height: 0px;
-    top: 35%;
+    height: 50px;
+    top: 37%;
+    left: 0%;
+    margin-right: 10px;
 }
 
 div.notify span {
