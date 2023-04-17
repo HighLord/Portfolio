@@ -53,6 +53,8 @@ window.onload = function()
     {
         if($('form')[0].checkValidity())
         {
+            webname.innerHTML = '<span></span><span></span><span></span><span></span> <i class="fa fa-spinner fa-spin"></i></>';
+            webname.style.textAlign = 'center';
             $.ajax
             ({
                 url: "https://github.webapps.com.ng/password-generator.php",
@@ -79,6 +81,7 @@ window.onload = function()
                         result.innerHTML = data;
                     }
                     finalResult = result.innerHTML;
+                    webname.innerHTML = '<span></span><span></span><span></span><span></span>  Generate Password';
                     $(result).bind('click', () => 
                     {
                         var aux = document.createElement("input");
@@ -95,6 +98,7 @@ window.onload = function()
                 function(response)
                 {
                     status = null;
+                    webname.innerHTML = '<span></span><span></span><span></span><span></span>  Generate Password';
                     document.getElementsByClassName("password")[0].innerHTML = "An error has occured please reload and try again";
                 }
             });
