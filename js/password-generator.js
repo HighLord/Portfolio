@@ -5,9 +5,20 @@ window.onload = function()
     const result = document.getElementsByClassName("password")[0];
     var oldResult = null;
     const cut = document.getElementById("alert");
+    var pass = document.getElementById("default_key");
     var status = null;
     var finalResult;
     var intervalid;
+    const passToggle = document.querySelector('.password-toggle');
+
+    passToggle.addEventListener("click", () => 
+    {
+        const type = pass.getAttribute("type") === "password" ? "text" : "password";
+        const eye = passToggle.getAttribute("class") === "fa fa-eye password-toggle" ? "fa fa-eye-slash password-toggle" : "fa fa-eye password-toggle";
+        pass.setAttribute("type", type);
+        passToggle.setAttribute("class", eye);
+    })
+
 
     cut.addEventListener('change', () =>
     {
