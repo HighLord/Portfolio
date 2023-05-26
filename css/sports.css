@@ -2,88 +2,112 @@ body
 {
     background-color: rgb(79, 50, 156);
     color: white;
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    left: -5px;
-}
-#span{
-    transition: all 1s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-h3{ 
-    transition: all 1s;
-    max-width: 300px;
-    height: 50px;
-    font-size: 15px;
+    height: 90%;
+    width: 96%;
+    position: relative;
     text-align: center;
 }
-div{
-    height: 75.6%;
+#span {
+    transition: all 1s;
     display: flex;
     flex-direction: column;
-    gap: 0rem;
     align-items: center;
+}
+h3 {
     transition: all 1s;
+    max-width: 300px;
+    height: 10px;
+    font-size: 13px;
+    text-align: justify;
 }
-#div2{
-    transform: translate(1000px, -341px);
+#resultCover {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
 }
-#stdiv{
-    padding: 18px;
+#result {
+    width: 100%;
+    text-align: justify;
+    flex-grow: 1;
+}
+.link {
+    font-size: 12px;
+    margin-top: -10px;
+    padding: 5px 10px;
+    width: 60px;
+    float: right;
+}
+#divResult {
+    width: 100%;
+    max-width: 300px;
+    border: 1px solid white;
+    padding: 5px;
+    padding-bottom: 20px;
+    height: 400px;
+    transition: all 1s;
+    font-size: 11px;
+    overflow: auto;
+    text-align: justify;
+    scrollbar-width: none;
+}
+#divResult::-webkit-scrollbar {
+    width: 0;
+    background-color: transparent;
+}
+@media only screen and (min-width: 500px) {
+    #divResult {
+        font-size: 13px;
+        width: 100%;
+        max-width: 500px;
+    }
+}
+select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid white;
+    background-color: transparent;
+    color: white;
+    transition: all 1s;
+    margin: 10px;
+    max-width: 150px;
+    width: 100%;
+    font-size: 11px;
+
+}
+#divSelect, #divCheckbox {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+#divButton {
+    width: 100%;
     transition: all 1s;
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 2em;
+    justify-content: center;
 }
-textarea{
+button {
     transition: all 1s;
     padding: 10px;
-    border-radius: 5px;
-    border: none;
-    width: 280px;
-    height: 300px;
-    text-align: center;
-    margin-bottom: 0px;
-}
-button{
-    transition: all 1s;
-    padding: 13px;
+    margin: 10px;
     background-color: aquamarine;
     border-radius: 20px;
     border: none;
-    width: 100px;
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    margin: 0px;
+    width: 100%;
+    max-width: 150px;
 }
-.fa-circle
-{
-    top: 25%;
-    position: absolute;
-    transition: all 1s;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    z-index: -20;
-    
-}
-#percent
-{
-    top: 26%;
-    position: absolute;
-    transition: all 1s;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    z-index: -20;
+#clear {
+    background-color: rgb(255, 255, 255);
 }
 
-  i.fa-bell {
+i.fa-bell {
     cursor: pointer;
     font-size: 22px;
     position: fixed;
@@ -108,7 +132,7 @@ button{
 
 div.notify {
     margin: auto;
-    position: relative;
+    position: absolute;
     width: 100%;
     justify-content: center;
     display: flex;
@@ -116,7 +140,18 @@ div.notify {
     height: 50px;
     top: 35%;
     left: 0%;
-    
+
+}
+p {
+    border: 1px solid white;
+    border-radius: 5px;
+    padding: 1px;
+}
+p#success {
+    background-color: rgb(40, 222, 76);
+}
+p#error {
+    background-color: rgb(210, 13, 13);
 }
 
 div.notify span {
@@ -127,9 +162,9 @@ div.notify span {
     border-radius: 15px 5px;
     padding: 20px 10px;
     border: solid 1px;
-    text-align: center;
+    text-align: justify;
     margin: auto;
-    font-size: 14px;
+    font-size: 13px;
     line-height: 1.3;
     height: -70vw;
     width: 290px;
@@ -139,4 +174,92 @@ div.notify span {
 span.notify-text a {
     color: coral;
     text-decoration: none;
+}
+
+
+/***** checkboxes *****/
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 55px;
+    height: 26px;
+    top: 0px;
+    margin: 0px;
+    margin-bottom: 0px;
+    -webkit-tap-highlight-color: transparent;
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    border-radius: 50px;
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 2px;
+    right: -2px;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    border-radius: 34px;
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 3px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+#alert1:checked + .slider, #alert2:checked + .slider, #alert3:checked + .slider {
+    background-color: #03f484;
+}
+
+#alert1:focus + .slider, #alert2:focus + .slider, #alert3:focus + .slider {
+    box-shadow: none;
+}
+
+#alert1:checked + .slider:before, #alert2:checked + .slider:before, #alert3:checked + .slider:before {
+    -webkit-transform: translateX(29px);
+    -ms-transform: translateX(29px);
+    transform: translateX(29px);
+}
+
+.div1, .div2, .div3 {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    display: inline-flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: space-between;
+    justify-content: center;
+    background-color: rgba(226, 212, 212, 0.293);
+    height: 40px;
+    border-radius: 10px;
+    padding: 0px 10px;
+    margin-bottom: 10px;
+
+}
+.div1 > div > h6, .div2 > div > h6, .div3 > div > h6 {
+    position: relative;
+    top: 8px;
+}
+@media screen and (min-width: 800px) {
+    body, html {
+        position: relative;
+
+    }
+    #paragraph {
+        font-size: 16px;
+    }
 }
