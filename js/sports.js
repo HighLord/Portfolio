@@ -1,12 +1,13 @@
-window.onload = function () {
-
+window.onload = function () 
+{
     var button = document.getElementById('button');
     var clear = document.getElementById('clear');
     const bell = document.getElementsByClassName('fa-bell')[0];
     const count = document.getElementsByClassName('count')[0];
     const notification = document.getElementsByClassName('notify-text')[0];
     const check1 = document.getElementById('alert1');
-
+    const save = document.getElementsByClassName('save')[0];
+     
     var amount = 1;
     [bell, count, notification].forEach((element) => 
     {
@@ -33,6 +34,45 @@ window.onload = function () {
     var click = true;
     var times;
     var selectedValue2;
+    var stop = false;
+    var saved = '';
+    
+    function makeAjaxRequest() 
+    {
+        $.ajax
+        ({
+            url: "https://github.webapps.com.ng/book.php?saved",
+            xhrFields: { withCredentials: false },
+            crossOrigin: true,
+            type: "GET",
+            dataType: 'text',
+            timeout: 8000,
+            success: 
+            function(data) 
+            {
+                saved = data;
+                document.getElementById('result').innerHTML = data;
+            },
+            error: 
+            function(xhr, status, error) 
+            {
+                makeAjaxRequest();
+            }
+        });
+    }
+    
+    save.addEventListener('click', () =>
+    {
+        if (saved === '')
+        {
+            makeAjaxRequest();
+        }
+        else
+        {
+            document.getElementById('result').innerHTML = saved;
+        }
+    })
+    
     clear.addEventListener('click', () => 
     {
         if (click == true)
@@ -42,6 +82,7 @@ window.onload = function () {
         if (click == false)
         {
             selectedValue2 = times + 1;
+            stop = true;
             clear.innerHTML = 'Stopping   <i class="fa fa-spinner fa-spin"></i>';
         }
     });
@@ -49,47 +90,47 @@ window.onload = function () {
     button.addEventListener('click', () => 
     {
         if (click === false){return false;}
-        analyse();
+        analyse(false, 0);
         click = false;
     });
     
     var premium = "normal";
     check1.addEventListener('click', () =>
     {
-        if (check1.checked == true)
+        if (check1.checked === true)
         {
             premium = "premium";
         }else{
             premium = "normal";
         }
-    })
+    });
     
-    function analyse() 
+    var dataKing = {};
+    var selectv2 = null;
+    var amounts = 0;
+    var amounted = 0;
+    var results = '';
+    var visited = [];
+    function analyse(selEle, timer) 
     {
         var selectElement = document.getElementById("mySelect");
         var selectElement2 = document.getElementById('mySelect2');
+        var selectElement3 = document.getElementById('mySelect3');
+        var selectElement4 = document.getElementById('mySelect4');
         var selectedValue = selectElement.value;
         selectedValue2 = selectElement2.value;
-        var divResult = document.getElementById("divResult");
+        if (selEle !== false){selectedValue2 = selEle;}
+        var selectedValue3 = selectElement3.value;
+        var selectedValue4 = selectElement4.value;
         button.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
         clear.innerHTML = 'Stop';
         var result = document.getElementById('result');
-        times = 0;
-        var scroll = true;
-        var dataKing = {};
-        divResult.addEventListener('scroll', () =>
-        {
-            scroll = false;
-            if (divResult.scrollTop + divResult.clientHeight >= result.scrollHeight + 10)
-            {
-                scroll = true;
-               
-            }
-        });
-
+        times = timer;
+        var book = false;
+        
         $.ajax
         ({
-            url: "https://github.webapps.com.ng/ajax.php",
+            url: "https://github.webapps.com.ng/ajax.php?game=" + selectedValue4 + "&date=" + selectedValue3,
             xhrFields: { withCredentials: false },
             crossOrigin: true,
             type: "GET",
@@ -104,29 +145,24 @@ window.onload = function () {
                     let iterations = 0;
                     for(const [key, value] of response) 
                     {
-                        iterations++;
                         if (times < selectedValue2)
                         {
-                            if (iterations < response.length)
-                            { 
+                            iterations++;
+                            if (response.length > iterations)
+                            {
                                 const dataKeys = Object.keys(value);
                                 const dataValues = Object.values(value);
                                 const time = dataKeys[0];
                                 const league = dataValues[0];
-                            
+                                if (visited.includes(key)){continue;}else{visited.push(key);}
                                 await doSomethingWithElement(key, time, league);
-                        
                                 times += 1;
                             }
                             else
                             {
                                 result.innerHTML += "<p id='error' style='padding: 5px; font-size: 11px;'>The amount of predictions you chose has exceeded the amount of games available today</p>";
-                                if (scroll === true)
-                                {
-                                    divResult.scrollTop = result.scrollHeight;
-                                }
-                                
                                 times = selectedValue2;
+                                book = true;
                             }
                         }
                         if (times == selectedValue2)
@@ -139,7 +175,7 @@ window.onload = function () {
                                     url: "https://github.webapps.com.ng/book.php",
                                     xhrFields: { withCredentials: false },
                                     crossOrigin: true,
-                                    data: { "data": dataKing },
+                                    data: { "data": dataKing, "game": selectedValue4 },
                                     type: "POST",
                                     dataType: 'json',
                                     timeout: 20000,
@@ -150,45 +186,106 @@ window.onload = function () {
                                         if (message === "Success")
                                         {
                                             var shareCode = responses.data.shareCode;
-                                        
-                                            var http = "https://www.sportybet.com?shareCode=" + shareCode + "&c=ng";
-                                            var data = "Sportybet booking code: " + shareCode;
-                                            var addon = '<a href="' + http + '" target="_blank"><button style="float:right; background-color: orange;" class="link">Play</button></a>';
-                                            result.innerHTML += "<br>";
-                                            result.innerHTML += addon;
-                                            result.innerHTML += "<p id='success' style='padding: 5px; font-size: 10px'>" + data + "</p>";
-                                            if (scroll === true)
+                                            var odds = responses.odds;
+                                            var total = responses.count;
+                                            var gamesBooked = responses.gamesBooked;
+                                            amounts = total;
+                                            if (total < selectedValue2 && selectv2 === null && book === false)
                                             {
-                                                divResult.scrollTop = result.scrollHeight;
+                                                selectedValue2 = parseFloat(selectedValue2);
+                                                var remainder = selectedValue2 - total;
+                                                remainder = selectedValue2 + remainder;
+                                                selectv2 = selectedValue2;
+                                                analyse(remainder, selectedValue2);
+                                                return false;
                                             }
-                                            button.innerHTML = "Search";
-                                            clear.innerHTML = "Clear";
-                                            click = true;
+                                            else if (total < selectv2 && book === false)
+                                            {
+                                                selectedValue2 = parseFloat(selectedValue2);
+                                                var remainder = selectv2 - total;
+                                                remainder = selectedValue2 + remainder;
+                                                analyse(remainder, selectedValue2);
+                                                return false;
+                                            }
+                                           
+                                            result.innerHTML = '<div id="status" style="width: 100%; text-align: center;">PREDICTING '+amounted+' OF '+selectedValue2+' GAMES<br>NO OF GAMES BOOKED: '+amounts+' </div>';
+                                            selectv2 = null;
+                                            var http = "https://www.sportybet.com?shareCode=" + shareCode + "&c=ng";
+                                            var addon = '<a href="' + http + '" target="_blank"><button style="float:right; background-color: orange;" class="link">Play</button></a>';
+                                            var data = "Sportybet booking code: " + shareCode + "<br>Amount of games booked: " + total + "<br>Total odds: " + odds + addon;
+                                            results += "<p id='success' style='padding: 5px; margin-right: 0px; font-size: 10px'>" + data + "</p>";
+                                            var container = document.createElement('div');
+                                            container.innerHTML = results;
+
+                                            var num = 1;
+                                            Array.from(container.children).forEach(element => 
+                                            {
+                                                var elementID = element.id;
+                                                if (gamesBooked.includes(elementID))
+                                                {
+                                                    element.style.display = "block";
+                                                    element.innerHTML = "<br>"+ num +". "+ element.innerHTML;
+                                                    num++;
+                                                }
+                                            });
+
+                                            Object.keys(dataKing).forEach(function(key) 
+                                            {
+                                                delete dataKing[key];
+                                            });
+                                            visited.splice(0, visited.length);
+                                            amounted = 0;
+                                            amounts = 0;
+                                            setTimeout(() =>
+                                            {
+                                                result.innerHTML = container.innerHTML; 
+                                                results = "";
+                                                $.ajax
+                                                ({
+                                                    url: "https://github.webapps.com.ng/book.php",
+                                                    xhrFields: { withCredentials: false },
+                                                    crossOrigin: true,
+                                                    data: { "save": result.innerHTML },
+                                                    type: "POST",
+                                                    dataType: 'json',
+                                                    timeout: 8000
+                                                }) 
+                                                saved = result.innerHTML;
+                                                button.innerHTML = "Search";
+                                                clear.innerHTML = "Clear";
+                                                click = true;    
+                                            },4000);
+
                                         }
                                         else
                                         {
-                                            result.innerHTML += "<p id='error' style='padding: 5px'>Unable to get booking code</p>";
-                                            if (scroll === true)
+                                            results += "<p id='error' style='padding: 5px'>Unable to get booking code</p>";
+                                            book = true;
+                                            Object.keys(dataKing).forEach(function(key) 
                                             {
-                                                divResult.scrollTop = result.scrollHeight;
-                                            }
+                                                delete dataKing[key];
+                                            });
+                                            visited.splice(0, visited.length);
                                             button.innerHTML = "Search";
                                             clear.innerHTML = "Clear";
                                             click = true;
+                                            result.innerHTML = results;
                                         }
                                     },
                                     error:
                                     function()
                                     {
-                                        result.innerHTML += "<p id='error' style='padding: 5px'>unable to get booking code</p>";
-                                        if (scroll === true)
-                                        {
-                                            divResult.scrollTop = result.scrollHeight;
-                                        }
+                                        results += "<p id='error' style='padding: 5px'>unable to get booking code</p>";
                                         button.innerHTML = "Search";
                                         clear.innerHTML = "Clear";
                                         click = true;
-                                        //return false;
+                                        Object.keys(dataKing).forEach(function(key) 
+                                        {
+                                            delete dataKing[key];
+                                        });
+                                        visited.splice(0, visited.length);
+                                        result.innerHTML = results;
+                                        book = true;
                                     }
                                 });
                             }, 100);
@@ -206,77 +303,54 @@ window.onload = function () {
                                 url: "https://github.webapps.com.ng/sports.php",
                                 xhrFields: { withCredentials: false },
                                 crossOrigin: true,
-                                data: { "url": key, "amount": selectedValue, "quality": premium},
+                                data: { "url": key, "amount": selectedValue, "quality": premium, "game": selectedValue4},
                                 type: "POST",
                                 dataType: 'json',
                                 timeout: 8000,
                                 success:
-                                function (response) 
+                                function (response, status) 
                                 {
-                                    //var response = JSON.parse(responses);
-                                    var datas = response.data;
-                                    var homeT = response.home;
-                                    var awayT = response.away;
-                                    var outcome = response.outcome;
-                                    var parsedtime = time.match(/\d{2}:\d{2} [AP]M/)[0];
-                                    var data = 
+                                    if (status !== 'parsererror')
                                     {
-                                       "home": homeT,
-                                       "away": awayT,
-                                       "time": parsedtime,
-                                       "outcome": outcome
-                                    };
-                                    dataKing["NO" + times] = data;
-                    
-                                    var data1 = "|" + (times + 1) + ". " + time + ".|" + "League: " + league + ".|" + datas;
-                                    let i = 0;
-                                    var intervalId = setInterval(() => 
-                                    {                                                                               
-                                        if (i < data1.length) 
+                                        var datas = response.data;
+                                        var homeT = response.home;
+                                        var awayT = response.away;
+                                        var outcome = response.outcome;
+                                        var parsedtime = time.match(/\d{2}:\d{2} [AP]M/)[0];
+                                        var data = 
                                         {
-                                            result.innerHTML += data1[i]; 
-                                            var replaced = result.innerHTML.replace(/\|/g, "<br>");
-                                            if (replaced !== result.innerHTML)
-                                            {
-                                                result.innerHTML = replaced;
-                                                if (scroll === true)
-                                                {
-                                                    divResult.scrollTop = result.scrollHeight;
-                                                }
-                                            }
-                                            i++;
-                                        }
-                                        else
-                                        {
-                                            clearInterval(intervalId);
-                                            var link = "https://www.livescore.in/match/" + key + "/#/h2h/overall";
-                                            result.innerHTML += '<a href="' + link + '" target="_blank"><button class="link">Link</button></a>';
-                                            result.innerHTML += "<p id='success'>";
-                                            if (scroll == true)
-                                            {
-                                                divResult.scrollTop = result.scrollHeight;
-                                            }
-                                            resolve();
-                                        }
-                                    }, 10); 
+                                           "home": homeT,
+                                           "away": awayT,
+                                           "time": parsedtime,
+                                           "outcome": outcome,
+                                           "gameNo": (times + 1)
+                                        };
+                                        dataKing["NO" + times] = data;
+                                        amounted++;                                   
+                                        var data1 = time + ".|" + "League: " + league + ".|" + datas;
+                                        data1 = data1.replace(/\|/g, "<br>");
+                                        results += '<div id="'+ (times + 1) +'" style="display: none;">' + data1;
+
+                                        var link = "https://www.livescore.in/match/" + key + "/#/h2h/overall";
+                                        results += '<a href="' + link + '" target="_blank"><button class="link">Link</button></a>';
+                                        results += "<p id='success'></p></div>";
+                                        result.innerHTML = '<div id="status" style="width: 100%; text-align: center;">PREDICTING '+amounted+' OF '+selectedValue2+' GAMES<br>NO OF GAMES BOOKED: '+amounts+' </div>';
+                                    }
+                                    resolve();               
                                     return false;
                                 },
                                 error:
-                                function(response) 
-                                {
-                                    var datas = response.responseText;
-                                   
-                                    var data = "<p id='error' style='padding: 5px'>A Network Error occured while trying to get data: Retrying...</p>";
-                                    if (datas !== "undefined")
+                                function(response, status) 
+                                {                  
+                                    if (status !== 'parsererror')
                                     {
-                                        data = "<p id='error' style='padding: 5px'>" + datas + "</p>";
+                                        var data = "<p id='error' style='padding: 5px'>A Network Error occured while trying to get data: Retrying...</p>";         
+                                        result.innerHTML += data;                                                   
                                     }
-                                    result.innerHTML += data;
-                                    if (scroll == true)
+                                    if (stop == false)
                                     {
-                                        divResult.scrollTop = result.scrollHeight;
+                                        times -= 1;
                                     }
-                                    times -= 1;
                                     resolve();
                                 }
                             });
@@ -288,39 +362,13 @@ window.onload = function () {
             error:
             function() 
             {
-                var data = "A Network Error occured while trying to get data. Connection terminated. please reload the page";
-                let i = 0; 
-                data = "|" + data;
-                var intervalId = setInterval(() => 
-                {                                                                               
-                    if (i < data.length) 
-                    {
-                        result.innerHTML += data[i]; 
-                        var replaced = result.innerHTML.replace(/\|/g, "<br>");
-                        if (replaced !== result.innerHTML)
-                        {
-                            result.innerHTML = replaced;
-                            if (scroll == true)
-                            {
-                                divResult.scrollTop = result.scrollHeight;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        clearInterval(intervalId);
-                        button.innerHTML = "Search";
-                        clear.innerHTML = "Clear";
-                        result.innerHTML += "<p id='error'>";
-                        if (scroll == true)
-                        {
-                            divResult.scrollTop = result.scrollHeight;
-                        }
-                        click = true;
-                    }
-                }, 20); 
+                var data = "<p id='error' style='padding: 5px'>A Network Error occured while trying to get data. Connection terminated. please reload the page</p>";
+                button.innerHTML = "Search";
+                clear.innerHTML = "Clear";
+                results += data;
+                result.innerHTML += data;
+                click = true;
             }
         });
     }
 };
-

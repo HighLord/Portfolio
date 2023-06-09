@@ -1,6 +1,6 @@
 body
 {
-    background-color: rgb(79, 50, 156);
+    background-color: rgb(79, 50, 156);  
     color: white;
     height: 90%;
     width: 96%;
@@ -41,13 +41,15 @@ h3 {
     width: 60px;
     float: right;
 }
+
 #divResult {
+    position: relative;
     width: 100%;
     max-width: 300px;
     border: 1px solid white;
-    padding: 5px;
+    padding: 10px;
     padding-bottom: 20px;
-    height: 400px;
+    height: 350px;
     transition: all 1s;
     font-size: 11px;
     overflow: auto;
@@ -72,11 +74,10 @@ select {
     background-color: transparent;
     color: white;
     transition: all 1s;
-    margin: 10px;
-    max-width: 150px;
-    width: 100%;
-    font-size: 11px;
-
+    margin: 5px 2px;
+    flex-basis: 155px;
+    font-size: 10px;
+    max-width: 155px;
 }
 #divSelect, #divCheckbox {
     width: 100%;
@@ -84,6 +85,14 @@ select {
     flex-direction: row;
     align-items: center;
     justify-content: center;
+}
+#divCheckbox{
+    flex-direction: column;
+}
+#divSelect{
+    flex-wrap: wrap;
+    max-width: 320px;
+    margin: auto;
 }
 #divButton {
     width: 100%;
@@ -96,8 +105,8 @@ select {
 button {
     transition: all 1s;
     padding: 10px;
-    margin: 10px;
-    background-color: aquamarine;
+    margin: 5px 10px;
+    background-color: rgb(66, 241, 128);
     border-radius: 20px;
     border: none;
     width: 100%;
@@ -105,6 +114,17 @@ button {
 }
 #clear {
     background-color: rgb(255, 255, 255);
+}
+#status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100px;
+    font-size: 14px;
+    letter-spacing: .1em;
+    font-weight: 300;
+    color: white;
 }
 
 i.fa-bell {
@@ -125,7 +145,7 @@ i.fa-bell {
     color: white;
     padding: 1px 5px;
     font-size: 12px;
-    background-color: red;
+    background-color: rgb(123, 223, 130);
     border-radius: 50%;
     animation: zoom 3s 3s both infinite;
 }
@@ -155,7 +175,7 @@ p#error {
 }
 
 div.notify span {
-    background-color: rgb(79, 50, 156);
+    background-color: rgb(68, 14, 217);
     color: white;
     display: none;
     border-color: black;
@@ -202,7 +222,7 @@ span.notify-text a {
     left: 2px;
     right: -2px;
     bottom: 0;
-    background-color: #ccc;
+    background-color: #1b202b98;
     -webkit-transition: .4s;
     transition: .4s;
 }
@@ -243,11 +263,12 @@ span.notify-text a {
     flex-wrap: wrap;
     align-content: space-between;
     justify-content: center;
-    background-color: rgba(226, 212, 212, 0.293);
+    background-color: rgba(15, 12, 32, 0);
+    border: 1px solid;
     height: 40px;
     border-radius: 10px;
     padding: 0px 10px;
-    margin-bottom: 10px;
+    margin: 5px 0px;
 
 }
 .div1 > div > h6, .div2 > div > h6, .div3 > div > h6 {

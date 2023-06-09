@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='stylesheet' type='text/css' media='screen' href='https://github.webapps.com.ng/css/sports.css?v=103'>
+    <link rel='stylesheet' type='text/css' media='screen' href='https://github.webapps.com.ng/css/sports.css?v=134'>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" crossorigin="anonymous"></script>
     <script src='https://kit.fontawesome.com/a9d42fc68f.js' crossorigin="anonymous"></script>
-    <script src='https://github.webapps.com.ng/js/sports.js?v=145'></script>
+    <script src='https://github.webapps.com.ng/js/sports.js?v=247'></script>
 
     <title>Sports Calculator</title>
 </head>
@@ -16,8 +16,8 @@
     <span class="count">1</span>
     <div class="notify">
         <span class="notify-text">
-             1. The Algorithm used to predict the games may not always be accurate. Cross-check each predictions
-             <br><br>2. Sometimes the booked sporty bet games may be lower than the predicted games. This is because some options may not be available on sporty bet.
+            1. The Algorithm used to predict the games may not always be accurate. Cross-check each predictions
+            <br><br><button id='success' class='save'>Reload Last game</button>
         </span>
     </div>
     <span id="span">
@@ -28,32 +28,6 @@
             <div id="result"></div>
         </div>
     </div>
-    <div id="divSelect">
-        <select id="mySelect" name="mySelect2">
-            <option value="5">Agressive</option>
-            <option value="10">Passive</option>
-            <option value="15" selected>Balanced (Default)</option>
-            <option value="20">Moderate Scan</option>
-            <option value="25">More Passive</option>
-            <option value="30">Deep Scan</option>
-        </select>
-        <select id="mySelect2" name="mySelect2">
-            <option value="1">Predict 1 game</option>
-            <option value="2">Predict 2 games</option>
-            <option value="3">Predict 3 games</option>
-            <option value="4">Predict 4 games</option>
-            <option value="5" selected>Predict 5 games</option>
-            <option value="10">Predict 10 games</option>
-            <option value="20">Predict 20 games</option>
-            <option value="30">Predict 30 games</option>
-            <option value="40">Predict 40 games</option>
-            <option value="50">Predict 50 games</option>
-        </select>
-    </div>
-    <div id="divButton">    
-        <button type="button" id="clear">Clear</button>
-        <button type="submit" id="button">Search</button>
-    </div>
     <div  id="divCheckbox">
         <div class="div1">
             <div>
@@ -63,10 +37,48 @@
                 </label> 
             </div>
             <div>
-                <h6>Premium Predictions (Experimental)</h6>
+                <h6>Premium Predictions</h6>
             </div>
         </div>
     </div>
-        
+
+    <div id="divSelect">
+        <select id="mySelect4" name="mySelect2">
+            <option value="football" selected>Football (Default)</option>
+            <option value="basketball">Basketball</option>
+            <option value="tennis">Tennis</option>
+        </select>
+
+        <select id="mySelect3" name="mySelect2">
+            <option value="today" selected>Today games (Default)</option>
+            <option value="tomorrow">Tomorrow games</option>
+            <option value="next-tomorrow">Next Tomorrow games</option>
+        </select>
+        <select id="mySelect" name="mySelect2">
+            <option value="5">Agressive</option>
+            <option value="10">Passive</option>
+            <option value="15" selected>Balanced (Default)</option>
+            <option value="20">Moderate Scan</option>
+            <option value="25">More Passive</option>
+            <option value="30">Deep Scan</option>
+        </select>
+        <select id="mySelect2" name="mySelect2">
+            <option value="1">Book 1 game</option>
+            <option value="2">Book 2 games</option>
+            <option value="3">Book 3 games</option>
+            <option value="4">Book 4 games</option>
+            <option value="5" selected>Book 5 games</option>
+            <option value="10">Book 10 games</option>
+            <option value="20">Book 20 games</option>
+            <option value="30">Book 30 games</option>
+            <option value="40">Book 40 games</option>
+            <option value="50">Book 50 games</option>
+        </select>
+  
+    </div>
+    <div id="divButton">    
+        <button type="button" id="clear">Clear</button>
+        <button type="submit" id="button">Search</button>
+    </div>
 </body>
 </html> 
