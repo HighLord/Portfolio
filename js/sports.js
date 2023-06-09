@@ -111,6 +111,25 @@ window.onload = function ()
     var amounted = 0;
     var results = '';
     var visited = [];
+    var label = false;
+
+    function updateProgressBar(value, max)
+    {
+        if (label === false)
+        {
+            document.getElementById('result').innerHTML = '<div id="status" style="width: 100%; text-align: center;"><div style="width: 100%;"><div id="progress-bar"></div></div><p id="report" style="padding: 10px;">PREDICTING  OF  GAMES<br>NO OF GAMES BOOKED: </p></div>';
+            label = true;
+        }
+        const progressBar = document.getElementById('progress-bar');
+        const report = document.getElementById('report');
+        const percentage = (value / max) * 100;
+        setTimeout(() =>
+        {
+            progressBar.style.width = `${percentage}%`;
+            report.innerHTML = 'PREDICTING '+amounted+' OF '+selectedValue2+' GAMES<br>NO OF GAMES BOOKED: '+amounts+'';
+        }, 10);
+    }
+
     function analyse(selEle, timer) 
     {
         var selectElement = document.getElementById("mySelect");
@@ -178,7 +197,7 @@ window.onload = function ()
                                     data: { "data": dataKing, "game": selectedValue4 },
                                     type: "POST",
                                     dataType: 'json',
-                                    timeout: 20000,
+                                    timeout: 10000,
                                     success:
                                     function (responses) 
                                     {
@@ -208,7 +227,7 @@ window.onload = function ()
                                                 return false;
                                             }
                                            
-                                            result.innerHTML = '<div id="status" style="width: 100%; text-align: center;">PREDICTING '+amounted+' OF '+selectedValue2+' GAMES<br>NO OF GAMES BOOKED: '+amounts+' </div>';
+                                            updateProgressBar(amounted, selectedValue2);
                                             selectv2 = null;
                                             var http = "https://www.sportybet.com?shareCode=" + shareCode + "&c=ng";
                                             var addon = '<a href="' + http + '" target="_blank"><button style="float:right; background-color: orange;" class="link">Play</button></a>';
@@ -255,7 +274,7 @@ window.onload = function ()
                                                 clear.innerHTML = "Clear";
                                                 click = true;    
                                             },4000);
-
+                                            label = false;
                                         }
                                         else
                                         {
@@ -270,6 +289,7 @@ window.onload = function ()
                                             clear.innerHTML = "Clear";
                                             click = true;
                                             result.innerHTML = results;
+                                            label = false;
                                         }
                                     },
                                     error:
@@ -286,6 +306,7 @@ window.onload = function ()
                                         visited.splice(0, visited.length);
                                         result.innerHTML = results;
                                         book = true;
+                                        label = false;
                                     }
                                 });
                             }, 100);
@@ -334,8 +355,8 @@ window.onload = function ()
                                         var link = "https://www.livescore.in/match/" + key + "/#/h2h/overall";
                                         results += '<a href="' + link + '" target="_blank"><button class="link">Link</button></a>';
                                         results += "<p id='success'></p></div>";
-                                        result.innerHTML = '<div id="status" style="width: 100%; text-align: center;">PREDICTING '+amounted+' OF '+selectedValue2+' GAMES<br>NO OF GAMES BOOKED: '+amounts+' </div>';
-                                    }
+                                        updateProgressBar(amounted, selectedValue2);
+                                   }
                                     resolve();               
                                     return false;
                                 },
@@ -368,6 +389,7 @@ window.onload = function ()
                 results += data;
                 result.innerHTML += data;
                 click = true;
+                label = false;
             }
         });
     }

@@ -42,6 +42,14 @@ h3 {
     float: right;
 }
 
+#progress-bar {
+    height: 5px;
+    width: 0%;
+    border-radius: 5px;
+    background-color: #1dda13;
+    transition: 1.8s ease;
+}
+
 #divResult {
     position: relative;
     width: 100%;
@@ -121,9 +129,7 @@ button {
     align-items: center;
     justify-content: flex-end;
     height: 100px;
-    font-size: 14px;
-    letter-spacing: .1em;
-    font-weight: 300;
+    font-size: 12px;
     color: white;
 }
 
