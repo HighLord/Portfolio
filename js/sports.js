@@ -92,6 +92,7 @@ window.onload = function ()
         if (click === false){return false;}
         analyse(false, 0);
         click = false;
+        clear.innerHTML = 'Stop';
     });
     
     var premium = "normal";
@@ -142,7 +143,6 @@ window.onload = function ()
         var selectedValue3 = selectElement3.value;
         var selectedValue4 = selectElement4.value;
         button.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
-        clear.innerHTML = 'Stop';
         var result = document.getElementById('result');
         times = timer;
         var book = false;
