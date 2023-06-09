@@ -253,8 +253,7 @@ window.onload = function ()
                                                 delete dataKing[key];
                                             });
                                             visited.splice(0, visited.length);
-                                            amounted = 0;
-                                            amounts = 0;
+                                                                                      
                                             setTimeout(() =>
                                             {
                                                 result.innerHTML = container.innerHTML; 
@@ -272,8 +271,10 @@ window.onload = function ()
                                                 saved = result.innerHTML;
                                                 button.innerHTML = "Search";
                                                 clear.innerHTML = "Clear";
-                                                click = true;    
-                                            },4000);
+                                                click = true;   
+                                                amounted = 0;
+                                                amounts = 0; 
+                                            },3000);
                                             label = false;
                                         }
                                         else
