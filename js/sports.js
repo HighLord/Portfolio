@@ -1,5 +1,5 @@
 window.onload = function () 
-{
+{ 
     var button = document.getElementById('button');
     var clear = document.getElementById('clear');
     const bell = document.getElementsByClassName('fa-bell')[0];
@@ -78,6 +78,7 @@ window.onload = function ()
         if (click == true)
         {
             document.getElementById('result').innerHTML = '';
+            results = "";
         }
         if (click == false)
         {
@@ -89,6 +90,7 @@ window.onload = function ()
 
     button.addEventListener('click', () => 
     {
+        console.log(ok);
         if (click === false){return false;}
         analyse(false, 0);
         click = false;
@@ -110,6 +112,7 @@ window.onload = function ()
     var selectv2 = null;
     var amounts = 0;
     var amounted = 0;
+    var countTotal = 0;
     var results = '';
     var visited = [];
     var label = false;
@@ -118,7 +121,7 @@ window.onload = function ()
     {
         if (label === false)
         {
-            document.getElementById('result').innerHTML = '<div id="status" style="width: 100%; text-align: center;"><div style="width: 100%;"><div id="progress-bar"></div></div><p id="report" style="padding: 10px;">PREDICTING  OF  GAMES<br>NO OF GAMES BOOKED: </p></div>';
+            document.getElementById('result').innerHTML = '<div id="status" style="width: 100%; text-align: center;"><div style="width: 100%;"><div id="progress-bar"></div></div><p id="report" style="padding: 10px;">GAMES SCANNED: '+countTotal+'<br>PREDICTING '+amounted+' OF '+selectedValue2+' GAMES<br>NO OF GAMES BOOKED: '+amounts+'</p></div>';
             label = true;
         }
         const progressBar = document.getElementById('progress-bar');
@@ -127,9 +130,10 @@ window.onload = function ()
         setTimeout(() =>
         {
             progressBar.style.width = `${percentage}%`;
-            report.innerHTML = 'PREDICTING '+amounted+' OF '+selectedValue2+' GAMES<br>NO OF GAMES BOOKED: '+amounts+'';
+            report.innerHTML = 'GAMES SCANNED: '+countTotal+'<br>PREDICTING '+amounted+' OF '+selectedValue2+' GAMES<br>NO OF GAMES BOOKED: '+amounts+'';
         }, 10);
     }
+    var ok = 0;
 
     function analyse(selEle, timer) 
     {
@@ -146,6 +150,9 @@ window.onload = function ()
         var result = document.getElementById('result');
         times = timer;
         var book = false;
+        var bypass = false;
+        updateProgressBar(amounted, selectedValue2);
+
         
         $.ajax
         ({
@@ -173,15 +180,25 @@ window.onload = function ()
                                 const dataValues = Object.values(value);
                                 const time = dataKeys[0];
                                 const league = dataValues[0];
-                                if (visited.includes(key)){continue;}else{visited.push(key);}
+                                if (ok > countTotal){bypass = true; oks();}
+                                if (visited.includes(key)){ok++; continue;}else{visited.push(key);}
+                                ok = 0;
+                                countTotal += 1;
+                                updateProgressBar(amounted, selectedValue2);
                                 await doSomethingWithElement(key, time, league);
                                 times += 1;
                             }
                             else
                             {
-                                result.innerHTML += "<p id='error' style='padding: 5px; font-size: 11px;'>The amount of predictions you chose has exceeded the amount of games available today</p>";
-                                times = selectedValue2;
-                                book = true;
+                                function oks()
+                                {
+                                    result.innerHTML += "<p id='error' style='padding: 5px; font-size: 11px;'>The amount of predictions you chose has exceeded the amount of games available today</p>";
+                                    times = selectedValue2;
+                                    book = true;
+                                    amounted = times;
+                                    updateProgressBar(amounted, selectedValue2);
+                                }
+                                oks();
                             }
                         }
                         if (times == selectedValue2)
@@ -202,14 +219,15 @@ window.onload = function ()
                                     function (responses) 
                                     {
                                         var message = responses.message;
-                                        if (message === "Success")
+                                        var innerMsg = responses.innerMsg;
+                                        if (message == "Success" || innerMsg == "Invalid")
                                         {
-                                            var shareCode = responses.data.shareCode;
                                             var odds = responses.odds;
                                             var total = responses.count;
                                             var gamesBooked = responses.gamesBooked;
+                                            var gamesNotBooked = responses.gamesNotBooked;
                                             amounts = total;
-                                            if (total < selectedValue2 && selectv2 === null && book === false)
+                                            if (total < selectedValue2 && selectv2 === null && book === false && bypass === false && stop === false)
                                             {
                                                 selectedValue2 = parseFloat(selectedValue2);
                                                 var remainder = selectedValue2 - total;
@@ -218,7 +236,7 @@ window.onload = function ()
                                                 analyse(remainder, selectedValue2);
                                                 return false;
                                             }
-                                            else if (total < selectv2 && book === false)
+                                            else if (total < selectv2 && book === false && bypass === false && stop === false)
                                             {
                                                 selectedValue2 = parseFloat(selectedValue2);
                                                 var remainder = selectv2 - total;
@@ -226,17 +244,44 @@ window.onload = function ()
                                                 analyse(remainder, selectedValue2);
                                                 return false;
                                             }
+                                            else if (responses.count == 0 && bypass === false)
+                                            {
+                                                results += "<p id='error' style='padding: 5px'>Unable to get booking code</p>";
+                                                book = true;
+                                                Object.keys(dataKing).forEach(function(key) 
+                                                {
+                                                    delete dataKing[key];
+                                                });
+                                                visited.splice(0, visited.length);
+                                                button.innerHTML = "Search";
+                                                clear.innerHTML = "Clear";
+                                                click = true;
+                                                result.innerHTML = results;
+                                                results = "";
+                                                label = false;
+                                                amounted = 0;
+                                                amounts = 0; 
+                                                countTotal = 0;
+                                                return false;
+                                            }
                                            
                                             updateProgressBar(amounted, selectedValue2);
                                             selectv2 = null;
+                                            var shareCode = null;
+                                            if (responses.data.shareCode !== undefined)
+                                            {
+                                                shareCode = responses.data.shareCode;
+                                            }
                                             var http = "https://www.sportybet.com?shareCode=" + shareCode + "&c=ng";
-                                            var addon = '<a href="' + http + '" target="_blank"><button style="float:right; background-color: orange;" class="link">Play</button></a>';
+                                            var addon = '<a href="' + http + '" target="_blank"><button style="float:right; background-color: orange;" class="link">Play</button></a><button style="float:right; background-color: yellow;" class="link" id="link">show</button>';
                                             var data = "Sportybet booking code: " + shareCode + "<br>Amount of games booked: " + total + "<br>Total odds: " + odds + addon;
                                             results += "<p id='success' style='padding: 5px; margin-right: 0px; font-size: 10px'>" + data + "</p>";
                                             var container = document.createElement('div');
+                                            var store = document.createElement('div');
                                             container.innerHTML = results;
 
                                             var num = 1;
+                                            var nums = 1;
                                             Array.from(container.children).forEach(element => 
                                             {
                                                 var elementID = element.id;
@@ -245,7 +290,17 @@ window.onload = function ()
                                                     element.style.display = "block";
                                                     element.innerHTML = "<br>"+ num +". "+ element.innerHTML;
                                                     num++;
-                                                }
+                                                }else if (gamesNotBooked.includes(elementID))
+                                                {
+                                                    element.innerHTML = "<br>"+ nums +". "+ element.innerHTML;
+                                                    nums++;
+                                                    store.innerHTML += element.innerHTML;
+                                                }                                               
+                                            });   
+
+                                            Array.from(store.children).forEach(element => 
+                                            {                             
+                                                element.style.display = "block";                                             
                                             });
 
                                             Object.keys(dataKing).forEach(function(key) 
@@ -257,6 +312,11 @@ window.onload = function ()
                                             setTimeout(() =>
                                             {
                                                 result.innerHTML = container.innerHTML; 
+                                                var show = document.getElementById('link');
+                                                show.addEventListener('click', () =>
+                                                {
+                                                    result.innerHTML += store.innerHTML;
+                                                });
                                                 results = "";
                                                 $.ajax
                                                 ({
@@ -274,6 +334,7 @@ window.onload = function ()
                                                 click = true;   
                                                 amounted = 0;
                                                 amounts = 0; 
+                                                countTotal = 0;
                                             },3000);
                                             label = false;
                                         }
@@ -290,7 +351,11 @@ window.onload = function ()
                                             clear.innerHTML = "Clear";
                                             click = true;
                                             result.innerHTML = results;
+                                            results = "";
                                             label = false;
+                                            amounted = 0;
+                                            amounts = 0; 
+                                            countTotal = 0;
                                         }
                                     },
                                     error:
@@ -306,8 +371,12 @@ window.onload = function ()
                                         });
                                         visited.splice(0, visited.length);
                                         result.innerHTML = results;
+                                        results = "";
                                         book = true;
                                         label = false;
+                                        amounted = 0;
+                                        amounts = 0;
+                                        countTotal = 0; 
                                     }
                                 });
                             }, 100);
@@ -382,16 +451,24 @@ window.onload = function ()
                 processElements();
             },
             error:
-            function() 
+            function(response, status) 
             {
-                var data = "<p id='error' style='padding: 5px'>A Network Error occured while trying to get data. Connection terminated. please reload the page</p>";
+                var data = response.responseText;
+                if (!data)
+                {
+                    data = "<p id='error' style='padding: 5px'>A Network Error occured while trying to get data. Connection terminated. please reload the page</p>";
+                }else
+                {
+                    data = "<p id='error' style='padding: 5px'>"+data+"</p>";
+                }
                 button.innerHTML = "Search";
                 clear.innerHTML = "Clear";
                 results += data;
                 result.innerHTML += data;
+                results = "";
                 click = true;
                 label = false;
             }
         });
     }
-};
+}; 

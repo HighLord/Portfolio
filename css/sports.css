@@ -1,5 +1,5 @@
 body
-{
+{ 
     background-color: rgb(79, 50, 156);  
     color: white;
     height: 90%;
@@ -289,4 +289,4 @@ span.notify-text a {
     #paragraph {
         font-size: 16px;
     }
-}
+} 
