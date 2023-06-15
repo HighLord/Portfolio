@@ -90,10 +90,10 @@ window.onload = function ()
 
     button.addEventListener('click', () => 
     {
-        console.log(ok);
         if (click === false){return false;}
         analyse(false, 0);
         click = false;
+        stop = false;
         clear.innerHTML = 'Stop';
     });
     
