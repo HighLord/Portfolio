@@ -1,4 +1,4 @@
-f (window.onload)
+if (window.onload)
 {
     myFunction();
 }else{
