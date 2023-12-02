@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='stylesheet' type='text/css' media='screen' href='/css/sports.css'>
+    <link rel='stylesheet' type='text/css' media='screen' href='../css/sports.css?v=8'>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" crossorigin="anonymous"></script>
     <script src='https://kit.fontawesome.com/a9d42fc68f.js' crossorigin="anonymous"></script>
-    <script src='/js/sports.js'></script>
 
     <title>Sports Calculator</title>
 </head>
@@ -28,20 +27,6 @@
             <div id="result"></div>
         </div>
     </div>
-    <div  id="divCheckbox">
-        <div class="div1">
-            <div>
-                <label class="switch"> 
-                    <input type="checkbox" id="alert1"> 
-                    <span class="slider"></span>
-                </label> 
-            </div>
-            <div>
-                <h6>Premium Predictions</h6>
-            </div>
-        </div>
-    </div>
-
     <div id="divSelect">
         <select id="mySelect4" name="mySelect2">
             <option value="football" selected>Football (Default)</option>
@@ -57,8 +42,8 @@
         <select id="mySelect" name="mySelect2">
             <option value="5">Agressive</option>
             <option value="10">Passive</option>
-            <option value="15" selected>Balanced (Default)</option>
-            <option value="20">Moderate Scan</option>
+            <option value="15" selected>Balanced</option>
+            <option value="20">Moderate Scan (Default)</option>
             <option value="25">More Passive</option>
             <option value="30">Deep Scan</option>
         </select>
@@ -67,18 +52,65 @@
             <option value="2">Book 2 games</option>
             <option value="3">Book 3 games</option>
             <option value="4">Book 4 games</option>
-            <option value="5" selected>Book 5 games</option>
+            <option value="5">Book 5 games</option>
             <option value="10">Book 10 games</option>
             <option value="20">Book 20 games</option>
             <option value="30">Book 30 games</option>
             <option value="40">Book 40 games</option>
-            <option value="50">Book 50 games</option>
+            <option value="50" selected>Book 50 games</option>
         </select>
-  
+        <select id="mySelect5" name="mySelect2">
+            <option value="1000" selected>Any Odds (Default)</option>
+        </select>
+        <div  id="divCheckbox">
+            <div class="div1">
+                <div>
+                    <label class="switch"> 
+                        <input type="checkbox" id="alert1"> 
+                        <span class="slider"></span>
+                    </label> 
+                </div>
+                <div>
+                    <h6>Switch To V2</h6>
+                </div>
+            </div>
+        </div> 
     </div>
     <div id="divButton">    
         <button type="button" id="clear">Clear</button>
         <button type="submit" id="button">Search</button>
     </div>
+    <script>
+        var random_num = Math.floor(Math.random() * 1000000);
+        var script = document.createElement('script');
+        script.crossorigin = 'anonymous';
+        function getCookieValue(cookieName) 
+	    {
+            const name = cookieName + "=";
+            const cDecoded = decodeURIComponent(document.cookie);
+            const cArr = cDecoded.split('; ');
+            let res;
+    
+            cArr.forEach(val => 
+            {
+                if (val.indexOf(name) === 0) res = val.substring(name.length);
+            });
+    
+            if (typeof res !== "undefined") 
+            {
+                return res;
+            } else {
+                return null;
+            }
+        }
+        cookies = getCookieValue("load");
+        if (cookies) 
+        {
+            script.src = cookies;
+        } else {
+            script.src = '../js/sports.js?v=' + random_num;
+        }
+        document.head.appendChild(script);
+    </script>
 </body>
 </html>
