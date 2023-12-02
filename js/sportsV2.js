@@ -297,7 +297,7 @@ function myFunction()
                                                             element.style.display = "block";
                                                             element.innerHTML = "<br>" + num + ". Odd: " + key + "<br>" + element.innerHTML;
                                                             num++;
-                                                            break; // Assuming each elementID is unique in gamesBooked, so we can exit the loop
+                                                            //break; // Assuming each elementID is unique in gamesBooked, so we can exit the loop
                                                         }
                                                     }
                                                 });
