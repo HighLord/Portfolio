@@ -10,6 +10,7 @@ function myFunction()
     const check1 = document.getElementById('alert1');
     const header1 = document.getElementsByTagName('h3')[0];
     header1.innerHTML += " V1";
+    check1.checked = false;
     check1.addEventListener('click', (event) =>
     {
         if (event.target.checked)
