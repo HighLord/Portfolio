@@ -12,7 +12,6 @@ function myFunction()
     const header2 = document.getElementsByTagName('h6')[0];
     header1.innerHTML += " V2";
     header2.innerHTML = "Switch To V1";
-    check1.checked = true;
     check1.addEventListener('click', (event) =>
     {
         if (event.target.checked)
