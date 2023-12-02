@@ -2,9 +2,9 @@
 <html lang="en"> 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='stylesheet' type='text/css' media='screen' href='../css/sports.css?v=8'>
+    <link rel='stylesheet' type='text/css' media='screen' href='../css/sports.css?v=8.1'>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" crossorigin="anonymous"></script>
     <script src='https://kit.fontawesome.com/a9d42fc68f.js' crossorigin="anonymous"></script>
 
@@ -22,6 +22,15 @@
     <span id="span">
         <h3>Sports Predictions</h3>
     </span>
+    <div id="center">
+	    <div class="search-container sticky">
+	    	<input  type="otp" placeholder="Search.." id="searchText" autocomplete="off">
+            <div id="count"></div>
+	    	<button id="search"><i class="fa fa-search"></i></button>
+	    	<button id="prev"><i class="fa-solid fa-arrow-up"></i></button>
+            <button id="next"><i class="fa-solid fa-arrow-down"></i></button>
+	    </div>
+    </div>
     <div id="resultCover">
         <div id="divResult">
             <div id="result"></div>
@@ -66,7 +75,7 @@
             <div class="div1">
                 <div>
                     <label class="switch"> 
-                        <input type="checkbox" id="alert1"> 
+                        <input type="checkbox" id="alert1" checked> 
                         <span class="slider"></span>
                     </label> 
                 </div>
@@ -108,9 +117,196 @@
         {
             script.src = cookies;
         } else {
-            script.src = '../js/sports.js?v=' + random_num;
+            script.src = '../js/sportsV2.js?v=' + random_num;
         }
         document.head.appendChild(script);
+
+        var timess = 1;
+        var countsent = [];
+        var currentMatch = 0;
+        const paragraph = document.getElementById("result");
+        let count = document.getElementById("count");
+        var searchText = document.getElementById("searchText");
+        var searchButton = document.getElementById("search");
+        var nextButton = document.getElementById("next");
+        var prevButton = document.getElementById("prev");
+        let chance;
+
+        let intervalId = setInterval(() =>
+        {
+            if (paragraph.innerHTML !== "")
+            {
+                chance = paragraph.innerHTML;
+                clearInterval(intervalId);
+            }
+        }, 100);
+
+        //Remove previous highlighting
+        function remhighLight()
+        {
+            let highlighted = document.querySelectorAll('.highlight');
+            for (let i = 0; i < highlighted.length; i++) 
+            {
+                highlighted[i].classList.remove('highlight');
+            }
+        }
+
+        const forbiddenWords = ["b", "br","<",">","span","<b","<br","<br>","r","<r","r>","br>","br> "];
+        searchText.addEventListener("input", function() 
+        {
+            setTimeout(function() 
+            {
+                if (searchText.value === "") 
+                {
+                   count.innerHTML = "";
+                   remhighLight();
+                } 
+                else if ((forbiddenWords.indexOf(searchText.value.toLowerCase()) === -1) && (searchText.value.length > 2))
+                {
+                   searchAndScroll();
+                }
+            }, 50);
+        
+        });
+
+        searchButton.addEventListener("click", function()
+        {
+            if (searchText.value === "") 
+            {
+                count.innerHTML = "";
+                remhighLight();
+            } 
+            else if (forbiddenWords.indexOf(searchText.value.toLowerCase()) === -1)
+            {
+                searchAndScroll();
+            }
+        });
+            
+        function calculateScore(sentence, query) 
+        {
+            const lowerSentence = sentence.toLowerCase();
+            const lowerQuery = query.toLowerCase()
+            const words = lowerQuery.split(/\s+/);
+        
+            // Initialize a score for the sentence
+            let score = 0;
+        
+            words.forEach((word) => {
+                let matchCount = (lowerSentence.match(new RegExp(word, 'gi')) || []).length;
+                score += matchCount;
+            });
+        
+            return score;
+        }
+                    
+        function searchAndScroll() 
+        {
+            // Find all occurrences of the search keyword or phrase in the <p> element
+            let matches = paragraph.innerHTML.match(new RegExp(searchText.value, "gi"));
+            //var sentences = docText.match(/[^.!?]+[.!?]+/g);
+        
+            // If there are matches, highlight the first one and scroll to it
+            if (matches && matches.length > 0) 
+            {
+                remhighLight();
+                currentMatch = 0;
+                highlightMatch(matches, currentMatch);
+                scrollToMatch();
+            }
+            else
+            {
+                count.innerHTML = ""; 
+            }
+        }
+           
+        function highlightMatch(matches, index, startPos) 
+        {
+            let match = matches[index];
+            let rand = new RegExp(match, 'gi');
+            let matchIndex = paragraph.innerHTML.indexOf(match, startPos);
+            
+            paragraph.innerHTML = paragraph.innerHTML.substring(0, matchIndex) + "<span class='highlight'>" + match + "</span>" + paragraph.innerHTML.substring(matchIndex + match.length);
+            
+            if (searchText.value !== "")
+            {
+                count.innerHTML = ""+ (index + 1) +"/"+ matches.length;
+            }
+            else
+            {
+                count.innerHTML = "";
+            }
+        
+            return matchIndex + match.length;
+        }
+                        
+        function scrollToMatch() 
+        {
+            setTimeout(function() 
+            {
+                let span = paragraph.querySelector("span.highlight");
+                span.scrollIntoView({ behavior: "smooth", block: "center" });
+            }, 100);
+        }
+
+        function nextMatch() 
+        {
+            remhighLight();
+
+            let matches = paragraph.innerHTML.match(new RegExp(searchText.value, "gi"));
+                    
+            if (matches && matches.length > 0) 
+            {
+                currentMatch = (currentMatch + 1) % matches.length;
+            
+                var startPos = 0;
+                for (var i = 0; i < currentMatch; i++) 
+                {
+                    startPos = paragraph.innerHTML.indexOf(matches[i], startPos) + matches[i].length;
+                }
+                
+                startPos = highlightMatch(matches, currentMatch, startPos);
+                scrollToMatch();
+            }
+            else
+            {
+                count.innerHTML = "";
+            }
+        }
+        
+        function previousMatch() 
+        {
+            remhighLight();
+            
+            let matches = paragraph.innerHTML.match(new RegExp(searchText.value, "gi"));
+          
+            if (matches && matches.length > 0) 
+            {
+                currentMatch = (currentMatch - 1 + matches.length) % matches.length;
+            
+                var startPos = 0;
+                for (var i = 0; i < currentMatch; i++) 
+                {
+                    startPos = paragraph.innerHTML.indexOf(matches[i], startPos) + matches[i].length;
+                }
+            
+                startPos = highlightMatch(matches, currentMatch, startPos);
+                scrollToMatch(matches, currentMatch);
+            }
+            else
+            {
+                count.innerHTML = "";
+            }
+        }
+
+        nextButton.addEventListener("click", function()
+        {
+            nextMatch();
+        });
+
+        prevButton.addEventListener("click", function()
+        {
+            previousMatch();
+        })
     </script>
 </body>
 </html>
