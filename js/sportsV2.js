@@ -17,10 +17,10 @@ function myFunction()
     {
         if (event.target.checked)
         {
-            document.cookie = "load=" + encodeURIComponent("../js/sportsV2.js?v=" + random_num) + "; expires=" + new Date(Date.now() + 3600000).toUTCString() + "; path=/; domain=github.webapps.com.ng";
+            document.cookie = "load=" + encodeURIComponent("../js/sportsV2.js?v=" + random_num) + "; expires=" + new Date(Date.now() + 3600000).toUTCString() + "; path=/; domain="+ window.location.hostname;
         } else
         {
-            document.cookie = "load=" + encodeURIComponent("../js/sports.js?v=" + random_num) + "; expires=" + new Date(Date.now() + 3600000).toUTCString() + "; path=/; domain=github.webapps.com.ng";
+            document.cookie = "load=" + encodeURIComponent("../js/sports.js?v=" + random_num) + "; expires=" + new Date(Date.now() + 3600000).toUTCString() + "; path=/; domain="+ window.location.hostname;
         }
         setTimeout(() => 
         {
