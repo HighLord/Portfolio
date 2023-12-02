@@ -72,7 +72,7 @@ h3 {
     #divResult {
         font-size: 13px;
         width: 100%;
-        max-width: 500px;
+        max-width: 300px;
     }
 }
 select {
@@ -87,17 +87,12 @@ select {
     font-size: 10px;
     max-width: 155px;
 }
-#divSelect, #divCheckbox {
+#divSelect {
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-}
-#divCheckbox{
-    flex-direction: column;
-}
-#divSelect{
     flex-wrap: wrap;
     max-width: 320px;
     margin: auto;
@@ -119,6 +114,7 @@ button {
     border: none;
     width: 100%;
     max-width: 150px;
+    cursor: pointer;
 }
 #clear {
     background-color: rgb(255, 255, 255);
@@ -204,7 +200,9 @@ span.notify-text a {
 
 
 /***** checkboxes *****/
-
+#divCheckbox {
+    width: 155px;
+}
 .switch {
     position: relative;
     display: inline-block;
@@ -263,7 +261,7 @@ span.notify-text a {
 .div1, .div2, .div3 {
     position: relative;
     width: 100%;
-    max-width: 300px;
+    max-width: 146px;
     display: inline-flex;
     flex-direction: column;
     flex-wrap: wrap;
@@ -271,9 +269,9 @@ span.notify-text a {
     justify-content: center;
     background-color: rgba(15, 12, 32, 0);
     border: 1px solid;
-    height: 40px;
-    border-radius: 10px;
-    padding: 0px 10px;
+    height: 34px;
+    border-radius: 5px;
+    padding: 0px 3px;
     margin: 5px 0px;
 
 }
@@ -290,3 +288,54 @@ span.notify-text a {
         font-size: 16px;
     }
 } 
+.sticky {
+	width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    max-width: 310px;
+    margin: auto;
+}
+.search-container {
+	background-color: #f1f1f1;
+	padding: 5px;
+}
+.search-container input[type=otp] {
+	padding: 10px;
+	margin-top: 2px;
+	font-size: 13px;
+	border: none;
+	width: 30%;
+	padding-right: 40px;
+}
+.search-container button {
+	float: right;
+    width: 35px;
+	padding: 8px 0px;
+    margin: 2px 5px;
+	background-color: #ddd;
+	font-size: 15px;
+	border: none;
+	cursor: pointer;
+	border-radius: 5px;
+}
+.search-container button:hover {
+	background: rgb(82, 57, 207);
+}
+.highlight {
+	background-color: rgb(0, 255, 76);	
+}
+#resultCover{
+    margin: 5px 0px 0px 0px;
+}
+#count{
+    overflow: hidden;
+    color: rgb(255, 255, 255);
+    width: 40px;
+    background-color: rgba(56, 1, 126, 0.985);
+    font-size: 12px; 
+    height: 34px;
+    line-height: 35px;
+    border-radius: 0px 10px 10px 0px;
+}
