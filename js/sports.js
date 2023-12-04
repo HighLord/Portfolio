@@ -332,20 +332,19 @@ function myFunction()
     
                                                 var num = 1;
           
-                                                Array.from(container.children).forEach(element => 
+                                                Array.from(container.children).forEach(element =>
                                                 {
                                                     var elementID = element.id;
-                                                    
-                                                    for (const key in gamesBooked) 
+                                                    if (gamesBooked.includes(elementID))
                                                     {
-                                                        if (gamesBooked.hasOwnProperty(key) && gamesBooked[key] == elementID) 
+                                                        for (let key in singleOdds)
                                                         {
-                                                            // key is the odds, gamesBooked[key] is the value (e.g., "2")
-                                                            
-                                                            element.style.display = "block";
-                                                            element.innerHTML = "<br>" + num + ". Odd: " + key + "<br>" + element.innerHTML;
-                                                            num++;
-                                                            break; // Assuming each elementID is unique in gamesBooked, so we can exit the loop
+                                                            if(key == elementID)
+                                                            {
+                                                                element.style.display = "block";
+                                                                element.innerHTML = "<br>" + num + ". Odd: " + singleOdds[key] + "<br>" + element.innerHTML;
+                                                                num++;
+                                                            }
                                                         }
                                                     }
                                                 });
