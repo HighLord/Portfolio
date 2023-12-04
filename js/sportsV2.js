@@ -283,11 +283,12 @@ function myFunction()
 
                                                 var num = 1;
                                                 var nums = 0;
+                                                /**
                                                 Array.from(container.children).forEach(element => 
                                                 {
                                                     var elementID = element.id;
                                                     
-                                                    for (const key in gamesBooked) 
+                                                    for (let key in gamesBooked) 
                                                     {
                                                         if (gamesBooked.hasOwnProperty(key) && gamesBooked[key] == elementID) 
                                                         {
@@ -296,23 +297,28 @@ function myFunction()
                                                             element.style.display = "block";
                                                             element.innerHTML = "<br>" + num + ". Odd: " + key + "<br>" + element.innerHTML;
                                                             num++;
-                                                            //break; // Assuming each elementID is unique in gamesBooked, so we can exit the loop
+                                                            break; // Assuming each elementID is unique in gamesBooked, so we can exit the loop
                                                         }
                                                     }
                                                 });
-                                                /*
+                                                **/
                                                 Array.from(container.children).forEach(element =>
                                                 {
                                                     var elementID = element.id;
                                                     if (gamesBooked.includes(elementID))
                                                     {
-                                                        element.style.display = "block";
-                                                        element.innerHTML = "<br>" + num + ". Odd: " + singleOdds[nums] + "<br>" + element.innerHTML;
-                                                        num++;
-                                                        nums++;
+                                                        for (let key in singleOdds)
+                                                        {
+                                                            if(key == elementID)
+                                                            {
+                                                                element.style.display = "block";
+                                                                element.innerHTML = "<br>" + num + ". Odd: " + singleOdds[key] + "<br>" + element.innerHTML;
+                                                                num++;
+                                                            }
+                                                        }
                                                     }
                                                 });
-                                                **/
+                                                
                                                 Array.from(store.children).forEach(element =>
                                                 {
                                                     element.style.display = "block";
@@ -429,7 +435,7 @@ function myFunction()
                         results += '<div id="' + (times + 1) + '" style="display: none;">' + data1;
 
                         var link = "https://www.livescore.in/match/" + key + "/#/h2h/overall";
-                        results += '<a href="' + link + '" target="_blank"><button class="link">Link</button></a>';
+                        results += '<a href="' + link + '" target="_blank"><button style="z-index:999" class="link">Link</button></a>';
                         results += "<p id='success'></p></div>";
                         updateProgressBar(amounted, amountOfBooking);
                         resolve();
@@ -914,8 +920,8 @@ function myFunction()
         if (master > 0) { myTruth += 1.5; } 
         if (master < 0) { myTruth -= 1.5; }
         //alert("sum1: "+ sum1 +" and sum2: "+ sum2 +" score1: "+score1+ " and score2: "+ score2 +"  master: "+ master + " truth: "+myTruth);
-        if (myTruth > 2) { return true; }
-        if (myTruth < -2) { return false; }
+        if (myTruth > 3) { return true; }
+        if (myTruth < -3) { return false; }
         return null;
     }
 };
