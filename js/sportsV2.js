@@ -414,7 +414,7 @@ function myFunction()
                         //alert(JSON.stringify(dataKing));
                         var data1 = time + ".|" + "League: " + league + ".| Outcome: " + statement;
                         data1 = data1.replace(/\|/g, "<br>");
-                        results += '<div id="' + (times + 1) + '" style="display: none;">' + data1;
+                        results += '<div id="' + (times + 1) + '" style="display: none; z-index:1;">' + data1;
 
                         var link = "https://www.livescore.in/match/" + key + "/#/h2h/overall";
                         results += '<a href="' + link + '" target="_blank"><button style="z-index:9999" class="link">Link</button></a>';
@@ -873,7 +873,7 @@ function myFunction()
                         {
                             master += 1;
                         }
-                        if (homeScore2 > awayScore2)
+                        else if (homeScore2 > awayScore2)
                         {
                             master -= 1;
                         }
@@ -909,7 +909,7 @@ function myFunction()
         if (score2 > score1) { myTruth -= 1; }
         if (master > 0) { myTruth += 1.5; } 
         if (master < 0) { myTruth -= 1.5; }
-        //alert("sum1: "+ sum1 +" and sum2: "+ sum2 +" score1: "+score1+ " and score2: "+ score2 +"  master: "+ master + " truth: "+myTruth);
+        alert("sum1: "+ sum1 +" and sum2: "+ sum2 +" score1: "+score1+ " and score2: "+ score2 +"  master: "+ master + " truth: "+myTruth);
         if (myTruth > 3) { return true; }
         if (myTruth < -3) { return false; }
         return null;
