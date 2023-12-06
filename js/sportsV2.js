@@ -283,25 +283,7 @@ function myFunction()
 
                                                 var num = 1;
                                                 var nums = 0;
-                                                /**
-                                                Array.from(container.children).forEach(element => 
-                                                {
-                                                    var elementID = element.id;
-                                                    
-                                                    for (let key in gamesBooked) 
-                                                    {
-                                                        if (gamesBooked.hasOwnProperty(key) && gamesBooked[key] == elementID) 
-                                                        {
-                                                            // key is the odds, gamesBooked[key] is the value (e.g., "2")
-                                                            
-                                                            element.style.display = "block";
-                                                            element.innerHTML = "<br>" + num + ". Odd: " + key + "<br>" + element.innerHTML;
-                                                            num++;
-                                                            break; // Assuming each elementID is unique in gamesBooked, so we can exit the loop
-                                                        }
-                                                    }
-                                                });
-                                                **/
+                                        
                                                 Array.from(container.children).forEach(element =>
                                                 {
                                                     var elementID = element.id;
@@ -430,12 +412,12 @@ function myFunction()
 
                         dataKing["NO" + times] = data; 
                         //alert(JSON.stringify(dataKing));
-                        var data1 = time + ".|" + "League: " + league + ".|" + homeT + " vs " + awayT + ".| Outcome: " + statement;
+                        var data1 = time + ".|" + "League: " + league + ".| Outcome: " + statement;
                         data1 = data1.replace(/\|/g, "<br>");
                         results += '<div id="' + (times + 1) + '" style="display: none;">' + data1;
 
                         var link = "https://www.livescore.in/match/" + key + "/#/h2h/overall";
-                        results += '<a href="' + link + '" target="_blank"><button style="z-index:999" class="link">Link</button></a>';
+                        results += '<a href="' + link + '" target="_blank"><button style="z-index:9999" class="link">Link</button></a>';
                         results += "<p id='success'></p></div>";
                         updateProgressBar(amounted, amountOfBooking);
                         resolve();
@@ -478,7 +460,7 @@ function myFunction()
                     headers: {
                         "x-fsign": "SW9D1eZo"
                     },
-                    signal: controller.signal,
+                    signal: controller.signal
                 })
                     .then(response =>
                     {
@@ -656,7 +638,7 @@ function myFunction()
                     {
                         let lines = matches.replace(/¬/g, '÷').split('÷');
                         let count = 0;
-                        const hometeams = [];
+                        let hometeams = [];
                         let awayteams = [];
                         let homescores = [];
                         let awayscores = [];
@@ -825,6 +807,10 @@ function myFunction()
                     {
                         score1 += 1;
                     }
+                    else if (homeScore == awayScore)
+                    {
+                        score1 += 0.5;
+                    }
                     iteration1++;
                 }
             }
@@ -841,6 +827,10 @@ function myFunction()
                     if (homeScore > awayScore)
                     {
                         score2 += 1;
+                    }
+                    else if (homeScore == awayScore)
+                    {
+                        score2 += 0.5;
                     }
                     iteration2++;
                 }
@@ -883,7 +873,7 @@ function myFunction()
                         {
                             master += 1;
                         }
-                        else if (homeScore2 > awayScore2)
+                        if (homeScore2 > awayScore2)
                         {
                             master -= 1;
                         }
