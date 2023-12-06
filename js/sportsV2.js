@@ -909,7 +909,7 @@ function myFunction()
         if (score2 > score1) { myTruth -= 1; }
         if (master > 0) { myTruth += 1.5; } 
         if (master < 0) { myTruth -= 1.5; }
-        alert("sum1: "+ sum1 +" and sum2: "+ sum2 +" score1: "+score1+ " and score2: "+ score2 +"  master: "+ master + " truth: "+myTruth);
+        //alert("sum1: "+ sum1 +" and sum2: "+ sum2 +" score1: "+score1+ " and score2: "+ score2 +"  master: "+ master + " truth: "+myTruth);
         if (myTruth > 3) { return true; }
         if (myTruth < -3) { return false; }
         return null;
