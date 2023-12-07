@@ -201,7 +201,7 @@ function myFunction()
                                     url: "https://webappsng.vercel.app/api/sportbooking",
                                     xhrFields: { withCredentials: false },
                                     crossOrigin: true,
-                                    data: { "data": dataKing, "game": gameType, "odd": selOdds.value },
+                                    data: { "datas": dataKing, "game": gameType, "odd": selOdds.value },
                                     type: "POST",
                                     dataType: 'json',
                                     timeout: 18000,
@@ -411,7 +411,7 @@ function myFunction()
                         };
 
                         dataKing["NO" + times] = data; 
-                        alert(JSON.stringify(dataKing));
+                        //alert(JSON.stringify(dataKing));
                         var data1 = time + ".|" + "League: " + league + ".| Outcome: " + statement;
                         data1 = data1.replace(/\|/g, "<br>");
                         results += '<div id="' + (times + 1) + '" style="display: none; z-index: 1;">' + data1;
