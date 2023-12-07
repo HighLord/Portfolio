@@ -198,7 +198,7 @@ function myFunction()
                         {
                             $.ajax
                                 ({
-                                    url: "https://github.webapps.com.ng/book.php",
+                                    url: "https://webappsng.vercel.app/api/sportbooking",
                                     xhrFields: { withCredentials: false },
                                     crossOrigin: true,
                                     data: { "data": dataKing, "game": gameType, "odd": selOdds.value },
