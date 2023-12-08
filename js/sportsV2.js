@@ -1,7 +1,8 @@
 if (window.onload)
 {
     myFunction();
-}else{
+} else
+{
     $(document).ready(myFunction);
 }
 
@@ -16,10 +17,10 @@ function myFunction()
     {
         if (event.target.checked)
         {
-            document.cookie = "load=" + encodeURIComponent("../js/sportsV2.js?v=" + random_num) + "; expires=" + new Date(Date.now() + 3600000).toUTCString() + "; path=/; domain="+ window.location.hostname;
+            document.cookie = "load=" + encodeURIComponent("../js/sportsV2.js?v=" + random_num) + "; expires=" + new Date(Date.now() + 3600000).toUTCString() + "; path=/; domain=" + window.location.hostname;
         } else
         {
-            document.cookie = "load=" + encodeURIComponent("../js/sports.js?v=" + random_num) + "; expires=" + new Date(Date.now() + 3600000).toUTCString() + "; path=/; domain="+ window.location.hostname;
+            document.cookie = "load=" + encodeURIComponent("../js/sports.js?v=" + random_num) + "; expires=" + new Date(Date.now() + 3600000).toUTCString() + "; path=/; domain=" + window.location.hostname;
         }
         setTimeout(() => 
         {
@@ -161,7 +162,7 @@ function myFunction()
                     updateProgressBar(amounted, amountOfBooking);
                 }
                 for (const [key, value] of response)
-                {               
+                {
                     if (times < amountOfBooking)
                     {
                         iterations++
@@ -178,7 +179,7 @@ function myFunction()
                             updateProgressBar(amounted, amountOfBooking);
                             await doSomethingWithElement(key, time, league);
                             times += 1;
-                            if (amountOfBooking > response.length) {amountOfBooking = response.length; }
+                            if (amountOfBooking > response.length) { amountOfBooking = response.length; }
                             if (times == response.length)
                             {
                                 oks();
@@ -208,17 +209,19 @@ function myFunction()
                                     success:
                                         function (responses)
                                         {
+                                            console.log(responses);
+
                                             var message = responses.message;
                                             var innerMsg = responses.innerMsg;
                                             if (message == "Success" || innerMsg == "Invalid")
                                             {
-                                                var odds = responses.odds;
+                                                var odds = responses.totalOdds;
                                                 var total = responses.count;
                                                 var gamesBooked = responses.gamesBooked;
-                                                var singleOdds = responses.singleOdd;
-                                                const entries = Object.entries(singleOdds);
                                                 var debug = responses.debug;
                                                 amounts = total;
+
+                                                const entries = Object.entries(gamesBooked);
 
                                                 Object.keys(dataKing).forEach(function (key)
                                                 {
@@ -282,25 +285,22 @@ function myFunction()
                                                 container.innerHTML = results;
 
                                                 var num = 1;
-                                                var nums = 0;
-                                        
+
                                                 Array.from(container.children).forEach(element =>
                                                 {
                                                     var elementID = element.id;
-                                                    if (gamesBooked.includes(elementID))
+
+                                                    for (let [key, values] of entries)
                                                     {
-                                                        for (let [key, values] of entries)
-                                                        {alert(key); alert(values);
-                                                            if(key == elementID)
-                                                            {
-                                                                element.style.display = "block";
-                                                                element.innerHTML = "<br>" + num + ". Odd: " + values + "<br>" + element.innerHTML;
-                                                                num++;
-                                                            }
+                                                        if (key == elementID)
+                                                        {
+                                                            element.style.display = "block";
+                                                            element.innerHTML = "<br>" + num + ". Odd: " + values + "<br>" + element.innerHTML;
+                                                            num++;
                                                         }
                                                     }
                                                 });
-                                                
+
                                                 Array.from(store.children).forEach(element =>
                                                 {
                                                     element.style.display = "block";
@@ -346,8 +346,9 @@ function myFunction()
                                             }
                                         },
                                     error:
-                                        function ()
+                                        function (response)
                                         {
+                                            console.log(response);
                                             results += "<p id='error' style='padding: 5px'>unable to get booking code</p>";
                                             button.innerHTML = "Search";
                                             clear.innerHTML = "Clear";
@@ -410,9 +411,9 @@ function myFunction()
                             "gameNo": (times + 1)
                         };
 
-                        dataKing["NO" + times] = data; 
+                        dataKing["NO" + times] = data;
                         //alert(JSON.stringify(dataKing));
-                        var data1 = time + ".|" + "League: " + league + ".| Outcome: " + statement;
+                        var data1 = time + ".|" + league + ".|" + statement;
                         data1 = data1.replace(/\|/g, "<br>");
                         results += '<div id="' + (times + 1) + '" style="display: none; z-index: 1;">' + data1;
 
@@ -681,7 +682,7 @@ function myFunction()
                             awayteams: awayteams,
                             homescores: homescores,
                             awayscores: awayscores
-                        });    
+                        });
                     }
                     getTeams();
                 })
@@ -901,13 +902,13 @@ function myFunction()
 
         let master = calculatedJson.percentageOfHOHWins;
 
-        let myTruth = 0;      
+        let myTruth = 0;
 
         if (sum1 > sum2) { myTruth += 1; }
         if (sum2 > sum1) { myTruth -= 1; }
         if (score1 > score2) { myTruth += 1; }
         if (score2 > score1) { myTruth -= 1; }
-        if (master > 0) { myTruth += 1.5; } 
+        if (master > 0) { myTruth += 1.5; }
         if (master < 0) { myTruth -= 1.5; }
         //alert("sum1: "+ sum1 +" and sum2: "+ sum2 +" score1: "+score1+ " and score2: "+ score2 +"  master: "+ master + " truth: "+myTruth);
         if (myTruth > 3) { return true; }
