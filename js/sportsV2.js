@@ -291,7 +291,7 @@ function myFunction()
                                                     if (gamesBooked.includes(elementID))
                                                     {
                                                         for (let [key, values] of entries)
-                                                        {
+                                                        {alert(key); alert(values);
                                                             if(key == elementID)
                                                             {
                                                                 element.style.display = "block";
