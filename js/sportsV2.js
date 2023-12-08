@@ -217,6 +217,7 @@ function myFunction()
                                                 var gamesBooked = responses.gamesBooked;
                                                 //var gamesNotBooked = responses.gamesNotBooked;
                                                 var singleOdds = responses.singleOdd;
+                                                const entries = Object.entries(singleOdds);
                                                 var debug = responses.debug;
                                                 amounts = total;
 
@@ -289,12 +290,12 @@ function myFunction()
                                                     var elementID = element.id;
                                                     if (gamesBooked.includes(elementID))
                                                     {
-                                                        for (let key in singleOdds)
+                                                        for (let [key, values] of entries)
                                                         {
                                                             if(key == elementID)
                                                             {
                                                                 element.style.display = "block";
-                                                                element.innerHTML = "<br>" + num + ". Odd: " + singleOdds[key] + "<br>" + element.innerHTML;
+                                                                element.innerHTML = "<br>" + num + ". Odd: " + values + "<br>" + element.innerHTML;
                                                                 num++;
                                                             }
                                                         }
