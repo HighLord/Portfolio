@@ -218,6 +218,11 @@ function myFunction()
                                                 //var gamesNotBooked = responses.gamesNotBooked;
                                                 var singleOdds = responses.singleOdd;
                                                 const entries = Object.entries(singleOdds);
+                                                for (let [key, values] of entries)
+                                                        {
+                                                            alert(key);
+                                                            alert(values);
+                                                        }
                                                 var debug = responses.debug;
                                                 amounts = total;
 
