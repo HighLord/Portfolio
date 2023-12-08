@@ -203,7 +203,7 @@ function myFunction()
                                     crossOrigin: true,
                                     data: JSON.stringify({ "data": dataKing, "game": gameType, "odd": selOdds.value }),
                                     type: "POST",
-                                    dataType: 'application/json',
+                                    contentType: "application/json",
                                     timeout: 18000,
                                     success:
                                         function (responses)
