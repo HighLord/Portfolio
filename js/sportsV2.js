@@ -499,6 +499,7 @@ function myFunction()
                                     {
                                         const currentDateTime = new Date(currentTimestamp * 1000);
                                         const nextDateTime = new Date(codes2 * 1000);
+                                        nextDateTime.setHours(nextDateTime.getHours() + 1);
                                         const currentDate = currentDateTime.toISOString().split('T')[0];
                                         const nextDate = nextDateTime.toISOString().split('T')[0];
 
