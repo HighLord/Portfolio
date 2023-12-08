@@ -215,14 +215,8 @@ function myFunction()
                                                 var odds = responses.odds;
                                                 var total = responses.count;
                                                 var gamesBooked = responses.gamesBooked;
-                                                //var gamesNotBooked = responses.gamesNotBooked;
                                                 var singleOdds = responses.singleOdd;
                                                 const entries = Object.entries(singleOdds);
-                                                for (let [key, values] of entries)
-                                                        {
-                                                            alert(key);
-                                                            alert(values);
-                                                        }
                                                 var debug = responses.debug;
                                                 amounts = total;
 
