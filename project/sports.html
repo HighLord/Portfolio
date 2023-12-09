@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='stylesheet' type='text/css' media='screen' href='../css/sports.css?v=8.1'>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" crossorigin="anonymous"></script>
@@ -10,6 +11,7 @@
 
     <title>Sports Calculator</title>
 </head>
+
 <body>
     <i class="fa fa-bell fa-shake"></i>
     <span class="count">1</span>
@@ -23,13 +25,13 @@
         <h3>Sports Predictions V2</h3>
     </span>
     <div id="center">
-	    <div class="search-container sticky">
-	    	<input  type="otp" placeholder="Search.." id="searchText" autocomplete="off">
+        <div class="search-container sticky">
+            <input type="otp" placeholder="Search.." id="searchText" autocomplete="off">
             <div id="count"></div>
-	    	<button id="search"><i class="fa fa-search"></i></button>
-	    	<button id="prev"><i class="fa-solid fa-arrow-up"></i></button>
+            <button id="search"><i class="fa fa-search"></i></button>
+            <button id="prev"><i class="fa-solid fa-arrow-up"></i></button>
             <button id="next"><i class="fa-solid fa-arrow-down"></i></button>
-	    </div>
+        </div>
     </div>
     <div id="resultCover">
         <div id="divResult">
@@ -71,21 +73,21 @@
         <select id="mySelect5" name="mySelect2">
             <option value="1000" selected>Any Odds (Default)</option>
         </select>
-        <div  id="divCheckbox" style="cursor: not-allowed;">
+        <div id="divCheckbox" style="cursor: not-allowed;">
             <div class="div1">
                 <div>
-                    <label class="switch"> 
-                        <input type="checkbox" id="alert1" checked disabled> 
+                    <label class="switch">
+                        <input type="checkbox" id="alert1" checked disabled>
                         <span class="slider" style="cursor: not-allowed;"></span>
-                    </label> 
+                    </label>
                 </div>
                 <div>
                     <h6><s>Switch To V2</s></h6>
                 </div>
             </div>
-        </div> 
+        </div>
     </div>
-    <div id="divButton">    
+    <div id="divButton">
         <button type="button" id="clear">Clear</button>
         <button type="submit" id="button">Search</button>
     </div>
@@ -94,21 +96,22 @@
         var script = document.createElement('script');
         script.crossorigin = 'anonymous';
         function getCookieValue(cookieName) 
-	    {
+        {
             const name = cookieName + "=";
             const cDecoded = decodeURIComponent(document.cookie);
             const cArr = cDecoded.split('; ');
             let res;
-    
+
             cArr.forEach(val => 
             {
                 if (val.indexOf(name) === 0) res = val.substring(name.length);
             });
-    
+
             if (typeof res !== "undefined") 
             {
                 return res;
-            } else {
+            } else
+            {
                 return null;
             }
         }
@@ -130,13 +133,29 @@
         {
             if (paragraph.innerHTML !== "")
             {
+                // Clear divs with display: none
+                clearHiddenDivs();
+
+                // Store the content of the paragraph
                 chance = paragraph.innerHTML;
+
+                // Stop the interval
                 clearInterval(intervalId);
             }
         }, 100);
 
-        //Remove previous highlighting
-        function remhighLight()
+        // Function to clear divs with display: none
+        function clearHiddenDivs()
+        {
+            let hiddenDivs = Array.from(paragraph.querySelectorAll('div[style*="display: none"]'));
+
+            hiddenDivs.forEach(div =>
+            {
+                div.parentNode.removeChild(div);
+            });
+        }
+
+        //function remhighLights()
         {
             let highlighted = document.querySelectorAll('.highlight');
             for (let i = 0; i < highlighted.length; i++) 
@@ -144,61 +163,56 @@
                 highlighted[i].classList.remove('highlight');
             }
         }
-
-        const forbiddenWords = ["b", "br","<",">","span","<b","<br","<br>","r","<r","r>","br>","br> "];
-        searchText.addEventListener("input", function() 
+        function remhighLight()
         {
-            setTimeout(function() 
+            let highlightedSpans = document.querySelectorAll('.highlight');
+            highlightedSpans.forEach(function (span)
+            {
+                // Replace the span with its content (the matched word)
+                let textNode = document.createTextNode(span.textContent);
+                span.parentNode.replaceChild(textNode, span);
+            });
+
+            // Clear the count
+            count.innerHTML = "";
+        }
+
+
+        const forbiddenWords = ["b", "br", "<", ">", "span", "<b", "<br", "<br>", "r", "<r", "r>", "br>", "br> "];
+        searchText.addEventListener("input", function () 
+        {
+            setTimeout(function () 
             {
                 if (searchText.value === "") 
                 {
-                   count.innerHTML = "";
-                   remhighLight();
-                } 
+                    count.innerHTML = "";
+                    remhighLight();
+                }
                 else if ((forbiddenWords.indexOf(searchText.value.toLowerCase()) === -1) && (searchText.value.length > 2))
                 {
-                   searchAndScroll();
+                    searchAndScroll();
                 }
             }, 50);
-        
+
         });
 
-        searchButton.addEventListener("click", function()
+        searchButton.addEventListener("click", function ()
         {
             if (searchText.value === "") 
             {
                 count.innerHTML = "";
                 remhighLight();
-            } 
+            }
             else if (forbiddenWords.indexOf(searchText.value.toLowerCase()) === -1)
             {
                 searchAndScroll();
             }
         });
-            
-        function calculateScore(sentence, query) 
-        {
-            const lowerSentence = sentence.toLowerCase();
-            const lowerQuery = query.toLowerCase()
-            const words = lowerQuery.split(/\s+/);
-        
-            // Initialize a score for the sentence
-            let score = 0;
-        
-            words.forEach((word) => {
-                let matchCount = (lowerSentence.match(new RegExp(word, 'gi')) || []).length;
-                score += matchCount;
-            });
-        
-            return score;
-        }
-                    
+
         function searchAndScroll() 
         {
-            // Find all occurrences of the search keyword or phrase in the <p> element
             let matches = paragraph.innerHTML.match(new RegExp(searchText.value, "gi"));
-            //var sentences = docText.match(/[^.!?]+[.!?]+/g);
-        
+
             // If there are matches, highlight the first one and scroll to it
             if (matches && matches.length > 0) 
             {
@@ -209,67 +223,55 @@
             }
             else
             {
-                count.innerHTML = ""; 
+                count.innerHTML = "";
             }
         }
-           
+
         function highlightMatch(matches, index, startPos) 
         {
             let match = matches[index];
-            let rand = new RegExp(match, 'gi');
             let matchIndex = paragraph.innerHTML.indexOf(match, startPos);
-            
+
             paragraph.innerHTML = paragraph.innerHTML.substring(0, matchIndex) + "<span class='highlight'>" + match + "</span>" + paragraph.innerHTML.substring(matchIndex + match.length);
-            
+
             if (searchText.value !== "")
             {
-                count.innerHTML = ""+ (index + 1) +"/"+ matches.length;
+                count.innerHTML = "" + (index + 1) + "/" + matches.length;
             }
             else
             {
                 count.innerHTML = "";
             }
-        
+
             return matchIndex + match.length;
         }
-	
 
-    
-	    
-        /*function scrollToMatch() 
+        function scrollToMatch() 
         {
-            setTimeout(function() 
+            setTimeout(function () 
             {
                 let span = paragraph.querySelector("span.highlight");
                 span.scrollIntoView({ behavior: "smooth", block: "center" });
             }, 100);
-        }*/
-	function scrollToMatch() {
-    setTimeout(function() {
-        let span = paragraph.querySelector(".highlight");
-        if (span) {
-            span.scrollIntoView({ behavior: "smooth", block: "center" });
         }
-    }, 100);
-}
-    
+
 
         function nextMatch() 
         {
             remhighLight();
 
             let matches = paragraph.innerHTML.match(new RegExp(searchText.value, "gi"));
-                    
+
             if (matches && matches.length > 0) 
             {
                 currentMatch = (currentMatch + 1) % matches.length;
-            
+
                 var startPos = 0;
                 for (var i = 0; i < currentMatch; i++) 
                 {
                     startPos = paragraph.innerHTML.indexOf(matches[i], startPos) + matches[i].length;
                 }
-                
+
                 startPos = highlightMatch(matches, currentMatch, startPos);
                 scrollToMatch();
             }
@@ -278,23 +280,23 @@
                 count.innerHTML = "";
             }
         }
-        
+
         function previousMatch() 
         {
             remhighLight();
-            
+
             let matches = paragraph.innerHTML.match(new RegExp(searchText.value, "gi"));
-          
+
             if (matches && matches.length > 0) 
             {
                 currentMatch = (currentMatch - 1 + matches.length) % matches.length;
-            
+
                 var startPos = 0;
                 for (var i = 0; i < currentMatch; i++) 
                 {
                     startPos = paragraph.innerHTML.indexOf(matches[i], startPos) + matches[i].length;
                 }
-            
+
                 startPos = highlightMatch(matches, currentMatch, startPos);
                 scrollToMatch(matches, currentMatch);
             }
@@ -304,15 +306,16 @@
             }
         }
 
-        nextButton.addEventListener("click", function()
+        nextButton.addEventListener("click", function ()
         {
             nextMatch();
         });
 
-        prevButton.addEventListener("click", function()
+        prevButton.addEventListener("click", function ()
         {
             previousMatch();
         })
     </script>
 </body>
+
 </html>
