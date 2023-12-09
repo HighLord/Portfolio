@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en"> 
 <head>
     <meta charset="UTF-8">
@@ -20,7 +20,7 @@
         </span>
     </div>
     <span id="span">
-        <h3>Sports Predictions</h3>
+        <h3>Sports Predictions V2</h3>
     </span>
     <div id="center">
 	    <div class="search-container sticky">
@@ -51,8 +51,8 @@
         <select id="mySelect" name="mySelect2">
             <option value="5">Agressive</option>
             <option value="10">Passive</option>
-            <option value="15" selected>Balanced</option>
-            <option value="20">Moderate Scan (Default)</option>
+            <option value="15" selected>Balanced (Default)</option>
+            <option value="20">Moderate Scan</option>
             <option value="25">More Passive</option>
             <option value="30">Deep Scan</option>
         </select>
@@ -66,21 +66,21 @@
             <option value="20">Book 20 games</option>
             <option value="30">Book 30 games</option>
             <option value="40">Book 40 games</option>
-            <option value="50" selected>Book 50 games</option>
+            <option value="50" selected>Book 50 games (Default)</option>
         </select>
         <select id="mySelect5" name="mySelect2">
             <option value="1000" selected>Any Odds (Default)</option>
         </select>
-        <div  id="divCheckbox">
+        <div  id="divCheckbox" style="cursor: not-allowed;">
             <div class="div1">
                 <div>
                     <label class="switch"> 
-                        <input type="checkbox" id="alert1" checked> 
-                        <span class="slider"></span>
+                        <input type="checkbox" id="alert1" checked disabled> 
+                        <span class="slider" style="cursor: not-allowed;"></span>
                     </label> 
                 </div>
                 <div>
-                    <h6>Switch To V2</h6>
+                    <h6><s>Switch To V2</s></h6>
                 </div>
             </div>
         </div> 
@@ -112,13 +112,7 @@
                 return null;
             }
         }
-        cookies = getCookieValue("load");
-        if (cookies) 
-        {
-            script.src = cookies;
-        } else {
-            script.src = '../js/sportsV2.js?v=' + random_num;
-        }
+        script.src = '../js/sportsV2.js?v=' + random_num;
         document.head.appendChild(script);
 
         var timess = 1;
