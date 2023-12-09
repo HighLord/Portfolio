@@ -421,7 +421,18 @@ function myFunction()
             const gameMapping = {
                 "football": 1,
                 "tennis": 2,
-                "basketball": 3
+                "basketball": 3,
+                "icehockey": 4,
+                "americanfootball": 5,
+                "baseball": 6,
+                "handball": 7,
+                "volleyball": 12,
+                "cricket": 13,
+                "darts": 14,
+                "boxing": 16,
+                "badminton": 21,
+                "tabletennis": 25,
+                "mma": 28
             };
 
             if (dateMapping.hasOwnProperty(date) && gameMapping.hasOwnProperty(game))
