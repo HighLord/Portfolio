@@ -43,6 +43,17 @@
             <option value="football" selected>Football (Default)</option>
             <option value="basketball">Basketball</option>
             <option value="tennis">Tennis</option>
+            <option value="tabletennis">Table Tennis</option>
+            <option value="americanfootball">American Football</option>
+            <option value="icehockey">Ice Hockey</option>
+            <option value="volleyball">Volley Ball</option>
+            <option value="handball">HandBall</option>
+            <option value="baseball">BaseBall</option>
+            <option value="badminton">Badminton</option>
+            <option value="cricket">Cricket</option>
+            <option value="boxing">Boxing</option>
+            <option value="mma">MMA</option>
+            <option value="darts">Darts</option>
         </select>
 
         <select id="mySelect3" name="mySelect2">
@@ -178,7 +189,7 @@
         }
 
 
-        const forbiddenWords = ["b", "br", "<", ">", "span", "<b", "<br", "<br>", "r", "<r", "r>", "br>", "br> "];
+        const forbiddenWords = ["b", "br", "<", ">", "span", "<b", "<br", "<br>", "r", "<r", "r>", "br>", "br> ", " "];
         searchText.addEventListener("input", function () 
         {
             setTimeout(function () 
@@ -263,7 +274,7 @@
 
             let matches = paragraph.innerHTML.match(new RegExp(searchText.value, "gi"));
 
-            if (matches && matches.length > 0) 
+            if ((forbiddenWords.indexOf(searchText.value.toLowerCase()) === -1) && searchText.value.length > 2 && matches && matches.length > 0) 
             {
                 currentMatch = (currentMatch + 1) % matches.length;
 
@@ -289,7 +300,7 @@
 
             let matches = paragraph.innerHTML.match(new RegExp(searchText.value, "gi"));
 
-            if (matches && matches.length > 0) 
+            if ((forbiddenWords.indexOf(searchText.value.toLowerCase()) === -1) && searchText.value.length > 2 && matches && matches.length > 0) 
             {
                 currentMatch = (currentMatch - 1 + matches.length) % matches.length;
 
@@ -318,6 +329,24 @@
         {
             previousMatch();
         })
+
+        // Event listener for keydown events on the document
+        document.addEventListener("keydown", function (event)
+        {
+            if (searchText.value !== "")
+            {
+                if (event.key === "ArrowUp")
+                {
+                    previousMatch();
+                }
+                // Check if the pressed key is the down arrow key
+                else if (event.key === "ArrowDown")
+                {
+                    nextMatch();
+                }
+            }
+        });
+
     </script>
 </body>
 
