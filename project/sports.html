@@ -237,19 +237,27 @@
     let matchIndex = paragraph.textContent.indexOf(match, startPos);
 
     if (matchIndex !== -1) {
-        // Create a new span element
+        // Create a range object
+        let range = document.createRange();
+
+        // Select the text content of the paragraph
+        range.selectNodeContents(paragraph);
+
+        // Collapse the range to the start of the matching text
+        range.setStart(paragraph.firstChild, matchIndex);
+
+        // Get the length of the matching text
+        let matchLength = match.length;
+
+        // Collapse the range to the end of the matching text
+        range.setEnd(paragraph.firstChild, matchIndex + matchLength);
+
+        // Create a span element and apply the highlight class
         let span = document.createElement('span');
         span.className = 'highlight';
-        span.textContent = match;
 
-        // Split the text node and insert the span
-        let textNode = paragraph.childNodes[0];
-        let beforeMatch = textNode.splitText(matchIndex);
-        let afterMatch = beforeMatch.splitText(match.length);
-        let highlightedText = beforeMatch.cloneNode(true);
-
-        span.appendChild(highlightedText);
-        paragraph.replaceChild(span, beforeMatch);
+        // Surround the matching text with the span
+        range.surroundContents(span);
     }
 
     if (searchText.value !== "") {
@@ -261,7 +269,7 @@
     return matchIndex + match.length;
 }
 
-                        
+	    
         function scrollToMatch() 
         {
             setTimeout(function() 
