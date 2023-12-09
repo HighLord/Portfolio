@@ -270,14 +270,23 @@
 }
 
 	    
-        function scrollToMatch() 
+        /*function scrollToMatch() 
         {
             setTimeout(function() 
             {
                 let span = paragraph.querySelector("span.highlight");
                 span.scrollIntoView({ behavior: "smooth", block: "center" });
             }, 100);
+        }*/
+	function scrollToMatch() {
+    setTimeout(function() {
+        let span = paragraph.querySelector(".highlight");
+        if (span) {
+            span.scrollIntoView({ behavior: "smooth", block: "center" });
         }
+    }, 100);
+}
+    
 
         function nextMatch() 
         {
