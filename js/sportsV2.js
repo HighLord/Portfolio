@@ -8,26 +8,6 @@ if (window.onload)
 
 function myFunction()
 {
-    const check1 = document.getElementById('alert1');
-    const header1 = document.getElementsByTagName('h3')[0];
-    const header2 = document.getElementsByTagName('h6')[0];
-    header1.innerHTML += " V2";
-    header2.innerHTML = "Switch To V1";
-    check1.addEventListener('click', (event) =>
-    {
-        if (event.target.checked)
-        {
-            document.cookie = "load=" + encodeURIComponent("../js/sportsV2.js?v=" + random_num) + "; expires=" + new Date(Date.now() + 3600000).toUTCString() + "; path=/; domain=" + window.location.hostname;
-        } else
-        {
-            document.cookie = "load=" + encodeURIComponent("../js/sports.js?v=" + random_num) + "; expires=" + new Date(Date.now() + 3600000).toUTCString() + "; path=/; domain=" + window.location.hostname;
-        }
-        setTimeout(() => 
-        {
-            window.location.href = '../project/sports.html';
-        }, 100);
-    });
-
     const selOdds = document.getElementById('mySelect5');
     for (var o = 1; o <= 4.1; o += 0.1)
     {
