@@ -189,8 +189,6 @@ function myFunction()
                                     success:
                                         function (responses)
                                         {
-                                            console.log(responses);
-
                                             var message = responses.message;
                                             var innerMsg = responses.innerMsg;
                                             if (message == "Success" || innerMsg == "Invalid")
@@ -328,7 +326,6 @@ function myFunction()
                                     error:
                                         function (response)
                                         {
-                                            console.log(response);
                                             results += "<p id='error' style='padding: 5px'>unable to get booking code</p>";
                                             button.innerHTML = "Search";
                                             clear.innerHTML = "Clear";
