@@ -236,15 +236,21 @@
     let match = matches[index];
     let matchIndex = paragraph.textContent.indexOf(match, startPos);
 
-    // Create a new span element
-    let span = document.createElement('span');
-    span.className = 'highlight';
-    span.textContent = match;
+    if (matchIndex !== -1) {
+        // Create a new span element
+        let span = document.createElement('span');
+        span.className = 'highlight';
+        span.textContent = match;
 
-    // Replace the matched text with the span
-    let matchedText = paragraph.childNodes[0].splitText(matchIndex);
-    paragraph.removeChild(matchedText);
-    paragraph.insertBefore(span, paragraph.childNodes[0]);
+        // Split the text node and insert the span
+        let textNode = paragraph.childNodes[0];
+        let beforeMatch = textNode.splitText(matchIndex);
+        let afterMatch = beforeMatch.splitText(match.length);
+        let highlightedText = beforeMatch.cloneNode(true);
+
+        span.appendChild(highlightedText);
+        paragraph.replaceChild(span, beforeMatch);
+    }
 
     if (searchText.value !== "") {
         count.innerHTML = "" + (index + 1) + "/" + matches.length;
