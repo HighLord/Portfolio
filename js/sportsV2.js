@@ -13,7 +13,7 @@ function myFunction()
     {
         const option = document.createElement('option');
         option.value = o.toFixed(1); // Round to one decimal place
-        option.text = '< ' + o.toFixed(1) + ' Odds';
+        option.text = 'Less than ' + o.toFixed(1) + ' Odds';
         selOdds.appendChild(option);
     }
 
