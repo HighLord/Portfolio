@@ -366,11 +366,22 @@ function myFunction()
                         switch (gameType)
                         {
                             case "football":
+                            case "icehockey":
+                            case "handball":
                                 outcome = predictedOutcome ? "Home or Draw" : "Draw or Away";
                                 statement = outcome === "Home or Draw" ? `${homeT} to win or draw ${awayT}` : `${awayT} to win or draw ${homeT}`;
                                 break;
                             case "basketball":
                             case "tennis":
+                            case "baseball":
+                            case "boxing":
+                            case "americanfootball":
+                            case "tabletennis":
+                            case "cricket":
+                            case "darts":
+                            case "volleyball":
+                            case "badminton":
+                            case "mma":
                                 outcome = predictedOutcome ? "Home" : "Away";
                                 statement = outcome === "Home" ? `${homeT} to win ${awayT}` : `${awayT} to win ${homeT}`;
                                 break;
@@ -537,7 +548,6 @@ function myFunction()
                                 }
                             };
                             jsonData = JSON.stringify(jsonData);
-
 
                             resolve(jsonData);*/
                             resolve(json);
