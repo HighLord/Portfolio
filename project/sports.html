@@ -213,7 +213,7 @@
             }
         }
            
-        /**function highlightMatch(matches, index, startPos) 
+        function highlightMatch(matches, index, startPos) 
         {
             let match = matches[index];
             let rand = new RegExp(match, 'gi');
@@ -231,44 +231,10 @@
             }
         
             return matchIndex + match.length;
-        }*/
-	function highlightMatch(matches, index, startPos) {
-    let match = matches[index];
-    let matchIndex = paragraph.textContent.indexOf(match, startPos);
+        }
+	
 
-    if (matchIndex !== -1) {
-        // Create a range object
-        let range = document.createRange();
-
-        // Select the text content of the paragraph
-        range.selectNodeContents(paragraph);
-
-        // Collapse the range to the start of the matching text
-        range.setStart(paragraph.firstChild, matchIndex);
-
-        // Get the length of the matching text
-        let matchLength = match.length;
-
-        // Collapse the range to the end of the matching text
-        range.setEnd(paragraph.firstChild, matchIndex + matchLength);
-
-        // Create a span element and apply the highlight class
-        let span = document.createElement('span');
-        span.className = 'highlight';
-
-        // Surround the matching text with the span
-        range.surroundContents(span);
-    }
-
-    if (searchText.value !== "") {
-        count.innerHTML = "" + (index + 1) + "/" + matches.length;
-    } else {
-        count.innerHTML = "";
-    }
-
-    return matchIndex + match.length;
-}
-
+    
 	    
         /*function scrollToMatch() 
         {
