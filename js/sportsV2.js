@@ -808,7 +808,7 @@ function myFunction()
                     }
                     else if (homeScore == awayScore)
                     {
-                        score1 += 0.5;
+                        score1 += 0.25;
                     }
                     iteration1++;
                 }
@@ -829,7 +829,7 @@ function myFunction()
                     }
                     else if (homeScore == awayScore)
                     {
-                        score2 += 0.5;
+                        score2 += 0.25;
                     }
                     iteration2++;
                 }
@@ -909,8 +909,8 @@ function myFunction()
         if (master > 0) { myTruth += 1.5; }
         if (master < 0) { myTruth -= 1.5; }
         //alert("sum1: "+ sum1 +" and sum2: "+ sum2 +" score1: "+score1+ " and score2: "+ score2 +"  master: "+ master + " truth: "+myTruth);
-        if (myTruth > 3) { return true; }
-        if (myTruth < -3) { return false; }
+        if (myTruth >= 2.5) { return true; }
+        if (myTruth <= -2.5) { return false; }
         return null;
     }
 };
