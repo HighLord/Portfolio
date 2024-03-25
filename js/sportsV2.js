@@ -909,8 +909,8 @@ function myFunction()
         if (master > 0) { myTruth += 1.5; }
         if (master < 0) { myTruth -= 1.5; }
         //alert("sum1: "+ sum1 +" and sum2: "+ sum2 +" score1: "+score1+ " and score2: "+ score2 +"  master: "+ master + " truth: "+myTruth);
-        if (myTruth >= 2.5) { return true; }
-        if (myTruth <= -2.5) { return false; }
+        if (myTruth >= 2) { return true; }
+        if (myTruth <= -2) { return false; }
         return null;
     }
 };
