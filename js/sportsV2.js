@@ -182,7 +182,7 @@ function myFunction()
                                     url: "https://webappsng.vercel.app/api/sportbooking",
                                     xhrFields: { withCredentials: false },
                                     crossOrigin: true,
-                                    data: JSON.stringify({ "data": dataKing, "game": gameType, "odd": selOdds.value }),
+                                    data: JSON.stringify({ "data": dataKing, "game": gameType, "setOdd": selOdds.value }),
                                     type: "POST",
                                     contentType: "application/json",
                                     timeout: 18000,
