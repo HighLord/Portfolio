@@ -6,7 +6,7 @@ if (window.onload)
     $(document).ready(myFunction);
 }
 
-function myFunction()
+function myFunction ()
 {
     const selOdds = document.getElementById('mySelect5');
     for (var o = 1; o <= 4.1; o += 0.1)
@@ -90,7 +90,7 @@ function myFunction()
     var visited = [];
     var label = false;
 
-    function updateProgressBar(value, max)
+    function updateProgressBar (value, max)
     {
         if (label === false)
         {
@@ -112,7 +112,7 @@ function myFunction()
     const selectElement2 = document.getElementById('mySelect2');
     const selectElement3 = document.getElementById('mySelect3');
     const selectElement4 = document.getElementById('mySelect4');
-    function analyse(selEle, timer)
+    function analyse (selEle, timer)
     {
         var gameMode = selectElement.value;
         amountOfBooking = selectElement2.value;
@@ -125,15 +125,15 @@ function myFunction()
         var bypass = false;
         updateProgressBar(amounted, amountOfBooking);
 
-        async function ajax()
+        async function ajax ()
         {
             var response = await getGames(gameType, gameTime);
             response = Object.entries(JSON.parse(response));
 
-            async function processElements()
+            async function processElements ()
             {
                 let iterations = 0;
-                function oks()
+                function oks ()
                 {
                     result.innerHTML += "<p id='error' style='padding: 5px; font-size: 11px;'>The amount of predictions you chose has exceeded the amount of games available today</p>";
                     times = amountOfBooking;
@@ -348,7 +348,7 @@ function myFunction()
                     }
                 }
             }
-            async function doSomethingWithElement(key, time, league)
+            async function doSomethingWithElement (key, time, league)
             {
 
                 let niceJson = await sortGame(key);
@@ -419,7 +419,7 @@ function myFunction()
         ajax();
     }
 
-    function getGames(game, date)
+    function getGames (game, date)
     {
         return new Promise((resolve, reject) =>
         {
@@ -576,7 +576,7 @@ function myFunction()
         });
     }
 
-    function sortGame(key)
+    function sortGame (key)
     {
         return new Promise((resolve, reject) =>
         {
@@ -604,7 +604,7 @@ function myFunction()
                 })
                 .then(matches =>
                 {
-                    function getNames()
+                    function getNames ()
                     {
                         let lines1 = matches.replace(/¬/g, '÷').split('÷');
                         let counts = 0;
@@ -633,7 +633,7 @@ function myFunction()
                         };
                     }
 
-                    function getTeams()
+                    function getTeams ()
                     {
                         let lines = matches.replace(/¬/g, '÷').split('÷');
                         let count = 0;
@@ -687,9 +687,9 @@ function myFunction()
         });
     }
 
-    function predict(niceJson, amountOfBooking, gameTime, gameType, gameMode)
+    function predict (niceJson, amountOfBooking, gameTime, gameType, gameMode)
     {
-        function matchAllTeamNames()
+        function matchAllTeamNames ()
         {
             const team1name = niceJson["names"]["team1name"];
             const team2name = niceJson["names"]["team2name"];
@@ -745,7 +745,7 @@ function myFunction()
             });
         }
         const matchJson = matchAllTeamNames();
-        function getSum()
+        function getSum ()
         {
             let sum1 = 0;
             let sum2 = 0;
@@ -786,7 +786,7 @@ function myFunction()
         }
         const sum = getSum();
 
-        function getScore()
+        function getScore ()
         {
             let score1 = 0;
             let score2 = 0;
@@ -843,7 +843,7 @@ function myFunction()
         }
         const score = getScore();
 
-        function calculatePercentage()
+        function calculatePercentage ()
         {
             let master = 0;
             let checkedAlready = [];
@@ -890,7 +890,7 @@ function myFunction()
         };
     }
 
-    function outcomes(calculatedJson)
+    function outcomes (calculatedJson)
     {
         let sum1 = calculatedJson.highestGoals.sum1 / calculatedJson.highestGoals.iteration1;
         let sum2 = calculatedJson.highestGoals.sum2 / calculatedJson.highestGoals.iteration2;
@@ -909,8 +909,8 @@ function myFunction()
         if (master > 0) { myTruth += 1.5; }
         if (master < 0) { myTruth -= 1.5; }
         //alert("sum1: "+ sum1 +" and sum2: "+ sum2 +" score1: "+score1+ " and score2: "+ score2 +"  master: "+ master + " truth: "+myTruth);
-        if (myTruth >= 2.5) { return true; }
-        if (myTruth <= -2.5) { return false; }
+        if (myTruth > 2.5) { return true; }
+        if (myTruth < -2.5) { return false; }
         return null;
     }
 };
