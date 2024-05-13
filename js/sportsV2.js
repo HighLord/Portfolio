@@ -351,7 +351,9 @@ function myFunction ()
             async function doSomethingWithElement (key, time, league)
             {
 
-                let niceJson = await sortGame(key);
+                let niceJson = await sortGame(key, time);
+                console.log(niceJson);
+
                 let calculatedJson = await predict(niceJson, amountOfBooking, gameTime, gameType, gameMode)
 
                 let predictedOutcome = outcomes(calculatedJson);
@@ -593,7 +595,7 @@ function myFunction ()
         });
     }
 
-    function sortGame (key)
+    function sortGame (key, time)
     {
         return new Promise((resolve, reject) =>
         {
@@ -719,7 +721,7 @@ function myFunction ()
             let team2 = [];
             let teamHeads = [];
             const maxNumber = Math.max(hometeams.length, awayteams.length);
-            
+
             for (let index = 0; index < maxNumber; index++)
             {
                 if (team1name == hometeams[index])
@@ -806,8 +808,8 @@ function myFunction ()
                         );
                     }
                 }
-            }        
-            
+            }
+
             return ({
                 "team1": team1,
                 "team2": team2,
@@ -816,7 +818,7 @@ function myFunction ()
         }
         const matchJson = matchAllTeamNames();
         console.log(matchJson);
-        
+
 
         function getSum ()
         {
@@ -859,7 +861,7 @@ function myFunction ()
         }
         const sum = getSum();
         console.log(sum);
-        
+
 
         function getScore ()
         {
