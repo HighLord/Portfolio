@@ -774,8 +774,8 @@ function myFunction ()
             let sum2 = 0;
             let iteration1 = 0;
             let iteration2 = 0;
-
-            for (let i = 0; i < matchJson.team1.length; i++)
+            const minNumber = Math.min(matchJson.team1.length, matchJson.team2.length);
+            for (let i = 0; i < minNumber; i++)
             {
                 if (iteration1 < gameMode)
                 {
@@ -788,7 +788,7 @@ function myFunction ()
                 }
             }
 
-            for (let i = 0; i < matchJson.team2.length; i++)
+            for (let i = 0; i < minNumber; i++)
             {
                 if (iteration2 < gameMode)
                 {
@@ -808,6 +808,8 @@ function myFunction ()
             }
         }
         const sum = getSum();
+        console.log(sum);
+        
 
         function getScore ()
         {
