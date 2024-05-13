@@ -353,7 +353,7 @@ function myFunction ()
 
                 let niceJson = await sortGame(key);
                 let calculatedJson = await predict(niceJson, amountOfBooking, gameTime, gameType, gameMode)
-                console.log("work " + calculatedJson);
+                console.log(calculatedJson);
 
                 let predictedOutcome = outcomes(calculatedJson);
                 amounted++;
