@@ -551,7 +551,6 @@ function myFunction ()
                             jsonData = JSON.stringify(jsonData);
 
                             resolve(jsonData);*/
-                            console.log(json);
                             resolve(json);
                         } else
                         {
