@@ -718,6 +718,8 @@ function myFunction ()
             let team1 = [];
             let team2 = [];
             const maxNumber = Math.max(hometeams.length, awayteams.length);
+            console.log(maxNumber);
+            
             for (let index = 0; index < maxNumber; index++)
             {
                 if (team1name == hometeams[index])
