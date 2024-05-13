@@ -757,6 +757,9 @@ function myFunction ()
                     );
                 }
             }        
+            console.log(team1);
+            console.log(team2);
+            
             
             return ({
                 "team1": team1,
