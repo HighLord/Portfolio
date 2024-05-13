@@ -764,7 +764,7 @@ function myFunction ()
             });
         }
         const matchJson = matchAllTeamNames();
-        console.log(matchJson);
+        console.log(JSON.stringify(matchJson));
         
 
         function getSum ()
