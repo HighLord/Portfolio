@@ -351,11 +351,10 @@ function myFunction ()
             async function doSomethingWithElement (key, time, league)
             {
 
-                let niceJson = await sortGame(key, time);
-                console.log(niceJson);
+                let niceJson = await sortGame(key);
 
                 let calculatedJson = await predict(niceJson, amountOfBooking, gameTime, gameType, gameMode)
-
+                
                 let predictedOutcome = outcomes(calculatedJson);
                 amounted++;
                 if (predictedOutcome !== null)
@@ -660,6 +659,7 @@ function myFunction ()
                         let awayteams = [];
                         let homescores = [];
                         let awayscores = [];
+                        let gameDate = [];
                         let dateLimit = new Date('2022-01-01').getTime() / 1000;
 
                         lines.some((line, index) =>
@@ -680,14 +680,18 @@ function myFunction ()
                                 let dTime = lines[index - 26];
                                 let dTime2 = lines[index - 30];
 
+                                let time100 = (dTime.length === 10) ? dTime : ((dTime2.length === 10) ? dTime2 : null);
+
+
                                 if (!homeTeam.match(/\b\w*\.png\w*\b/) || !awayTeam.match(/\b\w*\.png\w*\b/))
                                 {
-                                    if (dTime > dateLimit || dTime2 > dateLimit)
+                                    if (time100 > dateLimit)
                                     {
                                         hometeams.push(homeTeam);
                                         awayteams.push(awayTeam);
                                         homescores.push(homeScore);
                                         awayscores.push(awayScore);
+                                        gameDate.push(time100);
                                     }
                                 }
                             }
@@ -698,7 +702,8 @@ function myFunction ()
                             hometeams: hometeams,
                             awayteams: awayteams,
                             homescores: homescores,
-                            awayscores: awayscores
+                            awayscores: awayscores,
+                            gameDate: gameDate
                         });
                     }
                     getTeams();
@@ -716,6 +721,7 @@ function myFunction ()
             const awayteams = niceJson["awayteams"];
             const homescores = niceJson["homescores"];
             const awayscores = niceJson["awayscores"];
+            const gameDate = niceJson["gameDate"];
 
             let team1 = [];
             let team2 = [];
@@ -731,18 +737,27 @@ function myFunction ()
                         team1.push(
                             {
                                 [hometeams[index]]: homescores[index],
-                                [awayteams[index]]: awayscores[index]
+                                [awayteams[index]]: awayscores[index],
+                                ["date"]: gameDate[index]
                             }
                         );
                     }
                     else
                     {
-                        teamHeads.push(
-                            {
-                                [hometeams[index]]: homescores[index],
-                                [awayteams[index]]: awayscores[index]
-                            }
-                        );
+                        if (teamHeads.findIndex(obj =>
+                            obj[hometeams[index]] === homescores[index] &&
+                            obj[awayteams[index]] === awayscores[index] &&
+                            obj["date"] === gameDate[index]
+                        ) === -1)
+                        {
+                            teamHeads.push(
+                                {
+                                    [hometeams[index]]: homescores[index],
+                                    [awayteams[index]]: awayscores[index],
+                                    ["date"]: gameDate[index]
+                                }
+                            );
+                        }
                     }
                 }
                 if (team1name == awayteams[index])
@@ -752,18 +767,27 @@ function myFunction ()
                         team1.push(
                             {
                                 [awayteams[index]]: awayscores[index],
-                                [hometeams[index]]: homescores[index]
+                                [hometeams[index]]: homescores[index],
+                                ["date"]: gameDate[index]
                             }
                         );
                     }
                     else
                     {
-                        teamHeads.push(
-                            {
-                                [awayteams[index]]: awayscores[index],
-                                [hometeams[index]]: homescores[index]
-                            }
-                        );
+                        if (teamHeads.findIndex(obj =>
+                            obj[hometeams[index]] === homescores[index] &&
+                            obj[awayteams[index]] === awayscores[index] &&
+                            obj["date"] === gameDate[index]
+                        ) === -1)
+                        {
+                            teamHeads.push(
+                                {
+                                    [awayteams[index]]: awayscores[index],
+                                    [hometeams[index]]: homescores[index],
+                                    ["date"]: gameDate[index]
+                                }
+                            );
+                        }
                     }
                 }
                 if (team2name == hometeams[index])
@@ -773,18 +797,27 @@ function myFunction ()
                         team2.push(
                             {
                                 [hometeams[index]]: homescores[index],
-                                [awayteams[index]]: awayscores[index]
+                                [awayteams[index]]: awayscores[index],
+                                ["date"]: gameDate[index]
                             }
                         );
                     }
                     else
                     {
-                        teamHeads.push(
-                            {
-                                [awayteams[index]]: awayscores[index],
-                                [hometeams[index]]: homescores[index]
-                            }
-                        );
+                        if (teamHeads.findIndex(obj =>
+                            obj[hometeams[index]] === homescores[index] &&
+                            obj[awayteams[index]] === awayscores[index] &&
+                            obj["date"] === gameDate[index]
+                        ) === -1)
+                        {
+                            teamHeads.push(
+                                {
+                                    [awayteams[index]]: awayscores[index],
+                                    [hometeams[index]]: homescores[index],
+                                    ["date"]: gameDate[index]
+                                }
+                            );
+                        }
                     }
                 }
                 if (team2name == awayteams[index])
@@ -794,18 +827,27 @@ function myFunction ()
                         team2.push(
                             {
                                 [awayteams[index]]: awayscores[index],
-                                [hometeams[index]]: homescores[index]
+                                [hometeams[index]]: homescores[index],
+                                ["date"]: gameDate[index]
                             }
                         );
                     }
                     else
                     {
-                        teamHeads.push(
-                            {
-                                [hometeams[index]]: homescores[index],
-                                [awayteams[index]]: awayscores[index]
-                            }
-                        );
+                        if (teamHeads.findIndex(obj =>
+                            obj[hometeams[index]] === homescores[index] &&
+                            obj[awayteams[index]] === awayscores[index] &&
+                            obj["date"] === gameDate[index]
+                        ) === -1)
+                        {
+                            teamHeads.push(
+                                {
+                                    [hometeams[index]]: homescores[index],
+                                    [awayteams[index]]: awayscores[index],
+                                    ["date"]: gameDate[index]
+                                }
+                            );
+                        }
                     }
                 }
             }
@@ -817,7 +859,7 @@ function myFunction ()
             });
         }
         const matchJson = matchAllTeamNames();
-        console.log(matchJson);
+        //console.log(matchJson);
 
 
         function getSum ()
@@ -860,8 +902,6 @@ function myFunction ()
             }
         }
         const sum = getSum();
-        console.log(sum);
-
 
         function getScore ()
         {
@@ -879,13 +919,14 @@ function myFunction ()
                     let homeScore = firstMatch[homeTeam];
                     let awayTeam = Object.keys(firstMatch)[1];
                     let awayScore = firstMatch[awayTeam];
+
                     if (homeScore > awayScore)
                     {
                         score1 += 1;
                     }
                     else if (homeScore == awayScore)
                     {
-                        score1 += 0.25;
+                        score1 += 0.5;
                     }
                     iteration1++;
                 }
@@ -906,7 +947,7 @@ function myFunction ()
                     }
                     else if (homeScore == awayScore)
                     {
-                        score2 += 0.25;
+                        score2 += 0.5;
                     }
                     iteration2++;
                 }
@@ -919,6 +960,33 @@ function myFunction ()
             }
         }
         const score = getScore();
+
+        function h2h ()
+        {
+            const h2H = matchJson.teamHeads;
+            let highValue = 0;
+
+            h2H.forEach(Match =>
+            {
+                const homeTeam = Object.keys(Match)[0];
+                const homeScore = Match[homeTeam];
+                const awayTeam = Object.keys(Match)[1];
+                const awayScore = Match[awayTeam];
+
+                if (homeScore > awayScore)
+                {
+                    highValue += 1;
+                }
+                else if (awayScore > homeScore)
+                {
+                    highValue -= 1;
+                }
+            });
+
+            return highValue;
+        }
+        const head2head = h2h();
+        
 
         function calculatePercentage ()
         {
@@ -967,7 +1035,8 @@ function myFunction ()
         return {
             highestGoals: sum,
             mostGamesWon: score,
-            percentageOfHOHWins: percent
+            percentageOfHOHWins: percent,
+            head2head: head2head
         };
     }
 
@@ -981,6 +1050,8 @@ function myFunction ()
 
         let master = calculatedJson.percentageOfHOHWins;
 
+        const head2head = calculatedJson.head2head;
+
         let myTruth = 0;
 
         if (sum1 > sum2) { myTruth += 1; }
@@ -989,9 +1060,11 @@ function myFunction ()
         if (score2 > score1) { myTruth -= 1; }
         if (master > 0) { myTruth += 1.5; }
         if (master < 0) { myTruth -= 1.5; }
-        //alert("sum1: "+ sum1 +" and sum2: "+ sum2 +" score1: "+score1+ " and score2: "+ score2 +"  master: "+ master + " truth: "+myTruth);
-        if (myTruth > 2.5) { return true; }
-        if (myTruth < -2.5) { return false; }
+
+        myTruth += head2head;
+        //console.log("sum1: "+ sum1 +" and sum2: "+ sum2 +" score1: "+score1+ " and score2: "+ score2 +"  master: "+ master + " truth: "+ myTruth + " head2head: "+ head2head);
+        if (myTruth > 1.5) { return true; }
+        if (myTruth < -1.5) { return false; }
         return null;
     }
 };
