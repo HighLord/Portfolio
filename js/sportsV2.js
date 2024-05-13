@@ -717,51 +717,101 @@ function myFunction ()
 
             let team1 = [];
             let team2 = [];
+            let teamHeads = [];
             const maxNumber = Math.max(hometeams.length, awayteams.length);
             
             for (let index = 0; index < maxNumber; index++)
             {
                 if (team1name == hometeams[index])
                 {
-                    team1.push(
-                        {
-                            [hometeams[index]]: homescores[index],
-                            [awayteams[index]]: awayscores[index]
-                        }
-                    );
+                    if (awayteams[index] != team2name)
+                    {
+                        team1.push(
+                            {
+                                [hometeams[index]]: homescores[index],
+                                [awayteams[index]]: awayscores[index]
+                            }
+                        );
+                    }
+                    else
+                    {
+                        teamHeads.push(
+                            {
+                                [hometeams[index]]: homescores[index],
+                                [awayteams[index]]: awayscores[index]
+                            }
+                        );
+                    }
                 }
                 if (team1name == awayteams[index])
                 {
-                    team1.push(
-                        {
-                            [awayteams[index]]: awayscores[index],
-                            [hometeams[index]]: homescores[index]
-                        }
-                    );
+                    if (hometeams[index] != team2name)
+                    {
+                        team1.push(
+                            {
+                                [awayteams[index]]: awayscores[index],
+                                [hometeams[index]]: homescores[index]
+                            }
+                        );
+                    }
+                    else
+                    {
+                        teamHeads.push(
+                            {
+                                [awayteams[index]]: awayscores[index],
+                                [hometeams[index]]: homescores[index]
+                            }
+                        )
+                    }
                 }
                 if (team2name == hometeams[index])
                 {
-                    team2.push(
-                        {
-                            [hometeams[index]]: homescores[index],
-                            [awayteams[index]]: awayscores[index]
-                        }
-                    );
+                    if (awayteams[index] != team1name)
+                    {
+                        team2.push(
+                            {
+                                [hometeams[index]]: homescores[index],
+                                [awayteams[index]]: awayscores[index]
+                            }
+                        );
+                    }
+                    else
+                    {
+                        teamHeads.push(
+                            {
+                                [hometeams[index]]: homescores[index],
+                                [awayteams[index]]: awayscores[index]
+                            }
+                        )
+                    }
                 }
                 if (team2name == awayteams[index])
                 {
-                    team2.push(
-                        {
-                            [awayteams[index]]: awayscores[index],
-                            [hometeams[index]]: homescores[index]
-                        }
-                    );
+                    if (hometeams[index] != team1name)
+                    {
+                        team2.push(
+                            {
+                                [awayteams[index]]: awayscores[index],
+                                [hometeams[index]]: homescores[index]
+                            }
+                        );
+                    }
+                    else
+                    {
+                        teamHeads.push(
+                            {
+                                [awayteams[index]]: awayscores[index],
+                                [hometeams[index]]: homescores[index]
+                            }
+                        )
+                    }
                 }
             }        
             
             return ({
                 "team1": team1,
-                "team2": team2
+                "team2": team2,
+                "teamHeads": teamHeads
             });
         }
         const matchJson = matchAllTeamNames();
