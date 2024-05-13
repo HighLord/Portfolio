@@ -353,6 +353,8 @@ function myFunction ()
 
                 let niceJson = await sortGame(key);
                 let calculatedJson = await predict(niceJson, amountOfBooking, gameTime, gameType, gameMode)
+                console.log(calculatedJson);
+
                 let predictedOutcome = outcomes(calculatedJson);
                 amounted++;
                 if (predictedOutcome !== null)
@@ -553,6 +555,22 @@ function myFunction ()
                             resolve(json);
                         } else
                         {
+                            results += "<p id='error' style='padding: 5px'>NO GAMES AVAILABLE FOR SPECIFIED DATE</p>";
+                            button.innerHTML = "Search";
+                            clear.innerHTML = "Clear";
+                            click = true;
+                            Object.keys(dataKing).forEach(function (key)
+                            {
+                                delete dataKing[key];
+                            });
+                            visited.splice(0, visited.length);
+                            result.innerHTML = results;
+                            results = "";
+                            book = true;
+                            label = false;
+                            amounted = 0;
+                            amounts = 0;
+                            countTotal = 0;
                             resolve("NO GAMES AVAILABLE FOR SPECIFIED DATE");
                         }
                     })
@@ -745,6 +763,7 @@ function myFunction ()
             });
         }
         const matchJson = matchAllTeamNames();
+
         function getSum ()
         {
             let sum1 = 0;
@@ -846,11 +865,13 @@ function myFunction ()
         function calculatePercentage ()
         {
             let master = 0;
+            let limit = 0;
             let checkedAlready = [];
             let minNumber = Math.min(matchJson.team1.length, matchJson.team2.length);
 
-            for (let i = 0; i < minNumber; i++)
+            outerloop: for (let i = 0; i < minNumber; i++)
             {
+                if (limit > (gameMode * 2)) { break outerloop; };
                 let firstMatch = matchJson.team1[i];
                 let homeTeam1 = Object.keys(firstMatch)[0];
                 let awayTeam1 = Object.keys(firstMatch)[1];
@@ -871,10 +892,12 @@ function myFunction ()
                         if (homeScore1 > awayScore1)
                         {
                             master += 1;
+                            limit += 1;
                         }
                         else if (homeScore2 > awayScore2)
                         {
                             master -= 1;
+                            limit += 1;
                         }
                     }
                 }
