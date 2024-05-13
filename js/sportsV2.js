@@ -758,8 +758,8 @@ function myFunction ()
                     {
                         teamHeads.push(
                             {
-                                [awayteams[index]]: awayscores[index],
-                                [hometeams[index]]: homescores[index]
+                                [hometeams[index]]: homescores[index],
+                                [awayteams[index]]: awayscores[index]
                             }
                         );
                     }
@@ -800,8 +800,8 @@ function myFunction ()
                     {
                         teamHeads.push(
                             {
-                                [awayteams[index]]: awayscores[index],
-                                [hometeams[index]]: homescores[index]
+                                [hometeams[index]]: homescores[index],
+                                [awayteams[index]]: awayscores[index]
                             }
                         );
                     }
