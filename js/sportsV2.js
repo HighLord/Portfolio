@@ -718,7 +718,7 @@ function myFunction ()
             let team1 = [];
             let team2 = [];
             const maxNumber = Math.max(hometeams.length, awayteams.length);
-            for (let index = 0; index < maxNumber.length; index++)
+            for (let index = 0; index < maxNumber; index++)
             {
                 if (team1name == hometeams[index])
                 {
@@ -764,7 +764,7 @@ function myFunction ()
             });
         }
         const matchJson = matchAllTeamNames();
-        console.log(JSON.stringify(matchJson));
+        console.log((matchJson));
         
 
         function getSum ()
