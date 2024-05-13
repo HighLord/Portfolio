@@ -551,6 +551,7 @@ function myFunction ()
                             jsonData = JSON.stringify(jsonData);
 
                             resolve(jsonData);*/
+                            console.log(json);
                             resolve(json);
                         } else
                         {
@@ -572,7 +573,6 @@ function myFunction ()
                             countTotal = 0;
                             resolve("NO GAMES AVAILABLE FOR SPECIFIED DATE");
                         }
-                        console.log(json);
                     })
                     .catch(error =>
                     {
