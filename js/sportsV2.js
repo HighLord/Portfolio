@@ -761,7 +761,7 @@ function myFunction ()
                                 [awayteams[index]]: awayscores[index],
                                 [hometeams[index]]: homescores[index]
                             }
-                        )
+                        );
                     }
                 }
                 if (team2name == hometeams[index])
@@ -782,7 +782,7 @@ function myFunction ()
                                 [hometeams[index]]: homescores[index],
                                 [awayteams[index]]: awayscores[index]
                             }
-                        )
+                        );
                     }
                 }
                 if (team2name == awayteams[index])
@@ -803,7 +803,7 @@ function myFunction ()
                                 [awayteams[index]]: awayscores[index],
                                 [hometeams[index]]: homescores[index]
                             }
-                        )
+                        );
                     }
                 }
             }        
