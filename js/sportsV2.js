@@ -353,7 +353,6 @@ function myFunction ()
 
                 let niceJson = await sortGame(key);
                 let calculatedJson = await predict(niceJson, amountOfBooking, gameTime, gameType, gameMode)
-                console.log(calculatedJson);
 
                 let predictedOutcome = outcomes(calculatedJson);
                 amounted++;
@@ -573,6 +572,7 @@ function myFunction ()
                             countTotal = 0;
                             resolve("NO GAMES AVAILABLE FOR SPECIFIED DATE");
                         }
+                        console.log(json);
                     })
                     .catch(error =>
                     {
@@ -757,6 +757,10 @@ function myFunction ()
                     );
                 }
             }
+            console.log(team1);
+            console.log(team2);
+            
+            
             return ({
                 "team1": team1,
                 "team2": team2
