@@ -1070,13 +1070,13 @@ function myFunction ()
         if (sum2 > sum1) { myTruth -= 1; }
         if (score1 > score2) { myTruth += 1; }
         if (score2 > score1) { myTruth -= 1; }
-        if (master > 0) { myTruth += 1.5; }
-        if (master < 0) { myTruth -= 1.5; }
+        if (master > 0) { myTruth += 1; }
+        if (master < 0) { myTruth -= 1; }
 
         myTruth += head2head;
         //console.log("sum1: "+ sum1 +" and sum2: "+ sum2 +" score1: "+score1+ " and score2: "+ score2 +"  master: "+ master + " truth: "+ myTruth + " head2head: "+ head2head);
-        if (myTruth > 3) { return true; }
-        if (myTruth < -3) { return false; }
+        if (myTruth >= 3) { return true; }
+        if (myTruth <= -3) { return false; }
         return null;
     }
 };
