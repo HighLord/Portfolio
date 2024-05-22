@@ -354,7 +354,7 @@ function myFunction ()
                 let niceJson = await sortGame(key);
 
                 let calculatedJson = await predict(niceJson, amountOfBooking, gameTime, gameType, gameMode)
-                
+
                 let predictedOutcome = outcomes(calculatedJson);
                 amounted++;
                 if (predictedOutcome !== null)
@@ -983,10 +983,22 @@ function myFunction ()
                 }
             });
 
+            if (highValue > 0)
+            {
+                highValue = 1;
+            }
+            else if (highValue < 0)
+            {
+                highValue = -1;
+            }
+            else
+            {
+                highValue = 0;
+            }
             return highValue;
         }
         const head2head = h2h();
-        
+
 
         function calculatePercentage ()
         {
@@ -1064,7 +1076,7 @@ function myFunction ()
         myTruth += head2head;
         //console.log("sum1: "+ sum1 +" and sum2: "+ sum2 +" score1: "+score1+ " and score2: "+ score2 +"  master: "+ master + " truth: "+ myTruth + " head2head: "+ head2head);
         if (myTruth > 1.5) { return true; }
-        if (myTruth < -1.5) { return false; }
+        if (myTruth < 1.5) { return false; }
         return null;
     }
 };
