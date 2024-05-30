@@ -191,7 +191,7 @@ function myFunction ()
                                         {
                                             var message = responses.message;
                                             var innerMsg = responses.innerMsg;
-                                            if (message == "Success" || innerMsg == "Invalid")
+                                            if (message == "Success" || innerMsg == "Invalid" || innerMsg == "selections can not be null or empty")
                                             {
                                                 var odds = responses.totalOdds;
                                                 var total = responses.count;
