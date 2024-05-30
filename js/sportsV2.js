@@ -124,6 +124,7 @@ function myFunction ()
         var book = false;
         var bypass = false;
         updateProgressBar(amounted, amountOfBooking);
+        var amountOfBooking2;
 
         async function ajax ()
         {
@@ -159,7 +160,7 @@ function myFunction ()
                             updateProgressBar(amounted, amountOfBooking);
                             await doSomethingWithElement(key, time, league);
                             times += 1;
-                            if (amountOfBooking > response.length) { amountOfBooking = response.length; }
+                            if (amountOfBooking > response.length) { amountOfBooking2 = amountOfBooking; amountOfBooking = response.length;}
                             if (times == response.length)
                             {
                                 oks();
@@ -191,7 +192,7 @@ function myFunction ()
                                         {
                                             var message = responses.message;
                                             var innerMsg = responses.innerMsg;
-                                            if (message == "Success" || innerMsg == "Invalid" || innerMsg == "selections can not be null or empty")
+                                            if (message == "Success" || innerMsg == "Invalid" || (innerMsg == "selections can not be null or empty" && amountOfBooking2 != amountOfBooking)
                                             {
                                                 var odds = responses.totalOdds;
                                                 var total = responses.count;
@@ -208,10 +209,7 @@ function myFunction ()
                                                         delete dataKing[key];
                                                     }
                                                 });
-                                                console.log('start');
-                                                
-                                                console.log('total='+total+' amtOfBooking='+amountOfBooking+' selectV2='+selectv2);
-                                                
+                                                 
                                                 if (total < amountOfBooking && selectv2 === null && book === false && bypass === false && stop === false)
                                                 {
                                                     amountOfBooking = parseFloat(amountOfBooking);
