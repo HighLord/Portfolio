@@ -192,7 +192,7 @@ function myFunction ()
                                         {
                                             var message = responses.message;
                                             var innerMsg = responses.innerMsg;
-                                            if (message == "Success" || innerMsg == "Invalid" || (innerMsg == "selections can not be null or empty" && amountOfBooking2 != amountOfBooking)
+                                            if (message == "Success" || innerMsg == "Invalid" || (innerMsg == "selections can not be null or empty" && amountOfBooking2 != amountOfBooking))
                                             {
                                                 var odds = responses.totalOdds;
                                                 var total = responses.count;
