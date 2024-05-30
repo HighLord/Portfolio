@@ -441,7 +441,6 @@ function myFunction ()
                 "baseball": 6,
                 "handball": 7,
                 "volleyball": 12,
-                "cricket": 13,
                 "darts": 14,
                 "boxing": 16,
                 "badminton": 21,
