@@ -208,7 +208,8 @@ function myFunction ()
                                                         delete dataKing[key];
                                                     }
                                                 });
-
+                                                console.log('total='+total+' amtOfBooking='+amountOfBooking+' selectV2='+selectv2);
+                                                
                                                 if (total < amountOfBooking && selectv2 === null && book === false && bypass === false && stop === false)
                                                 {
                                                     amountOfBooking = parseFloat(amountOfBooking);
