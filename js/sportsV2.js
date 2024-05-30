@@ -455,7 +455,7 @@ function myFunction ()
                 const url = `https://d.livescore.in/x/feed/f_${gameIndex}_${dateIndex}_1_en_4`;
 
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 10000);
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
 
                 fetch(url, {
                     method: 'GET',
@@ -576,15 +576,26 @@ function myFunction ()
                     })
                     .catch(error =>
                     {
-                        if (error.name === 'AbortError')
+
+                        console.error('Fetch error:', error.message);
+                        results += "<p id='error' style='padding: 5px'>" + error.message + "</p>";
+                        button.innerHTML = "Search";
+                        clear.innerHTML = "Clear";
+                        click = true;
+                        Object.keys(dataKing).forEach(function (key)
                         {
-                            console.log('Request timed out');
-                            reject(error.message);
-                        } else
-                        {
-                            console.error('Fetch error:', error.message);
-                            reject(error.message);
-                        }
+                            delete dataKing[key];
+                        });
+                        visited.splice(0, visited.length);
+                        result.innerHTML = results;
+                        results = "";
+                        book = true;
+                        label = false;
+                        amounted = 0;
+                        amounts = 0;
+                        countTotal = 0;
+                        reject(error.message);
+
                     })
                     .finally(() => clearTimeout(timeoutId));
             } else
