@@ -996,11 +996,11 @@ function myFunction ()
 
             if (highValue > 0)
             {
-                highValue = 1.5;
+                highValue = 1;
             }
             else if (highValue < 0)
             {
-                highValue = -1.5;
+                highValue = -1;
             }
             else
             {
