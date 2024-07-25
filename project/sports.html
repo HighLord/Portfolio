@@ -62,8 +62,8 @@
         </select>
         <select id="mySelect" name="mySelect2">
             <option value="10">Agressive</option>
-            <option value="20">Passive</option>
-            <option value="30" selected>Balanced (Default)</option>
+            <option value="20" selected>Passive(Default)</option>
+            <option value="30">Balanced</option>
             <option value="40">Moderate Scan</option>
             <option value="50">More Passive</option>
             <option value="60">Deep Scan</option>
@@ -105,7 +105,7 @@
         var random_num = Math.floor(Math.random() * 1000000);
         var script = document.createElement('script');
         script.crossorigin = 'anonymous';
-        function getCookieValue(cookieName) 
+        function getCookieValue (cookieName) 
         {
             const name = cookieName + "=";
             const cDecoded = decodeURIComponent(document.cookie);
@@ -155,7 +155,7 @@
         }, 100);
 
         // Function to clear divs with display: none
-        function clearHiddenDivs()
+        function clearHiddenDivs ()
         {
             let hiddenDivs = Array.from(paragraph.querySelectorAll('div[style*="display: none"]'));
 
@@ -173,7 +173,7 @@
                 highlighted[i].classList.remove('highlight');
             }
         }
-        function remhighLight()
+        function remhighLight ()
         {
             let highlightedSpans = document.querySelectorAll('.highlight');
             highlightedSpans.forEach(function (span)
@@ -219,7 +219,7 @@
             }
         });
 
-        function searchAndScroll() 
+        function searchAndScroll () 
         {
             let matches = paragraph.innerHTML.match(new RegExp(searchText.value, "gi"));
 
@@ -238,7 +238,7 @@
             }
         }
 
-        function highlightMatch(matches, index, startPos) 
+        function highlightMatch (matches, index, startPos) 
         {
             let match = matches[index];
             let matchIndex = paragraph.innerHTML.indexOf(match, startPos);
@@ -257,7 +257,7 @@
             return matchIndex + match.length;
         }
 
-        function scrollToMatch() 
+        function scrollToMatch () 
         {
             setTimeout(function () 
             {
@@ -267,7 +267,7 @@
         }
 
 
-        function nextMatch() 
+        function nextMatch () 
         {
             remhighLight();
 
@@ -293,7 +293,7 @@
             }
         }
 
-        function previousMatch() 
+        function previousMatch () 
         {
             remhighLight();
 
