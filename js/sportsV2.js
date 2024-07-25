@@ -17,6 +17,39 @@ function myFunction ()
         selOdds.appendChild(option);
     }
 
+    function updateOptions (selectElement)
+    {
+        const selType = document.getElementById('mySelect6');
+        selType.innerHTML = ''; // Clear existing options
+
+        if (selectElement.value == 'football')
+        {
+            const option1 = document.createElement('option');
+            option1.value = 'double_chance';
+            option1.text = 'Double Chance';
+            selType.appendChild(option1);
+
+            const option2 = document.createElement('option');
+            option2.value = 'draw';
+            option2.text = 'Draws';
+            selType.appendChild(option2);
+        }
+        else if (selectElement.value == 'basketball')
+        {
+            const option = document.createElement('option');
+            option.value = 'winner';
+            option.text = 'Winner';
+            selType.appendChild(option);
+        }
+    }
+    document.getElementById('mySelect4').addEventListener('change', function ()
+    {
+        updateOptions(this);
+    });
+    
+    updateOptions(document.getElementById('mySelect4'));
+
+
     const bell = document.getElementsByClassName('fa-bell')[0];
     const count = document.getElementsByClassName('count')[0];
     const notification = document.getElementsByClassName('notify-text')[0];
