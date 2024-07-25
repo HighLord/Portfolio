@@ -935,10 +935,6 @@ function myFunction ()
                     {
                         score1 += 1;
                     }
-                    else if (homeScore == awayScore)
-                    {
-                        score1 += 0.5;
-                    }
                     iteration1++;
                 }
             }
@@ -955,10 +951,6 @@ function myFunction ()
                     if (homeScore > awayScore)
                     {
                         score2 += 1;
-                    }
-                    else if (homeScore == awayScore)
-                    {
-                        score2 += 0.5;
                     }
                     iteration2++;
                 }
@@ -1086,8 +1078,8 @@ function myFunction ()
 
         myTruth += head2head;
         //console.log("sum1: "+ sum1 +" and sum2: "+ sum2 +" score1: "+score1+ " and score2: "+ score2 +"  master: "+ master + " truth: "+ myTruth + " head2head: "+ head2head);
-        if (myTruth > 3) { return true; }
-        if (myTruth < -3) { return false; }
+        if (myTruth > 2.5) { return true; }
+        if (myTruth < -2.5) { return false; }
         return null;
     }
 };
