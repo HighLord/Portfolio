@@ -1164,12 +1164,13 @@ function myFunction ()
         }
         else if (selType.value == 'draw')
         {
+            myTruth += 1;
             if (draw1 === true) { myTruth += 1; }
             if (draw2 === true) { myTruth += 1; }
             if (draw3 === true) { myTruth += 1; }
         }
 
-        console.log("sum1: " + sum1 + " and sum2: " + sum2 + " score1: " + score1 + " and score2: " + score2 + "  master: " + master + " truth: " + myTruth + " head2head: " + head2head + "draws: " + draw1 + draw2 + draw3);
+        console.log("sum1: " + sum1 + " and sum2: " + sum2 + " score1: " + score1 + " and score2: " + score2 + "  master: " + master + " truth: " + myTruth + " head2head: " + head2head + " draws: " + draw1 + draw2 + draw3);
         if (myTruth > 2) { return true; }
         if (myTruth < -2) { return false; }
         return null;
