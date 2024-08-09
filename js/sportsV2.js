@@ -17,24 +17,29 @@ function myFunction ()
         selOdds.appendChild(option);
     }
 
+    const selType = document.getElementById('mySelect6');
     function updateOptions (selectElement)
     {
-        const selType = document.getElementById('mySelect6');
         selType.innerHTML = ''; // Clear existing options
 
         if (selectElement.value == 'football')
         {
-            const option1 = document.createElement('option');
-            option1.value = 'double_chance';
-            option1.text = 'Double Chance';
-            selType.appendChild(option1);
+            const option_1 = document.createElement('option');
+            option_1.value = 'winner';
+            option_1.text = 'Winner';
+            selType.appendChild(option_1);
 
-            const option2 = document.createElement('option');
-            option2.value = 'draw';
-            option2.text = 'Draws';
-            selType.appendChild(option2);
+            const option_2 = document.createElement('option');
+            option_2.value = 'double_chance';
+            option_2.text = 'Double Chance';
+            selType.appendChild(option_2);
+
+            const option_3 = document.createElement('option');
+            option_3.value = 'draw';
+            option_3.text = 'Draws';
+            selType.appendChild(option_3);
         }
-        else if (selectElement.value == 'basketball')
+        else
         {
             const option = document.createElement('option');
             option.value = 'winner';
@@ -46,7 +51,7 @@ function myFunction ()
     {
         updateOptions(this);
     });
-    
+
     updateOptions(document.getElementById('mySelect4'));
 
 
@@ -193,7 +198,7 @@ function myFunction ()
                             updateProgressBar(amounted, amountOfBooking);
                             await doSomethingWithElement(key, time, league);
                             times += 1;
-                            if (amountOfBooking > response.length) { amountOfBooking2 = amountOfBooking; amountOfBooking = response.length;}
+                            if (amountOfBooking > response.length) { amountOfBooking2 = amountOfBooking; amountOfBooking = response.length; }
                             if (times == response.length)
                             {
                                 oks();
@@ -242,7 +247,7 @@ function myFunction ()
                                                         delete dataKing[key];
                                                     }
                                                 });
-                                                 
+
                                                 if (total < amountOfBooking && selectv2 === null && book === false && bypass === false && stop === false)
                                                 {
                                                     amountOfBooking = parseFloat(amountOfBooking);
@@ -402,6 +407,18 @@ function myFunction ()
                         switch (gameType)
                         {
                             case "football":
+                                if (selType.value === "draw")
+                                {
+                                    outcome = "Draw";
+                                    statement = `${homeT} to draw ${awayT}`;
+                                    break;
+                                }
+                                else if (selType.value === "winner")
+                                {
+                                    outcome = predictedOutcome ? "Home" : "Away";
+                                    statement = outcome === "Home" ? `${homeT} to win ${awayT}` : `${awayT} to win ${homeT}`;
+                                    break;
+                                }
                             case "icehockey":
                             case "handball":
                                 outcome = predictedOutcome ? "Home or Draw" : "Draw or Away";
@@ -951,6 +968,7 @@ function myFunction ()
         {
             let score1 = 0;
             let score2 = 0;
+            let draw = 0;
             let iteration1 = 0;
             let iteration2 = 0;
 
@@ -967,6 +985,10 @@ function myFunction ()
                     if (homeScore > awayScore)
                     {
                         score1 += 1;
+                    }
+                    else if (homeScore === awayScore)
+                    {
+                        draw += 1;
                     }
                     iteration1++;
                 }
@@ -985,12 +1007,18 @@ function myFunction ()
                     {
                         score2 += 1;
                     }
+                    else if (homeScore === awayScore)
+                    {
+                        draw += 1;
+                    }
                     iteration2++;
                 }
             }
+
             return {
                 iteration1: iteration1,
                 iteration2: iteration2,
+                draw: draw >= iteration1 || draw >= iteration2 ? true : false,
                 score1: score1,
                 score2: score2
             }
@@ -1001,6 +1029,7 @@ function myFunction ()
         {
             const h2H = matchJson.teamHeads;
             let highValue = 0;
+            let draw = 0;
 
             h2H.forEach(Match =>
             {
@@ -1017,21 +1046,31 @@ function myFunction ()
                 {
                     highValue -= 1;
                 }
+                else if (homeScore === awayScore)
+                {
+                    draw += 1;
+                }
             });
 
             if (highValue > 0)
             {
+                draw = draw > highValue ? true : false;
                 highValue = 1;
             }
             else if (highValue < 0)
             {
+                draw = draw * -1 > highValue ? true : false;
                 highValue = -1;
             }
             else
             {
+                draw = draw > highValue ? true : false;
                 highValue = 0;
             }
-            return highValue;
+            return {
+                highValue: highValue,
+                draw: draw
+            }
         }
         const head2head = h2h();
 
@@ -1040,12 +1079,13 @@ function myFunction ()
         {
             let master = 0;
             let limit = 0;
+            let draw = 0;
             let checkedAlready = [];
             let minNumber = Math.min(matchJson.team1.length, matchJson.team2.length);
 
             outerloop: for (let i = 0; i < minNumber; i++)
             {
-                if (limit > (gameMode * 2)) { break outerloop; };
+                if (limit > (gameMode)) { break outerloop; };
                 let firstMatch = matchJson.team1[i];
                 let homeTeam1 = Object.keys(firstMatch)[0];
                 let awayTeam1 = Object.keys(firstMatch)[1];
@@ -1073,10 +1113,17 @@ function myFunction ()
                             master -= 1;
                             limit += 1;
                         }
+                        else if (homeScore1 === awayScore1 && homeScore2 === awayScore2)
+                        {
+                            draw += 1;
+                        }
                     }
                 }
             }
-            return master;
+            return {
+                master: master,
+                draw: draw = draw > 0 ? true : false
+            }
         }
         const percent = calculatePercentage();
 
@@ -1095,22 +1142,34 @@ function myFunction ()
 
         let score1 = calculatedJson.mostGamesWon.score1 / calculatedJson.mostGamesWon.iteration1;
         let score2 = calculatedJson.mostGamesWon.score2 / calculatedJson.mostGamesWon.iteration2;
+        let draw1 = calculatedJson.mostGamesWon.draw;
 
-        let master = calculatedJson.percentageOfHOHWins;
+        let master = calculatedJson.percentageOfHOHWins.master;
+        let draw2 = calculatedJson.percentageOfHOHWins.draw
 
-        const head2head = calculatedJson.head2head;
+        const head2head = calculatedJson.head2head.highValue;
+        let draw3 = calculatedJson.head2head.draw;
 
         let myTruth = 0;
+        if (selType.value == 'winner' || selType.value == 'double_chance')
+        {
+            if (sum1 > sum2) { myTruth += 1; }
+            if (sum2 > sum1) { myTruth -= 1; }
+            if (score1 > score2) { myTruth += 1; }
+            if (score2 > score1) { myTruth -= 1; }
+            if (master > 0) { myTruth += 1; }
+            if (master < 0) { myTruth -= 1; }
 
-        if (sum1 > sum2) { myTruth += 1; }
-        if (sum2 > sum1) { myTruth -= 1; }
-        if (score1 > score2) { myTruth += 1; }
-        if (score2 > score1) { myTruth -= 1; }
-        if (master > 0) { myTruth += 1; }
-        if (master < 0) { myTruth -= 1; }
+            myTruth += head2head;
+        }
+        else if (selType.value == 'draw')
+        {
+            if (draw1 === true) { myTruth += 1; }
+            if (draw2 === true) { myTruth += 1; }
+            if (draw3 === true) { myTruth += 1; }
+        }
 
-        myTruth += head2head;
-        //console.log("sum1: "+ sum1 +" and sum2: "+ sum2 +" score1: "+score1+ " and score2: "+ score2 +"  master: "+ master + " truth: "+ myTruth + " head2head: "+ head2head);
+        console.log("sum1: " + sum1 + " and sum2: " + sum2 + " score1: " + score1 + " and score2: " + score2 + "  master: " + master + " truth: " + myTruth + " head2head: " + head2head + "draws: " + draw1 + draw2 + draw3);
         if (myTruth > 2) { return true; }
         if (myTruth < -2) { return false; }
         return null;
