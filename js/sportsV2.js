@@ -383,7 +383,7 @@ function myFunction ()
                                             countTotal = 0;
                                         }
                                 });
-                        }, 100);
+                        }, 1);
                     }
                 }
             }
