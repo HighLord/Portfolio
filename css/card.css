@@ -23,6 +23,17 @@ section {
     border-radius: 15px;
 }
 
+.card {
+    transform: rotateX(50deg) rotateZ(50deg);
+    transform-style: preserve-3d;
+    transition:
+        .4s ease-in-out transform;
+}
+body:hover .card{
+    transform: rotateX(0deg) rotateZ(0deg);
+}
+
+
 .inner {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     position: relative;
@@ -215,5 +226,6 @@ section {
 }
 
 #set input {
-    
+    padding: 10px;
+    text-align: center;
 }
