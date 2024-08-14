@@ -21,8 +21,8 @@ section {
 .inner {
     box-shadow: rgba(17, 17, 169, 0.448) 0px 1px 3px, rgba(255, 255, 255, 0.475) 0px 1px 2px;
     position: relative;
-    width: 400px;
-    height: 270px;
+    width: 330px;
+    height: 220px;
     border-radius: 10px;
     transition: transform 0.9s;
     transform-style: preserve-3d;
@@ -57,7 +57,7 @@ section {
 .grid-item {
     margin: 2 2;
     display: flex;
-    jborder: 1px solid red;
+    hborder: 1px solid red;
     color: white;
 }
 .grid-item:nth-child(1) {
@@ -67,43 +67,44 @@ section {
     font-weight: 600;
 }
 .grid-item:nth-child(2) i{
-    font-size: 26px;
+    font-size: 22px;
     transform: rotate(90deg);
     color: white;
 }
 
 .grid-item:nth-child(4) img {
-    width: 60%;
+    width: 75%;
 }
 
 .grid-item:nth-child(5) p {
     position: absolute;
-    font-size: 1.2em;
-    letter-spacing: 9;
-    width: 100%;
-    top: 140;
-    left: 35;
+    font-size: 1em;
+    letter-spacing: 7;
+    width: 95%;
+    top: 115;
+    left: 27;
     font-weight: 400;
 }
 .grid-item:nth-child(7) i {
     position: absolute;
-    top: 175;
+    top: 155;
     left: 10px;
-    font-size: 25px;
+    font-size: 20px;
 }
 .grid-item:nth-child(7) p {
     position: absolute;
-    top: 230;
-    left: 35;
-    letter-spacing: 4;
+    top: 190;
+    left: 25;
+    letter-spacing: 2.5;
     font-weight: 600;
+    font-size: 0.8em;
 }
 
 .grid-item:nth-child(8) p:nth-child(1){
-    font-size: 0.8em;
+    font-size: 0.7em;
 }
 .grid-item:nth-child(8) p:nth-child(2) {
-    font-size: 1.4em;
+    font-size: 1.2em;
     letter-spacing: 4;
 }
 
