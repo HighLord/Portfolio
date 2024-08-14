@@ -1,0 +1,135 @@
+body{
+    background-color: rgba(0, 0, 0, 0.559);
+}
+section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    height: 98%;
+    background-color: rgba(255, 255, 255, 0.523);
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    margin: 0;
+}
+
+.card {
+    perspective: 1000px;
+}
+
+.inner {
+    box-shadow: rgba(17, 17, 169, 0.448) 0px 1px 3px, rgba(255, 255, 255, 0.475) 0px 1px 2px;
+    position: relative;
+    width: 400px;
+    height: 270px;
+    border-radius: 10px;
+    transition: transform 0.9s;
+    transform-style: preserve-3d;
+    
+}
+.card:hover .inner {
+    transform: rotateY(180deg);
+}
+
+.front, .back{
+    position: absolute;
+    width: 100%;
+    border-radius: 10px;
+    backface-visibility: hidden;
+    height: 100%;
+    padding: 1px 0px;
+}
+
+.front {
+    background: radial-gradient(circle, #0d3cab 20%, transparent 20%) 0 0,
+            radial-gradient(circle, #1414c569 20%, transparent 20%) 50px 50px,
+            radial-gradient(circle, #aa2020 20%, transparent 20%) 25px 25px,
+            radial-gradient(circle, #b61076 20%, transparent 20%) 75px 75px;
+        background-size: 100px 100px;
+        background-color: #361ca1ab;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0px;
+}
+
+.grid-item {
+    margin: 2 2;
+    display: flex;
+    jborder: 1px solid red;
+    color: white;
+}
+.grid-item:nth-child(1) {
+    font-size: 1.2em;
+    font-family: 'Courier New';
+    letter-spacing: 0.1em;
+    font-weight: 600;
+}
+.grid-item:nth-child(2) i{
+    font-size: 26px;
+    transform: rotate(90deg);
+    color: white;
+}
+
+.grid-item:nth-child(4) img {
+    width: 60%;
+}
+
+.grid-item:nth-child(5) p {
+    position: absolute;
+    font-size: 1.2em;
+    letter-spacing: 9;
+    width: 100%;
+    top: 140;
+    left: 35;
+    font-weight: 400;
+}
+.grid-item:nth-child(7) i {
+    position: absolute;
+    top: 175;
+    left: 10px;
+    font-size: 25px;
+}
+.grid-item:nth-child(7) p {
+    position: absolute;
+    top: 230;
+    left: 35;
+    letter-spacing: 4;
+    font-weight: 600;
+}
+
+.grid-item:nth-child(8) p:nth-child(1){
+    font-size: 0.8em;
+}
+.grid-item:nth-child(8) p:nth-child(2) {
+    font-size: 1.4em;
+    letter-spacing: 4;
+}
+
+.grid-item:nth-child(9) img {
+    width: 90%;
+    height: auto;
+}
+
+.grid-item:nth-child(1), .grid-item:nth-child(2), .grid-item:nth-child(3), .grid-item:nth-child(4), .grid-item:nth-child(9){
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.grid-item:nth-child(8){
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.back {
+    background-color: rgb(255, 255, 255);
+    transform: rotateY(180deg);
+}
+
+#set {
+    border: 1px solid;
+    height: 49%;
+}
