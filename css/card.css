@@ -17,35 +17,49 @@ section {
     box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
     margin: 0;
 }
+section button {
+    position: absolute;
+    top: 10px;
+    padding: 2 20px;
+    border-radius: 5px;
+    border: none;
+    outline: none; 
+    transition: .7s ease-in all;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4), 0px 7px 13px -3px rgba(0, 0, 0, 0.3),
+            0px -3px 0px rgba(0, 0, 0, 0.2) inset;
+    
+}
+section button:focus{
+    transform: translate(-150px);
+    transition: .7s ease-in all;
+}
+.inner.active{
+    transform: rotateY(180deg);
+}
 
 .card {
     perspective: 1000px;
     border-radius: 15px;
-}
-
-.card {
+    box-shadow: -15px -15px 15px rgba(255, 255, 255, 0.2), 15px 15px 15px rgba(0, 0, 0, 0.1),
+            -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 5px 5px 5px rgba(0,0,0,0.1) inset;
     transform: rotateX(50deg) rotateZ(50deg);
     transform-style: preserve-3d;
     transition:
         .4s ease-in-out transform;
 }
-body:hover .card{
+
+body:hover .card {
     transform: rotateX(0deg) rotateZ(0deg);
 }
 
 
 .inner {
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     position: relative;
     width: 330px;
     height: 238px;
     border-radius: 15px;
     transition: transform 0.9s;
     transform-style: preserve-3d;
-}
-
-.card:hover .inner {
-    transform: rotateY(180deg);
 }
 
 .front,
@@ -88,6 +102,13 @@ body:hover .card{
     font-size: 22px;
     transform: rotate(90deg);
     color: white;
+}
+.grid-item:nth-child(3) p {
+    font-size: 13px;
+    position: absolute;
+    width: 40%;
+    right: 0px;
+    overflow: hidden;
 }
 
 .grid-item:nth-child(4) img {
@@ -191,20 +212,23 @@ body:hover .card{
     flex-direction: column;
     align-items: center;
 }
-.grid-item-2:nth-child(2) div:nth-child(1){
+
+.grid-item-2:nth-child(2) div:nth-child(1) {
     display: inline-flex;
     height: 30%;
-        flex-direction: row;
-        font-size: 10px;
-        gap: 60px;
-        justify-content: space-between;
+    flex-direction: row;
+    font-size: 10px;
+    gap: 60px;
+    justify-content: space-between;
 }
+
 .grid-item-2:nth-child(2) div:nth-child(2) {
     width: 80%;
     height: 70%;
     background-color: rgba(188, 188, 188, 0.588);
 }
-.grid-item-2:nth-child(2) div:nth-child(2) p{
+
+.grid-item-2:nth-child(2) div:nth-child(2) p {
     float: right;
     margin-right: 20px;
 }
@@ -223,9 +247,27 @@ body:hover .card{
     border-radius: 10px;
     height: 49%;
     width: clamp(330px, 90%, 400px);
+    margin: 10px;
+        position: relative;
 }
 
 #set input {
+    box-shadow: -15px -15px 15px rgba(255, 255, 255, 0.2), 15px 15px 15px rgba(0, 0, 0, 0.1),
+            -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 5px 5px 5px rgba(0,0,0,0.1) inset;
     padding: 10px;
     text-align: center;
+    font-size: 10px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    width: 95%;
+    outline: none;
+}
+
+#set label {
+    padding: 0 35px;
+    color: #747377a7;
+    font-size: 14px;
+    box-shadow: -15px -15px 15px rgba(255, 255, 255, 0.2), 15px 15px 15px rgba(0, 0, 0, 0.1),
+            -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 5px 5px 5px rgba(0, 0, 0, 0.1) inset;
 }

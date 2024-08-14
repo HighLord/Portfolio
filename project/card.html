@@ -7,18 +7,21 @@
     <link rel='stylesheet' type='text/css' media='screen' href='/css/card.css'>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" crossorigin="anonymous"></script>
     <script src='https://kit.fontawesome.com/a9d42fc68f.js' crossorigin="anonymous"></script>
-    <script src='/js/'></script>
+    <script src='/js/card.js'></script>
     <title>Card</title>
 </head>
 
 <body>
     <section>
+        <button id="view">view</button>
         <div class="card">
             <div class="inner">
                 <div class="front">
                     <div class="grid-item">debit</div>
                     <div class="grid-item"><i class="fa fa-wifi"></i></div>
-                    <div class="grid-item">BANK OF EMPIRE</div>
+                    <div class="grid-item">
+                        <p>BANK OF EMPIRE</p>
+                    </div>
                     <div class="grid-item">
                         <img src="/icon/golden-sim-chip-card-microchip-for-payment-or-credit-card-vector-removebg-preview.png"
                             alt="">
@@ -64,7 +67,20 @@
         </div>
         </div>
         <div id="set">
-            <input type="text" name="" id="bank_name" placeholder="Bank name">
+            <label>Bank name</label>
+            <input type="text" name="" id="bank_name" maxlength="40" placeholder="Bank name">
+
+            <label>Card number</label>
+            <input type="number" name="" id="card_number" maxlength="16" placeholder="Card number">
+
+            <label>Card expiry</label>
+            <input type="number" name="" id="card_expiry" maxlength="4" placeholder="Card expiry">
+       
+            <label>Card name</label>
+            <input type="text" name="" id="card_name" maxlength="40" placeholder="Card name">
+        
+            <label>Card cvv</label>
+            <input type="number" name="" id="card_cvv" maxlength="3" placeholder="Card cvv">
         </div>
     </section>
 </body>
