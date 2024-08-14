@@ -1,5 +1,8 @@
 body {
     background-color: rgba(0, 0, 0, 0.559);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 section {
@@ -7,27 +10,27 @@ section {
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
-    width: 100%;
+    width: clamp(350px, 100%, 400px);
     height: 98%;
     background-color: rgba(255, 255, 255, 0.523);
-    border-radius: 10px;
+    border-radius: 15px;
     box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
     margin: 0;
 }
 
 .card {
     perspective: 1000px;
+    border-radius: 15px;
 }
 
 .inner {
-    box-shadow: rgba(17, 17, 169, 0.448) 0px 1px 3px, rgba(255, 255, 255, 0.475) 0px 1px 2px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     position: relative;
     width: 330px;
     height: 238px;
-    border-radius: 10px;
+    border-radius: 15px;
     transition: transform 0.9s;
     transform-style: preserve-3d;
-
 }
 
 .card:hover .inner {
@@ -38,7 +41,7 @@ section {
 .back {
     position: absolute;
     width: 100%;
-    border-radius: 10px;
+    border-radius: 15px;
     backface-visibility: hidden;
     height: 100%;
     padding: 1px 0px;
@@ -205,6 +208,12 @@ section {
 }
 
 #set {
-    border: 1px solid;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    border-radius: 10px;
     height: 49%;
+    width: clamp(330px, 90%, 400px);
+}
+
+#set input {
+    
 }
