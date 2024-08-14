@@ -1,6 +1,7 @@
-body{
+body {
     background-color: rgba(0, 0, 0, 0.559);
 }
+
 section {
     display: flex;
     flex-direction: column;
@@ -22,17 +23,19 @@ section {
     box-shadow: rgba(17, 17, 169, 0.448) 0px 1px 3px, rgba(255, 255, 255, 0.475) 0px 1px 2px;
     position: relative;
     width: 330px;
-    height: 220px;
+    height: 238px;
     border-radius: 10px;
     transition: transform 0.9s;
     transform-style: preserve-3d;
-    
+
 }
+
 .card:hover .inner {
     transform: rotateY(180deg);
 }
 
-.front, .back{
+.front,
+.back {
     position: absolute;
     width: 100%;
     border-radius: 10px;
@@ -43,11 +46,11 @@ section {
 
 .front {
     background: radial-gradient(circle, #0d3cab 20%, transparent 20%) 0 0,
-            radial-gradient(circle, #1414c569 20%, transparent 20%) 50px 50px,
-            radial-gradient(circle, #aa2020 20%, transparent 20%) 25px 25px,
-            radial-gradient(circle, #b61076 20%, transparent 20%) 75px 75px;
-        background-size: 100px 100px;
-        background-color: #361ca1ab;
+        radial-gradient(circle, #1414c569 20%, transparent 20%) 50px 50px,
+        radial-gradient(circle, #aa2020 20%, transparent 20%) 25px 25px,
+        radial-gradient(circle, #b61076 20%, transparent 20%) 75px 75px;
+    background-size: 100px 100px;
+    background-color: #361ca1ab;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
@@ -57,16 +60,17 @@ section {
 .grid-item {
     margin: 2 2;
     display: flex;
-    hborder: 1px solid red;
     color: white;
 }
+
 .grid-item:nth-child(1) {
     font-size: 1.2em;
     font-family: 'Courier New';
     letter-spacing: 0.1em;
     font-weight: 600;
 }
-.grid-item:nth-child(2) i{
+
+.grid-item:nth-child(2) i {
     font-size: 22px;
     transform: rotate(90deg);
     color: white;
@@ -81,28 +85,31 @@ section {
     font-size: 1em;
     letter-spacing: 7;
     width: 95%;
-    top: 115;
+    top: 125;
     left: 27;
     font-weight: 400;
 }
+
 .grid-item:nth-child(7) i {
     position: absolute;
     top: 155;
     left: 10px;
     font-size: 20px;
 }
+
 .grid-item:nth-child(7) p {
     position: absolute;
-    top: 190;
+    top: 205;
     left: 25;
     letter-spacing: 2.5;
     font-weight: 600;
     font-size: 0.8em;
 }
 
-.grid-item:nth-child(8) p:nth-child(1){
+.grid-item:nth-child(8) p:nth-child(1) {
     font-size: 0.7em;
 }
+
 .grid-item:nth-child(8) p:nth-child(2) {
     font-size: 1.2em;
     letter-spacing: 4;
@@ -113,12 +120,17 @@ section {
     height: auto;
 }
 
-.grid-item:nth-child(1), .grid-item:nth-child(2), .grid-item:nth-child(3), .grid-item:nth-child(4), .grid-item:nth-child(9){
+.grid-item:nth-child(1),
+.grid-item:nth-child(2),
+.grid-item:nth-child(3),
+.grid-item:nth-child(4),
+.grid-item:nth-child(9) {
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.grid-item:nth-child(8){
+
+.grid-item:nth-child(8) {
     display: inline-flex;
     flex-direction: row;
     align-items: center;
@@ -128,6 +140,68 @@ section {
 .back {
     background-color: rgb(255, 255, 255);
     transform: rotateY(180deg);
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.grid-item-2 {
+    margin: 2 2;
+    display: flex;
+    color: rgb(0, 0, 0);
+}
+
+.grid-item-2:nth-child(1) {
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-item-2:nth-child(1) div:nth-child(1) {
+    height: 30%;
+    font-size: 10px;
+    font-style: italic;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: start;
+    justify-content: space-around;
+}
+
+.grid-item-2:nth-child(1) div:nth-child(2) {
+    height: 70%;
+    background-color: black;
+    width: 100%;
+}
+
+.grid-item-2:nth-child(2) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.grid-item-2:nth-child(2) div:nth-child(1){
+    display: inline-flex;
+    height: 30%;
+        flex-direction: row;
+        font-size: 10px;
+        gap: 60px;
+        justify-content: space-between;
+}
+.grid-item-2:nth-child(2) div:nth-child(2) {
+    width: 80%;
+    height: 70%;
+    background-color: rgba(188, 188, 188, 0.588);
+}
+.grid-item-2:nth-child(2) div:nth-child(2) p{
+    float: right;
+    margin-right: 20px;
+}
+
+.grid-item-2:nth-child(3) {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-left: 5;
+    font-size: 9px;
 }
 
 #set {
