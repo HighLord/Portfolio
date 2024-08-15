@@ -105,12 +105,10 @@ p
 {
     position: relative;
     background: linear-gradient(-45deg, rgb(255, 255, 255), rgba(21, 17, 112, 0.528), rgb(255, 255, 255), rgba(3, 0, 194, 0.318), rgb(255, 255, 255));
-    background-size: 400% 100%;
+    background-size: 200% 100%;
     animation: gradient 20s ease infinite;
-    border: none;
-    outline: none;
-    box-shadow: -15px -15px 15px rgba(81, 81, 81, 0.333), 15px 15px 15px rgba(0, 0, 0, 0.53),
-            -5px -5px 5px rgba(255, 255, 255, 0.063) inset, 5px 5px 5px rgba(255, 255, 255, 0.063) inset;
+    border: solid 1px;
+    
     border-color: black;
     padding: 30px;
     margin-right: 30px;
