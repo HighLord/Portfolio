@@ -3,6 +3,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: fixed;
+    height: 98%;
 }
 
 section {
