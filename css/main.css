@@ -105,7 +105,7 @@ p
 {
     position: relative;
     background: linear-gradient(-45deg, rgb(255, 255, 255), rgba(21, 17, 112, 0.528), rgb(255, 255, 255), rgba(3, 0, 194, 0.318), rgb(255, 255, 255));
-    background-size: 200% 100%;
+    background-size: 400% 100%;
     animation: gradient 20s ease infinite;
     border: none;
     outline: none;
@@ -118,7 +118,7 @@ p
     margin-top: 20px;
     margin-bottom: 0px;
     height: 82%;
-    display: none;   
+    sdisplay: none;   
 }
 
 @media screen and (max-width: 800px)
