@@ -17,7 +17,7 @@ window.onload = function()
 
     var check;
     const container = document.styleSheets[0].cssRules[12].style;
-    const border = document.getElementsByTagName('div')[2];
+    //const border = document.getElementsByTagName('div')[2];
     const enabled = document.getElementsByClassName('l')[0];
     const disabled = document.getElementsByClassName('d')[0];
     const light = document.getElementsByClassName('display')[0];
@@ -30,8 +30,8 @@ window.onload = function()
         if (check){}else{check = container.background;}
         const get_bg = container.background === check ? newColor : check;
         container.setProperty("background", get_bg);
-        const set_border = border.getAttribute('class') === 'border container' ? 'no-border container' : 'border container';
-        border.setAttribute('class', set_border);
+        //const set_border = border.getAttribute('class') === 'border container' ? 'no-border container' : 'border container';
+        //border.setAttribute('class', set_border);
         const enable = enabled.getAttribute('class') === 'fa-solid fa-square lcode' ? 'fa-solid fa-square dcode' : 'fa-solid fa-square lcode';
         enabled.setAttribute('class', enable);
         const disable = enabled.getAttribute('class') === 'fa-solid fa-square dcode' ? 'fa-solid fa-square lcode' : 'fa-solid fa-square dcode';
