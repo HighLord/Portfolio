@@ -56,7 +56,7 @@ body:hover .card {
 .inner {
     position: relative;
     width: 330px;
-    height: 238px;
+    height: 230px;
     border-radius: 15px;
     transition: transform 0.9s;
     transform-style: preserve-3d;
@@ -134,7 +134,7 @@ body:hover .card {
 
 .grid-item:nth-child(7) p {
     position: absolute;
-    top: 205;
+    top: 198;
     left: 25;
     letter-spacing: 2.5;
     font-weight: 600;
@@ -142,11 +142,11 @@ body:hover .card {
 }
 
 .grid-item:nth-child(8) p:nth-child(1) {
-    font-size: 0.7em;
+    font-size: 0.6em;
 }
 
 .grid-item:nth-child(8) p:nth-child(2) {
-    font-size: 1.2em;
+    font-size: 1em;
     letter-spacing: 4;
 }
 
