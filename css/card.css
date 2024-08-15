@@ -32,7 +32,7 @@ section button {
     
 }
 section button:focus{
-    transform: translate(-150px);
+    transform: translate(-100px);
     transition: .7s ease-in all;
 }
 .inner.active{
@@ -221,7 +221,7 @@ body:hover .card {
     flex-direction: row;
     font-size: 10px;
     gap: 60px;
-    justify-content: space-between;
+    justify-content: space-evenly;
 }
 
 .grid-item-2:nth-child(2) div:nth-child(2) {
