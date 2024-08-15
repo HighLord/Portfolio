@@ -105,12 +105,10 @@ p
 {
     position: relative;
     background: linear-gradient(-45deg, rgb(255, 255, 255), rgba(21, 17, 112, 0.528), rgb(255, 255, 255), rgba(3, 0, 194, 0.318), rgb(255, 255, 255));
-    background-size: 200% 100%;
-    animation: gradient 20s ease infinite;
+    background-size: 150% 100%;
+    animation: gradient 10s ease infinite;
     border: none;
     outline: none;
-    box-shadow: -15px -15px 15px rgba(255, 255, 255, 0.2), 15px 15px 15px rgba(0, 0, 0, 0.1),
-            -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 5px 5px 5px rgba(0, 0, 0, 0.1) inset;
     border-color: black;
     padding: 30px;
     margin-right: 30px;
@@ -118,7 +116,9 @@ p
     margin-top: 20px;
     margin-bottom: 0px;
     height: 82%;
-    display: none;   
+    display: none;
+    box-shadow: -15px -15px 15px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset,
+            -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 5px 5px 5px rgba(0, 0, 0, 0.1) inset;
 }
 
 @media screen and (max-width: 800px)
