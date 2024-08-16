@@ -117,8 +117,8 @@ p
     margin-bottom: 0px;
     height: 82%;
     display: none;
-    box-shadow: -15px -15px 15px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset,
-            -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 5px 5px 5px rgba(0, 0, 0, 0.1) inset;
+    box-shadow: -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset,
+            -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset;
 }
 
 @media screen and (max-width: 800px)
