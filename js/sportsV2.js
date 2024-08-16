@@ -982,11 +982,11 @@ function myFunction ()
                     let awayTeam = Object.keys(firstMatch)[1];
                     let awayScore = firstMatch[awayTeam];
 
-                    if (homeScore > awayScore)
+                    if (homeScore > awayScore + 1)
                     {
                         score1 += 1;
                     }
-                    else if (homeScore === awayScore)
+                    else if (homeScore == 0 && awayScore == 0)
                     {
                         draw += 1;
                     }
@@ -1003,11 +1003,11 @@ function myFunction ()
                     let homeScore = secondMatch[homeTeam];
                     let awayTeam = Object.keys(secondMatch)[1];
                     let awayScore = secondMatch[awayTeam];
-                    if (homeScore > awayScore)
+                    if (homeScore > awayScore + 1)
                     {
                         score2 += 1;
                     }
-                    else if (homeScore === awayScore)
+                    else if (homeScore == 0 && awayScore == 0)
                     {
                         draw += 1;
                     }
@@ -1038,15 +1038,15 @@ function myFunction ()
                 const awayTeam = Object.keys(Match)[1];
                 const awayScore = Match[awayTeam];
 
-                if (homeScore > awayScore)
+                if (homeScore > awayScore + 1)
                 {
                     highValue += 1;
                 }
-                else if (awayScore > homeScore)
+                else if (awayScore > homeScore + 1)
                 {
                     highValue -= 1;
                 }
-                else if (homeScore === awayScore)
+                else if (homeScore == 0 && awayScore == 0)
                 {
                     draw += 1;
                 }
@@ -1113,7 +1113,7 @@ function myFunction ()
                             master -= 1;
                             limit += 1;
                         }
-                        else if (homeScore1 === awayScore1 && homeScore2 === awayScore2)
+                        else if (homeScore1 == 0 && homeScore2 == 0)
                         {
                             draw += 1;
                         }

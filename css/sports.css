@@ -51,10 +51,12 @@ h3 {
 }
 
 #divResult {
+    box-shadow: -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset,
+            -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset;
     position: relative;
     width: 100%;
     max-width: 300px;
-    border: 1px solid white;
+    border: none;
     padding: 10px;
     padding-bottom: 20px;
     height: 350px;
@@ -76,9 +78,12 @@ h3 {
     }
 }
 select {
+    box-shadow: -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset,
+            -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset;
     padding: 10px;
     border-radius: 5px;
-    border: 1px solid white;
+    border: none;
+    outline: none;
     background-color: transparent;
     color: #ffffff;
     transition: all 1s;
@@ -97,7 +102,7 @@ option {
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    max-width: 320px;
+    max-width: 330px;
     margin: auto;
 }
 #divButton {
@@ -109,6 +114,8 @@ option {
     justify-content: center;
 }
 button {
+    box-shadow: -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset,
+            -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset;
     transition: all 1s;
     padding: 10px;
     margin: 5px 10px;
@@ -177,7 +184,6 @@ div.notify {
     height: 50px;
     top: 35%;
     left: 0%;
-
 }
 p {
     border: 1px solid white;
@@ -317,6 +323,8 @@ span.notify-text a {
 	padding: 5px;
 }
 .search-container input[type=otp] {
+    box-shadow: -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset,
+            -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset;
 	padding: 10px;
 	margin-top: 2px;
 	font-size: 13px;
