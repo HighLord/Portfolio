@@ -1055,17 +1055,17 @@ function myFunction ()
             if ( highValue > 0 )
             {
                 draw = draw > highValue ? true : false;
-                highValue = 1;
+                //highValue = 1;
             }
             else if ( highValue < 0 )
             {
                 draw = draw * -1 > highValue ? true : false;
-                highValue = -1;
+                //highValue = -1;
             }
             else
             {
                 draw = draw > highValue ? true : false;
-                highValue = 0;
+                //highValue = 0;
             }
             return {
                 highValue: highValue,
