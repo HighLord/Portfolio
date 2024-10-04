@@ -90,22 +90,22 @@
         <button type="submit" id="button">Search</button>
     </div>
     <script>
-        var random_num = Math.floor(Math.random() * 1000000);
-        var script = document.createElement('script');
+        var random_num = Math.floor( Math.random() * 1000000 );
+        var script = document.createElement( 'script' );
         script.crossorigin = 'anonymous';
-        function getCookieValue (cookieName) 
+        function getCookieValue ( cookieName ) 
         {
             const name = cookieName + "=";
-            const cDecoded = decodeURIComponent(document.cookie);
-            const cArr = cDecoded.split('; ');
+            const cDecoded = decodeURIComponent( document.cookie );
+            const cArr = cDecoded.split( '; ' );
             let res;
 
-            cArr.forEach(val => 
+            cArr.forEach( val => 
             {
-                if (val.indexOf(name) === 0) res = val.substring(name.length);
-            });
+                if ( val.indexOf( name ) === 0 ) res = val.substring( name.length );
+            } );
 
-            if (typeof res !== "undefined") 
+            if ( typeof res !== "undefined" ) 
             {
                 return res;
             } else
@@ -114,22 +114,22 @@
             }
         }
         script.src = '../js/sportsV2.js?v=' + random_num;
-        document.head.appendChild(script);
+        document.head.appendChild( script );
 
         var timess = 1;
         var countsent = [];
         var currentMatch = 0;
-        const paragraph = document.getElementById("result");
-        let count = document.getElementById("count");
-        var searchText = document.getElementById("searchText");
-        var searchButton = document.getElementById("search");
-        var nextButton = document.getElementById("next");
-        var prevButton = document.getElementById("prev");
+        const paragraph = document.getElementById( "result" );
+        let count = document.getElementById( "count" );
+        var searchText = document.getElementById( "searchText" );
+        var searchButton = document.getElementById( "search" );
+        var nextButton = document.getElementById( "next" );
+        var prevButton = document.getElementById( "prev" );
         let chance;
 
-        let intervalId = setInterval(() =>
+        let intervalId = setInterval( () =>
         {
-            if (paragraph.innerHTML !== "")
+            if ( paragraph.innerHTML !== "" )
             {
                 // Clear divs with display: none
                 clearHiddenDivs();
@@ -138,38 +138,38 @@
                 chance = paragraph.innerHTML;
 
                 // Stop the interval
-                clearInterval(intervalId);
+                clearInterval( intervalId );
             }
-        }, 100);
+        }, 100 );
 
         // Function to clear divs with display: none
         function clearHiddenDivs ()
         {
-            let hiddenDivs = Array.from(paragraph.querySelectorAll('div[style*="display: none"]'));
+            let hiddenDivs = Array.from( paragraph.querySelectorAll( 'div[style*="display: none"]' ) );
 
-            hiddenDivs.forEach(div =>
+            hiddenDivs.forEach( div =>
             {
-                div.parentNode.removeChild(div);
-            });
+                div.parentNode.removeChild( div );
+            } );
         }
 
         //function remhighLights()
         {
-            let highlighted = document.querySelectorAll('.highlight');
-            for (let i = 0; i < highlighted.length; i++) 
+            let highlighted = document.querySelectorAll( '.highlight' );
+            for ( let i = 0; i < highlighted.length; i++ ) 
             {
-                highlighted[i].classList.remove('highlight');
+                highlighted[i].classList.remove( 'highlight' );
             }
         }
         function remhighLight ()
         {
-            let highlightedSpans = document.querySelectorAll('.highlight');
-            highlightedSpans.forEach(function (span)
+            let highlightedSpans = document.querySelectorAll( '.highlight' );
+            highlightedSpans.forEach( function ( span )
             {
                 // Replace the span with its content (the matched word)
-                let textNode = document.createTextNode(span.textContent);
-                span.parentNode.replaceChild(textNode, span);
-            });
+                let textNode = document.createTextNode( span.textContent );
+                span.parentNode.replaceChild( textNode, span );
+            } );
 
             // Clear the count
             count.innerHTML = "";
@@ -177,46 +177,46 @@
 
 
         const forbiddenWords = ["b", "br", "<", ">", "span", "<b", "<br", "<br>", "r", "<r", "r>", "br>", "br> ", " "];
-        searchText.addEventListener("input", function () 
+        searchText.addEventListener( "input", function () 
         {
-            setTimeout(function () 
+            setTimeout( function () 
             {
-                if (searchText.value === "") 
+                if ( searchText.value === "" ) 
                 {
                     count.innerHTML = "";
                     remhighLight();
                 }
-                else if ((forbiddenWords.indexOf(searchText.value.toLowerCase()) === -1) && (searchText.value.length > 2))
+                else if ( ( forbiddenWords.indexOf( searchText.value.toLowerCase() ) === -1 ) && ( searchText.value.length > 2 ) )
                 {
                     searchAndScroll();
                 }
-            }, 50);
+            }, 50 );
 
-        });
+        } );
 
-        searchButton.addEventListener("click", function ()
+        searchButton.addEventListener( "click", function ()
         {
-            if (searchText.value === "") 
+            if ( searchText.value === "" ) 
             {
                 count.innerHTML = "";
                 remhighLight();
             }
-            else if (forbiddenWords.indexOf(searchText.value.toLowerCase()) === -1)
+            else if ( forbiddenWords.indexOf( searchText.value.toLowerCase() ) === -1 )
             {
                 searchAndScroll();
             }
-        });
+        } );
 
         function searchAndScroll () 
         {
-            let matches = paragraph.innerHTML.match(new RegExp(searchText.value, "gi"));
+            let matches = paragraph.innerHTML.match( new RegExp( searchText.value, "gi" ) );
 
             // If there are matches, highlight the first one and scroll to it
-            if (matches && matches.length > 0) 
+            if ( matches && matches.length > 0 ) 
             {
                 remhighLight();
                 currentMatch = 0;
-                highlightMatch(matches, currentMatch);
+                highlightMatch( matches, currentMatch );
                 scrollToMatch();
             }
             else
@@ -226,16 +226,16 @@
             }
         }
 
-        function highlightMatch (matches, index, startPos) 
+        function highlightMatch ( matches, index, startPos ) 
         {
             let match = matches[index];
-            let matchIndex = paragraph.innerHTML.indexOf(match, startPos);
+            let matchIndex = paragraph.innerHTML.indexOf( match, startPos );
 
-            paragraph.innerHTML = paragraph.innerHTML.substring(0, matchIndex) + "<span class='highlight'>" + match + "</span>" + paragraph.innerHTML.substring(matchIndex + match.length);
+            paragraph.innerHTML = paragraph.innerHTML.substring( 0, matchIndex ) + "<span class='highlight'>" + match + "</span>" + paragraph.innerHTML.substring( matchIndex + match.length );
 
-            if (searchText.value !== "")
+            if ( searchText.value !== "" )
             {
-                count.innerHTML = "" + (index + 1) + "/" + matches.length;
+                count.innerHTML = "" + ( index + 1 ) + "/" + matches.length;
             }
             else
             {
@@ -247,11 +247,11 @@
 
         function scrollToMatch () 
         {
-            setTimeout(function () 
+            setTimeout( function () 
             {
-                let span = paragraph.querySelector("span.highlight");
-                span.scrollIntoView({ behavior: "smooth", block: "center" });
-            }, 100);
+                let span = paragraph.querySelector( "span.highlight" );
+                span.scrollIntoView( { behavior: "smooth", block: "center" } );
+            }, 100 );
         }
 
 
@@ -259,19 +259,19 @@
         {
             remhighLight();
 
-            let matches = paragraph.innerHTML.match(new RegExp(searchText.value, "gi"));
+            let matches = paragraph.innerHTML.match( new RegExp( searchText.value, "gi" ) );
 
-            if ((forbiddenWords.indexOf(searchText.value.toLowerCase()) === -1) && searchText.value.length > 2 && matches && matches.length > 0) 
+            if ( ( forbiddenWords.indexOf( searchText.value.toLowerCase() ) === -1 ) && searchText.value.length > 2 && matches && matches.length > 0 ) 
             {
-                currentMatch = (currentMatch + 1) % matches.length;
+                currentMatch = ( currentMatch + 1 ) % matches.length;
 
                 var startPos = 0;
-                for (var i = 0; i < currentMatch; i++) 
+                for ( var i = 0; i < currentMatch; i++ ) 
                 {
-                    startPos = paragraph.innerHTML.indexOf(matches[i], startPos) + matches[i].length;
+                    startPos = paragraph.innerHTML.indexOf( matches[i], startPos ) + matches[i].length;
                 }
 
-                startPos = highlightMatch(matches, currentMatch, startPos);
+                startPos = highlightMatch( matches, currentMatch, startPos );
                 scrollToMatch();
             }
             else
@@ -285,20 +285,20 @@
         {
             remhighLight();
 
-            let matches = paragraph.innerHTML.match(new RegExp(searchText.value, "gi"));
+            let matches = paragraph.innerHTML.match( new RegExp( searchText.value, "gi" ) );
 
-            if ((forbiddenWords.indexOf(searchText.value.toLowerCase()) === -1) && searchText.value.length > 2 && matches && matches.length > 0) 
+            if ( ( forbiddenWords.indexOf( searchText.value.toLowerCase() ) === -1 ) && searchText.value.length > 2 && matches && matches.length > 0 ) 
             {
-                currentMatch = (currentMatch - 1 + matches.length) % matches.length;
+                currentMatch = ( currentMatch - 1 + matches.length ) % matches.length;
 
                 var startPos = 0;
-                for (var i = 0; i < currentMatch; i++) 
+                for ( var i = 0; i < currentMatch; i++ ) 
                 {
-                    startPos = paragraph.innerHTML.indexOf(matches[i], startPos) + matches[i].length;
+                    startPos = paragraph.innerHTML.indexOf( matches[i], startPos ) + matches[i].length;
                 }
 
-                startPos = highlightMatch(matches, currentMatch, startPos);
-                scrollToMatch(matches, currentMatch);
+                startPos = highlightMatch( matches, currentMatch, startPos );
+                scrollToMatch( matches, currentMatch );
             }
             else
             {
@@ -307,32 +307,32 @@
             }
         }
 
-        nextButton.addEventListener("click", function ()
+        nextButton.addEventListener( "click", function ()
         {
             nextMatch();
-        });
+        } );
 
-        prevButton.addEventListener("click", function ()
+        prevButton.addEventListener( "click", function ()
         {
             previousMatch();
-        })
+        } )
 
         // Event listener for keydown events on the document
-        document.addEventListener("keydown", function (event)
+        document.addEventListener( "keydown", function ( event )
         {
-            if (searchText.value !== "")
+            if ( searchText.value !== "" )
             {
-                if (event.key === "ArrowUp")
+                if ( event.key === "ArrowUp" )
                 {
                     previousMatch();
                 }
                 // Check if the pressed key is the down arrow key
-                else if (event.key === "ArrowDown")
+                else if ( event.key === "ArrowDown" )
                 {
                     nextMatch();
                 }
             }
-        });
+        } );
 
     </script>
 </body>
