@@ -986,9 +986,10 @@ function myFunction ()
                     {
                         score1 += 1;
                     }
-                    if ( homeScore == 0 && awayScore == 0 )
+                    if ( homeScore == awayScore )
                     {
                         draw += 1;
+                        score1 += 0.5
                     }
                     iteration1++;
                 }
@@ -1007,9 +1008,10 @@ function myFunction ()
                     {
                         score2 += 1;
                     }
-                    if ( homeScore == 0 && awayScore == 0 )
+                    if ( homeScore == awayScore )
                     {
                         draw += 1;
+                        score2 += 0.5
                     }
                     iteration2++;
                 }
@@ -1055,17 +1057,17 @@ function myFunction ()
             if ( highValue > 0 )
             {
                 draw = draw > highValue ? true : false;
-                //highValue = 1;
+                highValue = 1;
             }
             else if ( highValue < 0 )
             {
                 draw = draw * -1 > highValue ? true : false;
-                //highValue = -1;
+                highValue = -1;
             }
             else
             {
                 draw = draw > highValue ? true : false;
-                //highValue = 0;
+                highValue = 0;
             }
             return {
                 highValue: highValue,
