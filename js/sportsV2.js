@@ -453,7 +453,7 @@ function myFunction ()
                         };
 
                         dataKing["NO" + times] = data;
-                        //alert(JSON.stringify(dataKing));
+                        //console.log(JSON.stringify(dataKing));
                         var data1 = time + ".|" + league + ".|" + statement;
                         data1 = data1.replace( /\|/g, "<br>" );
                         results += '<div id="' + ( times + 1 ) + '" style="display: none; z-index: 1;">' + data1;
@@ -927,37 +927,28 @@ function myFunction ()
         {
             let sum1 = 0;
             let sum2 = 0;
-            let iteration1 = 0;
-            let iteration2 = 0;
+            let iteration
             const minNumber = Math.min( matchJson.team1.length, matchJson.team2.length );
             for ( let i = 0; i < minNumber; i++ )
             {
-                if ( iteration1 < gameMode )
+                if ( iteration < gameMode )
                 {
-                    let firstMatch = matchJson.team1[i];
-                    let homeTeam = Object.keys( firstMatch )[0];
-                    let homeScore = firstMatch[homeTeam];
+                    const firstMatch = matchJson.team1[i];
+                    const homeTeam = Object.keys( firstMatch )[0];
+                    const homeScore = firstMatch[homeTeam];
 
                     sum1 = sum1 + JSON.parse( homeScore );
-                    iteration1++;
-                }
-            }
-
-            for ( let i = 0; i < minNumber; i++ )
-            {
-                if ( iteration2 < gameMode )
-                {
-                    let secondMatch = matchJson.team2[i];
-                    let awayTeam = Object.keys( secondMatch )[0];
-                    let awayScore = secondMatch[awayTeam];
+                    
+                    const secondMatch = matchJson.team2[i];
+                    const awayTeam = Object.keys( secondMatch )[0];
+                    const awayScore = secondMatch[awayTeam];
 
                     sum2 = sum2 + JSON.parse( awayScore );
-                    iteration2++;
+                    iteration++;
                 }
             }
             return {
-                iteration1: iteration1,
-                iteration2: iteration2,
+                iteration: iteration,
                 sum1: sum1,
                 sum2: sum2
             }
@@ -976,11 +967,11 @@ function myFunction ()
             {
                 if ( iteration1 < gameMode )
                 {
-                    let firstMatch = matchJson.team1[i];
-                    let homeTeam = Object.keys( firstMatch )[0];
-                    let homeScore = firstMatch[homeTeam];
-                    let awayTeam = Object.keys( firstMatch )[1];
-                    let awayScore = firstMatch[awayTeam];
+                    const firstMatch = matchJson.team1[i];
+                    const homeTeam = Object.keys( firstMatch )[0];
+                    const homeScore = firstMatch[homeTeam];
+                    const awayTeam = Object.keys( firstMatch )[1];
+                    const awayScore = firstMatch[awayTeam];
 
                     if ( homeScore > awayScore + 1 )
                     {
@@ -989,7 +980,6 @@ function myFunction ()
                     if ( homeScore == awayScore )
                     {
                         draw += 1;
-                        score1 += 0.5
                     }
                     iteration1++;
                 }
@@ -999,11 +989,11 @@ function myFunction ()
             {
                 if ( iteration2 < gameMode )
                 {
-                    let secondMatch = matchJson.team2[i];
-                    let homeTeam = Object.keys( secondMatch )[0];
-                    let homeScore = secondMatch[homeTeam];
-                    let awayTeam = Object.keys( secondMatch )[1];
-                    let awayScore = secondMatch[awayTeam];
+                    const secondMatch = matchJson.team2[i];
+                    const homeTeam = Object.keys( secondMatch )[0];
+                    const homeScore = secondMatch[homeTeam];
+                    const awayTeam = Object.keys( secondMatch )[1];
+                    const awayScore = secondMatch[awayTeam];
                     if ( homeScore > awayScore + 1 )
                     {
                         score2 += 1;
@@ -1011,7 +1001,6 @@ function myFunction ()
                     if ( homeScore == awayScore )
                     {
                         draw += 1;
-                        score2 += 0.5
                     }
                     iteration2++;
                 }
@@ -1082,25 +1071,25 @@ function myFunction ()
             let master = 0;
             let limit = 0;
             let draw = 0;
-            let checkedAlready = [];
-            let minNumber = Math.min( matchJson.team1.length, matchJson.team2.length );
+            const checkedAlready = [];
+            const minNumber = Math.min( matchJson.team1.length, matchJson.team2.length );
 
             outerloop: for ( let i = 0; i < minNumber; i++ )
             {
                 if ( limit > ( gameMode ) ) { break outerloop; };
-                let firstMatch = matchJson.team1[i];
-                let homeTeam1 = Object.keys( firstMatch )[0];
-                let awayTeam1 = Object.keys( firstMatch )[1];
-                let homeScore1 = firstMatch[homeTeam1];
-                let awayScore1 = firstMatch[awayTeam1];
+                const firstMatch = matchJson.team1[i];
+                const homeTeam1 = Object.keys( firstMatch )[0];
+                const awayTeam1 = Object.keys( firstMatch )[1];
+                const homeScore1 = firstMatch[homeTeam1];
+                const awayScore1 = firstMatch[awayTeam1];
 
                 for ( let j = 0; j < minNumber; j++ )
                 {
-                    let secondMatch = matchJson.team2[j];
-                    let homeTeam2 = Object.keys( secondMatch )[0];
-                    let awayTeam2 = Object.keys( secondMatch )[1];
-                    let homeScore2 = secondMatch[homeTeam2];
-                    let awayScore2 = secondMatch[awayTeam2];
+                    const secondMatch = matchJson.team2[j];
+                    const homeTeam2 = Object.keys( secondMatch )[0];
+                    const awayTeam2 = Object.keys( secondMatch )[1];
+                    const homeScore2 = secondMatch[homeTeam2];
+                    const awayScore2 = secondMatch[awayTeam2];
 
                     if ( awayTeam1 == awayTeam2 )
                     {
@@ -1139,42 +1128,43 @@ function myFunction ()
 
     function outcomes ( calculatedJson )
     {
-        let sum1 = calculatedJson.highestGoals.sum1 / calculatedJson.highestGoals.iteration1;
-        let sum2 = calculatedJson.highestGoals.sum2 / calculatedJson.highestGoals.iteration2;
+        const sum1 = calculatedJson.highestGoals.sum1;
+        const sum2 = calculatedJson.highestGoals.sum2;
 
-        let score1 = calculatedJson.mostGamesWon.score1 / calculatedJson.mostGamesWon.iteration1;
-        let score2 = calculatedJson.mostGamesWon.score2 / calculatedJson.mostGamesWon.iteration2;
-        let draw1 = calculatedJson.mostGamesWon.draw;
+        const score1 = calculatedJson.mostGamesWon.score1;
+        const score2 = calculatedJson.mostGamesWon.score2;
+        const draw1 = calculatedJson.mostGamesWon.draw;
 
-        let master = calculatedJson.percentageOfHOHWins.master;
-        let draw2 = calculatedJson.percentageOfHOHWins.draw
+        const master = calculatedJson.percentageOfHOHWins.master;
+        const draw2 = calculatedJson.percentageOfHOHWins.draw
 
         const head2head = calculatedJson.head2head.highValue;
         let draw3 = calculatedJson.head2head.draw;
 
-        let myTruth = 0;
+        let home = 0;
+        let away = 0;
+
+        let result = null;
         if ( selType.value == 'winner' || selType.value == 'double_chance' )
         {
-            if ( sum1 > sum2 ) { myTruth += 1; }
-            if ( sum2 > sum1 ) { myTruth -= 1; }
-            if ( score1 > score2 ) { myTruth += 1; }
-            if ( score2 > score1 ) { myTruth -= 1; }
-            if ( master > 0 ) { myTruth += 1; }
-            if ( master < 0 ) { myTruth -= 1; }
+            if ( sum1 > sum2 ) { home += 1; }
+            if ( sum2 > sum1 ) { away += 1; }
+            if ( score1 > score2 ) { home += 1; }
+            if ( score2 > score1 ) { away += 1; }
+            if ( master > 0 ) { home += 1; }
+            if ( master < 0 ) { away += 1; }
+            if ( head2head > 0 ) { home += 1; }
+            if ( head2head < 0 ) { away += 1; }
 
-            myTruth += head2head;
+            result = home > away ? true : ( away > home ? false : null );
         }
         else if ( selType.value == 'draw' )
         {
-            myTruth += 1;
-            if ( draw1 === true ) { myTruth += 1; }
-            if ( draw2 === true ) { myTruth += 1; }
-            if ( draw3 === true ) { myTruth += 1; }
+            result = ( draw1 === true && draw2 === true && draw3 === true ) ? true : null;
         }
 
-        console.log( "sum1: " + sum1 + " and sum2: " + sum2 + " score1: " + score1 + " and score2: " + score2 + "  master: " + master + " truth: " + myTruth + " head2head: " + head2head + " draws: " + draw1 + draw2 + draw3 );
-        if ( myTruth > 2 ) { return true; }
-        if ( myTruth < -2 ) { return false; }
-        return null;
+        //console.log( "sum1: " + sum1 + " and sum2: " + sum2 + " score1: " + score1 + " and score2: " + score2 + "  master: " + master + " truth: " + myTruth + " head2head: " + head2head + " draws: " + draw1 + draw2 + draw3 );
+        calculatedJson.result = result;
+        return result !== null ? calculatedJson : null;
     }
 };
