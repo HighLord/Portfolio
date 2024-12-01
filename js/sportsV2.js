@@ -22,7 +22,7 @@ function myFunction ()
     {
         selType.innerHTML = ''; // Clear existing options
 
-        if ( selectElement.value == 'football' )
+        if ( selectElement.value == 'football' || selectElement.value == 'icehockey' || selectElement.value == 'handball' )
         {
             const option_1 = document.createElement( 'option' );
             option_1.value = 'winner';
@@ -407,6 +407,8 @@ function myFunction ()
                         switch ( gameType )
                         {
                             case "football":
+                            case "icehockey":
+                            case "handball":
                                 if ( selType.value === "draw" )
                                 {
                                     outcome = "Draw";
@@ -419,10 +421,11 @@ function myFunction ()
                                     statement = outcome === "Home" ? `${homeT} to win ${awayT}` : `${awayT} to win ${homeT}`;
                                     break;
                                 }
-                            case "icehockey":
-                            case "handball":
-                                outcome = predictedOutcome ? "Home or Draw" : "Draw or Away";
-                                statement = outcome === "Home or Draw" ? `${homeT} to win or draw ${awayT}` : `${awayT} to win or draw ${homeT}`;
+                                else if ( selType.value === "double_chance" )
+                                {
+                                    outcome = predictedOutcome ? "Home or Draw" : "Draw or Away";
+                                    statement = outcome === "Home or Draw" ? `${homeT} to win or draw ${awayT}` : `${awayT} to win or draw ${homeT}`;
+                                }
                                 break;
                             case "basketball":
                             case "tennis":
@@ -938,7 +941,7 @@ function myFunction ()
                     const homeScore = firstMatch[homeTeam];
 
                     sum1 = sum1 + JSON.parse( homeScore );
-                    
+
                     const secondMatch = matchJson.team2[i];
                     const awayTeam = Object.keys( secondMatch )[0];
                     const awayScore = secondMatch[awayTeam];
