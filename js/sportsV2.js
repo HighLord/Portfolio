@@ -1074,7 +1074,7 @@ function myFunction ()
             let master = 0;
             let limit = 0;
             let draw = 0;
-            const checkedAlready = [];
+            let checkedAlready = [];
             const minNumber = Math.min( matchJson.team1.length, matchJson.team2.length );
 
             outerloop: for ( let i = 0; i < minNumber; i++ )
@@ -1166,7 +1166,7 @@ function myFunction ()
             result = ( draw1 === true && draw2 === true && draw3 === true ) ? true : null;
         }
 
-        //console.log( "sum1: " + sum1 + " and sum2: " + sum2 + " score1: " + score1 + " and score2: " + score2 + "  master: " + master + " truth: " + myTruth + " head2head: " + head2head + " draws: " + draw1 + draw2 + draw3 );
+        console.log( "sum1: " + sum1 + " and sum2: " + sum2 + " score1: " + score1 + " and score2: " + score2 + "  master: " + master + " truth: " + myTruth + " head2head: " + head2head + " draws: " + draw1 + draw2 + draw3 );
         calculatedJson.result = result;
         return result !== null ? calculatedJson : null;
     }
