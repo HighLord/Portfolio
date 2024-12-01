@@ -1074,7 +1074,7 @@ function myFunction ()
             let master = 0;
             let limit = 0;
             let draw = 0;
-            let checkedAlready = [];
+            const checkedAlready = [];
             const minNumber = Math.min( matchJson.team1.length, matchJson.team2.length );
 
             outerloop: for ( let i = 0; i < minNumber; i++ )
