@@ -1142,7 +1142,7 @@ function myFunction ()
         const draw2 = calculatedJson.percentageOfHOHWins.draw
 
         const head2head = calculatedJson.head2head.highValue;
-        let draw3 = calculatedJson.head2head.draw;
+        const draw3 = calculatedJson.head2head.draw;
 
         let home = 0;
         let away = 0;
@@ -1166,7 +1166,7 @@ function myFunction ()
             result = ( draw1 === true && draw2 === true && draw3 === true ) ? true : null;
         }
 
-        console.log( "sum1: " + sum1 + " and sum2: " + sum2 + " score1: " + score1 + " and score2: " + score2 + "  master: " + master + " truth: " + myTruth + " head2head: " + head2head + " draws: " + draw1 + draw2 + draw3 );
+        console.log( "sum1: " + sum1 + " and sum2: " + sum2 + " score1: " + score1 + " and score2: " + score2 + "  master: " + master +  " head2head: " + head2head + " result: " + result + " draws: " + draw1 + draw2 + draw3 );
         calculatedJson.result = result;
         return result !== null ? calculatedJson : null;
     }
