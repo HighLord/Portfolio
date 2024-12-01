@@ -930,7 +930,7 @@ function myFunction ()
         {
             let sum1 = 0;
             let sum2 = 0;
-            let iteration
+            let iteration = 0;
             const minNumber = Math.min( matchJson.team1.length, matchJson.team2.length );
             for ( let i = 0; i < minNumber; i++ )
             {
@@ -957,6 +957,7 @@ function myFunction ()
             }
         }
         const sum = getSum();
+        //console.log(sum);
 
         function getScore ()
         {
@@ -1166,7 +1167,7 @@ function myFunction ()
             result = ( draw1 === true && draw2 === true && draw3 === true ) ? true : null;
         }
 
-        console.log( "sum1: " + sum1 + " and sum2: " + sum2 + " score1: " + score1 + " and score2: " + score2 + "  master: " + master +  " head2head: " + head2head + " result: " + result + " draws: " + draw1 + draw2 + draw3 );
+        //console.log( "sum1: " + sum1 + " and sum2: " + sum2 + " score1: " + score1 + " and score2: " + score2 + "  master: " + master +  " head2head: " + head2head + " result: " + result + " draws: " + draw1 + draw2 + draw3 );
         calculatedJson.result = result;
         return result !== null ? calculatedJson : null;
     }
