@@ -1160,7 +1160,7 @@ function myFunction ()
             if ( head2head > 0 ) { home += 1; }
             if ( head2head < 0 ) { away += 1; }
 
-            result = home < away ? true : ( away < home ? false : null );
+            result = home > away ? true : ( away > home ? false : null );
         }
         else if ( selType.value == 'draw' )
         {
