@@ -394,7 +394,7 @@ function myFunction ()
 
                 let calculatedJson = await predict( niceJson, amountOfBooking, gameTime, gameType, gameMode )
 
-                let predictedOutcome = outcomes( calculatedJson );
+                let predictedOutcome = outcomes( calculatedJson, niceJson);
                 amounted++;
                 if ( predictedOutcome !== null )
                 {
@@ -1130,7 +1130,7 @@ function myFunction ()
         };
     }
 
-    function outcomes ( calculatedJson )
+    function outcomes ( calculatedJson, matchJson )
     {
         const sum1 = calculatedJson.highestGoals.sum1;
         const sum2 = calculatedJson.highestGoals.sum2;
@@ -1167,7 +1167,7 @@ function myFunction ()
             result = ( draw1 === true && draw2 === true && draw3 === true ) ? true : null;
         }
 
-        console.log( `team1: ${matchJson.team1} and team2: ${matchJson.team2}, sum1: ${sum1} and sum2: ${sum2}, score1: ${score1} and score2: ${score2}, master: ${master}, head2head: ${head2head} , result: ${result} `);
+        //console.log( `team1: ${matchJson.names.team1name} and team2: ${matchJson.names.team2name}, sum1: ${sum1} and sum2: ${sum2}, score1: ${score1} and score2: ${score2}, master: ${master}, head2head: ${head2head} , result: ${result} `);
         calculatedJson.result = result;
         return result !== null ? calculatedJson : null;
     }
