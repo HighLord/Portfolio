@@ -394,10 +394,10 @@ function myFunction ()
 
                 let calculatedJson = await predict( niceJson, amountOfBooking, gameTime, gameType, gameMode )
 
-                let predictedOutcome = outcomes( calculatedJson, niceJson);
+                let predictedOutcome = await outcomes( calculatedJson, niceJson);
                 amounted++;
                 if ( predictedOutcome !== null )
-                {
+                {                   
                     return new Promise( ( resolve ) =>
                     {
                         var homeT = niceJson["names"]["team1name"];
@@ -1169,6 +1169,7 @@ function myFunction ()
 
         //console.log( `team1: ${matchJson.names.team1name} and team2: ${matchJson.names.team2name}, sum1: ${sum1} and sum2: ${sum2}, score1: ${score1} and score2: ${score2}, master: ${master}, head2head: ${head2head} , result: ${result} `);
         calculatedJson.result = result;
+        return result;
         return result !== null ? calculatedJson : null;
     }
 };
