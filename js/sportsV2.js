@@ -218,7 +218,7 @@ function myFunction ()
                         {
                             $.ajax
                                 ( {
-                                    url: "https://webappsng.vercel.app/api/sportbooking22",
+                                    url: "https://webappsng.vercel.app/api/sportbooking",
                                     xhrFields: { withCredentials: false },
                                     crossOrigin: true,
                                     data: JSON.stringify( { "data": dataKing, "game": gameType, "setOdd": selOdds.value } ),
