@@ -218,7 +218,7 @@ function myFunction ()
                         {
                             $.ajax
                                 ( {
-                                    url: "https://webappsng.vercel.app/api/sportbooking",
+                                    url: "https://webappsng.vercel.app/api/sportbooking22",
                                     xhrFields: { withCredentials: false },
                                     crossOrigin: true,
                                     data: JSON.stringify( { "data": dataKing, "game": gameType, "setOdd": selOdds.value } ),
@@ -1167,7 +1167,7 @@ function myFunction ()
             result = ( draw1 === true && draw2 === true && draw3 === true ) ? true : null;
         }
 
-        console.log( "sum1: " + sum1 + " and sum2: " + sum2 + " score1: " + score1 + " and score2: " + score2 + "  master: " + master +  " head2head: " + head2head + " result: " + result + " draws: " + draw1 + draw2 + draw3 );
+        console.log( `team1: ${matchJson.team1} and team2: ${matchJson.team2}, sum1: ${sum1} and sum2: ${sum2}, score1: ${score1} and score2: ${score2}, master: ${master}, head2head: ${head2head} , result: ${result} `);
         calculatedJson.result = result;
         return result !== null ? calculatedJson : null;
     }
