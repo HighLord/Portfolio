@@ -1167,7 +1167,7 @@ function myFunction ()
             result = ( draw1 === true && draw2 === true && draw3 === true ) ? true : null;
         }
 
-        //console.log( `team1: ${matchJson.names.team1name} and team2: ${matchJson.names.team2name}, sum1: ${sum1} and sum2: ${sum2}, score1: ${score1} and score2: ${score2}, master: ${master}, head2head: ${head2head} , result: ${result} `);
+        //console.log( `team1: ${matchJson.names.team1name} and team2: ${matchJson.names.team2name}, sum1: ${sum1} and sum2: ${sum2}, score1: ${score1} and score2: ${score2}, master: ${master}, head2head: ${head2head} , result: ${result}, home: ${home}, away: ${away}` );
         calculatedJson.result = result;
         return result;
         return result !== null ? calculatedJson : null;
