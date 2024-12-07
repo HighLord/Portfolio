@@ -1033,11 +1033,11 @@ function myFunction ()
                 const awayTeam = Object.keys( Match )[1];
                 const awayScore = Match[awayTeam];
 
-                if ( homeScore > awayScore + 1 )
+                if ( homeScore > awayScore)
                 {
                     highValue += 1;
                 }
-                if ( awayScore > homeScore + 1 )
+                if ( awayScore > homeScore)
                 {
                     highValue -= 1;
                 }
@@ -1050,12 +1050,12 @@ function myFunction ()
             if ( highValue > 0 )
             {
                 draw = draw > highValue ? true : false;
-                highValue = 1;
+                //highValue = 1;
             }
             else if ( highValue < 0 )
             {
                 draw = draw * -1 > highValue ? true : false;
-                highValue = -1;
+                //highValue = -1;
             }
             else
             {
@@ -1157,8 +1157,8 @@ function myFunction ()
             if ( score2 > score1 ) { away += 1; }
             if ( master > 0 ) { home += 1; }
             if ( master < 0 ) { away += 1; }
-            if ( head2head > 0 ) { home += 1; }
-            if ( head2head < 0 ) { away += 1; }
+            if ( head2head > 0 ) { home += head2head; }
+            if ( head2head < 0 ) { away += head2head; }
 
             result = home > away ? true : ( away > home ? false : null );
         }
