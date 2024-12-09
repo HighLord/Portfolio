@@ -1165,53 +1165,50 @@ function myFunction ()
 
     function outcomes ( calculatedJson, matchJson )
     {
-        const sum1 = calculatedJson.highestGoals.sum1;
-        const sum2 = calculatedJson.highestGoals.sum2;
+        const { highestGoals, mostGamesWon, percentageOfHOHWins, head2head } = calculatedJson;
+        const { team1name, team2name } = matchJson.names;
 
-        const score1 = calculatedJson.mostGamesWon.score1;
-        const score2 = calculatedJson.mostGamesWon.score2;
-        const draw1 = calculatedJson.mostGamesWon.draw;
+        const sum1 = highestGoals.sum1 || 0;
+        const sum2 = highestGoals.sum2 || 0;
 
-        const master = calculatedJson.percentageOfHOHWins.master;
-        const draw2 = calculatedJson.percentageOfHOHWins.draw
+        const score1 = mostGamesWon.score1 || 0;
+        const score2 = mostGamesWon.score2 || 0;
+        const draw1 = mostGamesWon.draw || false;
 
-        const head2head = calculatedJson.head2head.highValue;
-        const draw3 = calculatedJson.head2head.draw;
+        const master = percentageOfHOHWins.master || 0;
+        const draw2 = percentageOfHOHWins.draw || false;
+
+        const head2headValue = head2head.highValue || 0;
+        const draw3 = head2head.draw || false;
 
         let home = 0;
         let away = 0;
-
         let result = null;
-        if ( selType.value == 'winner' || selType.value == 'double_chance' )
+
+        if ( selType.value === 'winner' || selType.value === 'double_chance' )
         {
-            if ( sum1 > sum2 ) { home += 1; }
-            if ( sum2 > sum1 ) { away += 1; }
-            if ( score1 > score2 ) { home += 1; }
-            if ( score2 > score1 ) { away += 1; }
-            if ( master > 0 ) { home += master; }
-            if ( master < 0 ) { away -= master; }
-            if ( head2head > 0 ) { home += head2head; }
-            if ( head2head < 0 ) { away -= head2head; }
+            home += ( sum1 > sum2 ) + ( score1 > score2 ) + Math.max( 0, master ) + Math.max( 0, head2head );
+            away += ( sum2 > sum1 ) + ( score2 > score1 ) + Math.max( 0, -master ) + Math.max( 0, -head2head );
 
             result = home > away ? true : ( away > home ? false : null );
         }
-        else if ( selType.value == 'draw' )
+        else if ( selType.value === 'draw' )
         {
-            result = ( draw1 === true && draw2 === true && draw3 === true ) ? true : null;
+            result = draw1 && draw2 && draw3 ? true : null;
         }
 
         const log = {
-            team1: matchJson.names.team1name,
-            team2: matchJson.names.team2name,
-            sum1: sum1,
-            sum2: sum2,
-            score1: score1,
-            score2: score2,
-            master: master,
-            head2head: head2head,
-            result: result,
-            home: home,
-            away: away
+            team1: team1name,
+            team2: team2name,
+            sum1,
+            sum2,
+            score1,
+            score2,
+            master,
+            head2head: head2headValue,
+            result,
+            home,
+            away
         }        
         calculatedJson.result = result;
         return log;
