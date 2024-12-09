@@ -400,8 +400,8 @@ function myFunction ()
                 {                   
                     return new Promise( ( resolve ) =>
                     {
-                        var homeT = niceJson["names"]["team1name"];
-                        var awayT = niceJson["names"]["team2name"];
+                        const homeT = niceJson["names"]["team1name"];
+                        const awayT = niceJson["names"]["team2name"];
                         let outcome = null;
                         let statement = null;
                         switch ( gameType )
@@ -457,7 +457,7 @@ function myFunction ()
                         
                         dataKing["NO" + times] = data;
 
-                        var data1 = time + ".|" + league + ".|" + statement;
+                        let data1 = time + ".|" + league + ".|" + statement;
                         data1 = data1.replace( /\|/g, "<br>" );
                         results += '<div class="hover" id="' + ( times + 1 ) + '" style="display: none; z-index: 1;">' + data1;
 
@@ -721,9 +721,9 @@ function myFunction ()
                 {
                     function getNames ()
                     {
-                        let lines1 = matches.replace( /¬/g, '÷' ).split( '÷' );
+                        const lines1 = matches.replace( /¬/g, '÷' ).split( '÷' );
                         let counts = 0;
-                        let wordCount = [];
+                        const wordCount = [];
                         let homie, awayie;
 
                         lines1.forEach( ( line1 ) =>
@@ -750,14 +750,14 @@ function myFunction ()
 
                     function getTeams ()
                     {
-                        let lines = matches.replace( /¬/g, '÷' ).split( '÷' );
+                        const lines = matches.replace( /¬/g, '÷' ).split( '÷' );
                         let count = 0;
-                        let hometeams = [];
-                        let awayteams = [];
-                        let homescores = [];
-                        let awayscores = [];
-                        let gameDate = [];
-                        let dateLimit = new Date( '2022-01-01' ).getTime() / 1000;
+                        const hometeams = [];
+                        const awayteams = [];
+                        const homescores = [];
+                        const awayscores = [];
+                        const gameDate = [];
+                        const dateLimit = new Date( '2022-01-01' ).getTime() / 1000;
 
                         lines.some( ( line, index ) =>
                         {
@@ -768,16 +768,16 @@ function myFunction ()
                             }
                             else if ( line.match( /(\d+):(\d+)/ ) )
                             {
-                                let scores = line.match( /(\d+):(\d+)/ );
-                                let homeScore = scores[1];
-                                let awayScore = scores[2];
+                                const scores = line.match( /(\d+):(\d+)/ );
+                                const homeScore = scores[1];
+                                const awayScore = scores[2];
 
-                                let awayTeam = lines[index - 4];
-                                let homeTeam = lines[index - 10];
-                                let dTime = lines[index - 26];
-                                let dTime2 = lines[index - 30];
+                                const awayTeam = lines[index - 4];
+                                const homeTeam = lines[index - 10];
+                                const dTime = lines[index - 26];
+                                const dTime2 = lines[index - 30];
 
-                                let time100 = ( dTime.length === 10 ) ? dTime : ( ( dTime2.length === 10 ) ? dTime2 : null );
+                                const time100 = ( dTime.length === 10 ) ? dTime : ( ( dTime2.length === 10 ) ? dTime2 : null );
 
 
                                 if ( !homeTeam.match( /\b\w*\.png\w*\b/ ) || !awayTeam.match( /\b\w*\.png\w*\b/ ) )
