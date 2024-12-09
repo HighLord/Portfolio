@@ -958,7 +958,6 @@ function myFunction ()
         const matchJson = matchAllTeamNames();
         //console.log(matchJson);
 
-
         function getSum ()
         {
             let sum1 = 0;
@@ -1010,7 +1009,7 @@ function myFunction ()
                     const awayTeam = Object.keys( firstMatch )[1];
                     const awayScore = firstMatch[awayTeam];
 
-                    if ( homeScore > awayScore + 1 )
+                    if ( homeScore > awayScore )
                     {
                         score1 += 1;
                     }
@@ -1031,7 +1030,7 @@ function myFunction ()
                     const homeScore = secondMatch[homeTeam];
                     const awayTeam = Object.keys( secondMatch )[1];
                     const awayScore = secondMatch[awayTeam];
-                    if ( homeScore > awayScore + 1 )
+                    if ( homeScore > awayScore )
                     {
                         score2 += 1;
                     }
@@ -1131,12 +1130,12 @@ function myFunction ()
                     if ( awayTeam1 == awayTeam2 )
                     {
                         if ( checkedAlready.includes( awayTeam1 ) ) { continue; } else { checkedAlready.push( awayTeam1 ); }
-                        if ( homeScore1 > awayScore1 + 1 )
+                        if ( homeScore1 > awayScore1)
                         {
                             master += 1;
                             limit += 1;
                         }
-                        if ( homeScore2 > awayScore2 + 1 )
+                        if ( homeScore2 > awayScore2)
                         {
                             master -= 1;
                             limit += 1;
