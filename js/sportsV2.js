@@ -1187,8 +1187,8 @@ function myFunction ()
 
         if ( selType.value === 'winner' || selType.value === 'double_chance' )
         {
-            home += ( sum1 > sum2 ) + ( score1 > score2 ) + Math.max( 0, master ) + Math.max( 0, head2head );
-            away += ( sum2 > sum1 ) + ( score2 > score1 ) + Math.max( 0, -master ) + Math.max( 0, -head2head );
+            home += ( sum1 > sum2 ) + ( score1 > score2 ) + Math.max( 0, master ) + Math.max( 0, head2headValue );
+            away += ( sum2 > sum1 ) + ( score2 > score1 ) + Math.max( 0, -master ) + Math.max( 0, -head2headValue );
 
             result = home > away ? true : ( away > home ? false : null );
         }
@@ -1209,7 +1209,9 @@ function myFunction ()
             result,
             home,
             away
-        }        
+        };
+        //console.log(log);
+        
         calculatedJson.result = result;
         return log;
         //return result !== null ? calculatedJson : null;
