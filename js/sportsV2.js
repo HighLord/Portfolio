@@ -1186,8 +1186,8 @@ function myFunction ()
 
         if ( selType.value === 'winner' || selType.value === 'double_chance' )
         {
-            home += ( sum1 > sum2 ) + ( score1 > score2 ) + Math.max( 0, master ) + Math.max( 0, head2headValue );
-            away += ( sum2 > sum1 ) + ( score2 > score1 ) + Math.max( 0, -master ) + Math.max( 0, -head2headValue );
+            home += ( sum1 > sum2 ) + ( score1 > score2 ) + (master > 0) + Math.max( 0, head2headValue );
+            away += ( sum2 > sum1 ) + ( score2 > score1 ) + (master < 0) + Math.max( 0, -head2headValue );
 
             result = home > away ? true : ( away > home ? false : null );
         }
