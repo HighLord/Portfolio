@@ -1188,8 +1188,8 @@ function myFunction ()
             if ( sum2 > sum1 ) { away += 1; }
             if ( score1 > score2 ) { home += 1; }
             if ( score2 > score1 ) { away += 1; }
-            if ( master > 0 ) { home += 1; }
-            if ( master < 0 ) { away += 1; }
+            if ( master > 0 ) { home += master; }
+            if ( master < 0 ) { away -= master; }
             if ( head2head > 0 ) { home += head2head; }
             if ( head2head < 0 ) { away -= head2head; }
 
