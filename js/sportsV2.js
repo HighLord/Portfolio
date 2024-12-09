@@ -396,7 +396,7 @@ function myFunction ()
 
                 let predictedOutcome = await outcomes( calculatedJson, niceJson);
                 amounted++;
-                if ( predictedOutcome !== null )
+                if ( predictedOutcome.result !== null )
                 {                   
                     return new Promise( ( resolve ) =>
                     {
@@ -417,13 +417,13 @@ function myFunction ()
                                 }
                                 else if ( selType.value === "winner" )
                                 {
-                                    outcome = predictedOutcome ? "Home" : "Away";
+                                    outcome = predictedOutcome.result ? "Home" : "Away";
                                     statement = outcome === "Home" ? `${homeT} to win ${awayT}` : `${awayT} to win ${homeT}`;
                                     break;
                                 }
                                 else if ( selType.value === "double_chance" )
                                 {
-                                    outcome = predictedOutcome ? "Home or Draw" : "Draw or Away";
+                                    outcome = predictedOutcome.result ? "Home or Draw" : "Draw or Away";
                                     statement = outcome === "Home or Draw" ? `${homeT} to win or draw ${awayT}` : `${awayT} to win or draw ${homeT}`;
                                 }
                                 break;
@@ -438,7 +438,7 @@ function myFunction ()
                             case "volleyball":
                             case "badminton":
                             case "mma":
-                                outcome = predictedOutcome ? "Home" : "Away";
+                                outcome = predictedOutcome.result ? "Home" : "Away";
                                 statement = outcome === "Home" ? `${homeT} to win ${awayT}` : `${awayT} to win ${homeT}`;
                                 break;
                             default:
@@ -454,16 +454,49 @@ function myFunction ()
                             "outcome": outcome,
                             "gameNo": ( times + 1 )
                         };
-
+                        
                         dataKing["NO" + times] = data;
-                        //console.log(JSON.stringify(dataKing));
+
                         var data1 = time + ".|" + league + ".|" + statement;
                         data1 = data1.replace( /\|/g, "<br>" );
-                        results += '<div id="' + ( times + 1 ) + '" style="display: none; z-index: 1;">' + data1;
+                        results += '<div class="hover" id="' + ( times + 1 ) + '" style="display: none; z-index: 1;">' + data1;
 
-                        var link = "https://www.livescore.in/match/" + key + "/#/h2h/overall";
+                        const link = "https://www.livescore.in/match/" + key + "/#/h2h/overall";
                         results += '<a href="' + link + '" target="_blank"><button style="z-index: 9999;" class="link">Link</button></a>';
+                        results += `
+                            <table class="popup" style="width:100%; border-collapse: collapse; font-size: 8px; text-align: left;">
+                            <thead>
+                                <tr>
+                                    <th style="width:30%; border: 1px solid white;">TEAMS</th>
+                                    <th style="width:35%; border: 1px solid white;">${predictedOutcome.team1}</th>
+                                    <th style="width:35%; border: 1px solid white;">${predictedOutcome.team2}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th style="width:30%; border: 1px solid white;">SCORE</th>
+                                    <td style="width:35%; border: 1px solid white;">${predictedOutcome.score1}</td>
+                                    <td style="width:35%; border: 1px solid white;">${predictedOutcome.score2}</td>
+                                </tr>
+                                <tr>
+                                    <th style="width:30%; border: 1px solid white;">SUM</th>
+                                    <td style="width:35%; border: 1px solid white;">${predictedOutcome.sum1}</td>
+                                    <td style="width:35%; border: 1px solid white;">${predictedOutcome.sum2}</td>
+                                </tr>
+                                <tr>
+                                    <th style="width:30%; border: 1px solid white;">OUTCOME</th>
+                                    <td style="width:35%; border: 1px solid white;">Head2head: ${predictedOutcome.head2head}</td>
+                                    <td style="width:35%; border: 1px solid white;">Master: ${predictedOutcome.master}</td>
+                                </tr>
+                                <tr>
+                                    <th style="width:30%; border: 1px solid white;">${predictedOutcome.result}</th>
+                                    <td style="width:35%; border: 1px solid white;">${predictedOutcome.home}</td>
+                                    <td style="width:35%; border: 1px solid white;">${predictedOutcome.away}</td>
+                                </tr>
+                            </tbody>
+                        </table>`;
                         results += "<br><p id='success'></p></div>";
+                        
                         updateProgressBar( amounted, amountOfBooking );
                         resolve();
                         return false;
@@ -1158,7 +1191,7 @@ function myFunction ()
             if ( master > 0 ) { home += 1; }
             if ( master < 0 ) { away += 1; }
             if ( head2head > 0 ) { home += head2head; }
-            if ( head2head < 0 ) { away += head2head; }
+            if ( head2head < 0 ) { away -= head2head; }
 
             result = home > away ? true : ( away > home ? false : null );
         }
@@ -1167,9 +1200,21 @@ function myFunction ()
             result = ( draw1 === true && draw2 === true && draw3 === true ) ? true : null;
         }
 
-        //console.log( `team1: ${matchJson.names.team1name} and team2: ${matchJson.names.team2name}, sum1: ${sum1} and sum2: ${sum2}, score1: ${score1} and score2: ${score2}, master: ${master}, head2head: ${head2head} , result: ${result}, home: ${home}, away: ${away}` );
+        const log = {
+            team1: matchJson.names.team1name,
+            team2: matchJson.names.team2name,
+            sum1: sum1,
+            sum2: sum2,
+            score1: score1,
+            score2: score2,
+            master: master,
+            head2head: head2head,
+            result: result,
+            home: home,
+            away: away
+        }        
         calculatedJson.result = result;
-        return result;
-        return result !== null ? calculatedJson : null;
+        return log;
+        //return result !== null ? calculatedJson : null;
     }
 };

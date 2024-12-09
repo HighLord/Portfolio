@@ -1,18 +1,19 @@
-body
-{ 
-    background-color: rgb(79, 50, 156);  
+body {
+    background-color: rgb(79, 50, 156);
     color: white;
     height: 90%;
     width: 96%;
     position: relative;
     text-align: center;
 }
+
 #span {
     transition: all 1s;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
+
 h3 {
     transition: all 1s;
     max-width: 300px;
@@ -20,6 +21,7 @@ h3 {
     font-size: 13px;
     text-align: justify;
 }
+
 #resultCover {
     position: relative;
     width: 100%;
@@ -29,11 +31,13 @@ h3 {
     justify-content: center;
 
 }
+
 #result {
     width: 100%;
     text-align: justify;
     flex-grow: 1;
 }
+
 .link {
     font-size: 12px;
     margin-top: -10px;
@@ -50,9 +54,21 @@ h3 {
     transition: 1.8s ease;
 }
 
+/* Styles for the popup */
+.popup {
+    display: none;
+    position: relative;
+    border: none;
+    outline: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.hover:hover .popup {
+    display: table;
+}
+
 #divResult {
     box-shadow: -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset,
-            -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset;
+        -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset;
     position: relative;
     width: 100%;
     max-width: 300px;
@@ -66,10 +82,12 @@ h3 {
     text-align: justify;
     scrollbar-width: none;
 }
+
 #divResult::-webkit-scrollbar {
     width: 0;
     background-color: transparent;
 }
+
 @media only screen and (min-width: 500px) {
     #divResult {
         font-size: 13px;
@@ -77,9 +95,10 @@ h3 {
         max-width: 300px;
     }
 }
+
 select {
     box-shadow: -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset,
-            -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset;
+        -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset;
     padding: 10px;
     border-radius: 5px;
     border: none;
@@ -92,9 +111,11 @@ select {
     font-size: 10px;
     max-width: 155px;
 }
+
 option {
     color: black;
 }
+
 #divSelect {
     width: 100%;
     display: flex;
@@ -105,6 +126,7 @@ option {
     max-width: 330px;
     margin: auto;
 }
+
 #divButton {
     width: 100%;
     transition: all 1s;
@@ -113,9 +135,10 @@ option {
     align-items: center;
     justify-content: center;
 }
+
 button {
     box-shadow: -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset,
-            -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset;
+        -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset;
     transition: all 1s;
     padding: 10px;
     margin: 5px 10px;
@@ -126,9 +149,11 @@ button {
     max-width: 150px;
     cursor: pointer;
 }
+
 #clear {
     background-color: rgb(255, 255, 255);
 }
+
 #status {
     display: flex;
     flex-direction: column;
@@ -161,18 +186,21 @@ i.fa-bell {
     border-radius: 50%;
     animation: zoom 3s both infinite;
 }
+
 @keyframes zoom {
     0% {
-      transform: scale(1);
+        transform: scale(1);
     }
+
     50% {
-      transform: scale(0.7);
+        transform: scale(0.7);
     }
+
     100% {
-      transform: scale(1);
+        transform: scale(1);
     }
-  }
-  
+}
+
 
 div.notify {
     margin: auto;
@@ -185,14 +213,17 @@ div.notify {
     top: 35%;
     left: 0%;
 }
+
 p {
     border: 1px solid white;
     border-radius: 5px;
     padding: 1px;
 }
+
 p#success {
     background-color: rgb(40, 222, 76);
 }
+
 p#error {
     background-color: rgb(210, 13, 13);
 }
@@ -224,6 +255,7 @@ span.notify-text a {
 #divCheckbox {
     width: 155px;
 }
+
 .switch {
     position: relative;
     display: inline-block;
@@ -234,11 +266,13 @@ span.notify-text a {
     margin-bottom: 0px;
     -webkit-tap-highlight-color: transparent;
 }
+
 .switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
+
 .slider {
     border-radius: 50px;
     position: absolute;
@@ -265,21 +299,29 @@ span.notify-text a {
     transition: .4s;
 }
 
-#alert1:checked + .slider, #alert2:checked + .slider, #alert3:checked + .slider {
+#alert1:checked+.slider,
+#alert2:checked+.slider,
+#alert3:checked+.slider {
     background-color: #03f484;
 }
 
-#alert1:focus + .slider, #alert2:focus + .slider, #alert3:focus + .slider {
+#alert1:focus+.slider,
+#alert2:focus+.slider,
+#alert3:focus+.slider {
     box-shadow: none;
 }
 
-#alert1:checked + .slider:before, #alert2:checked + .slider:before, #alert3:checked + .slider:before {
+#alert1:checked+.slider:before,
+#alert2:checked+.slider:before,
+#alert3:checked+.slider:before {
     -webkit-transform: translateX(29px);
     -ms-transform: translateX(29px);
     transform: translateX(29px);
 }
 
-.div1, .div2, .div3 {
+.div1,
+.div2,
+.div3 {
     position: relative;
     width: 100%;
     max-width: 146px;
@@ -296,21 +338,29 @@ span.notify-text a {
     margin: 5px 0px;
 
 }
-.div1 > div > h6, .div2 > div > h6, .div3 > div > h6 {
+
+.div1>div>h6,
+.div2>div>h6,
+.div3>div>h6 {
     position: relative;
     top: 8px;
 }
+
 @media screen and (min-width: 800px) {
-    body, html {
+
+    body,
+    html {
         position: relative;
 
     }
+
     #paragraph {
         font-size: 16px;
     }
-} 
+}
+
 .sticky {
-	width: 100%;
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -318,46 +368,53 @@ span.notify-text a {
     max-width: 310px;
     margin: auto;
 }
+
 .search-container {
-	background-color: #f1f1f1;
-	padding: 5px;
+    background-color: #f1f1f1;
+    padding: 5px;
 }
+
 .search-container input[type=otp] {
     box-shadow: -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset,
-            -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset;
-	padding: 10px;
-	margin-top: 2px;
-	font-size: 13px;
-	border: none;
-	width: 30%;
-	padding-right: 40px;
+        -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset;
+    padding: 10px;
+    margin-top: 2px;
+    font-size: 13px;
+    border: none;
+    width: 30%;
+    padding-right: 40px;
 }
+
 .search-container button {
-	float: right;
+    float: right;
     width: 35px;
-	padding: 8px 0px;
+    padding: 8px 0px;
     margin: 2px 5px;
-	background-color: #ddd;
-	font-size: 15px;
-	border: none;
-	cursor: pointer;
-	border-radius: 5px;
+    background-color: #ddd;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
 }
+
 .search-container button:hover {
-	background: rgb(82, 57, 207);
+    background: rgb(82, 57, 207);
 }
+
 .highlight {
-	background-color: rgb(0, 255, 76);	
+    background-color: rgb(0, 255, 76);
 }
-#resultCover{
+
+#resultCover {
     margin: 5px 0px 0px 0px;
 }
-#count{
+
+#count {
     overflow: hidden;
     color: rgb(255, 255, 255);
     width: 40px;
     background-color: rgba(56, 1, 126, 0.985);
-    font-size: 12px; 
+    font-size: 12px;
     height: 34px;
     line-height: 35px;
     border-radius: 0px 10px 10px 0px;
