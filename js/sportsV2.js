@@ -757,7 +757,7 @@ function myFunction ()
                         let homescores = [];
                         let awayscores = [];
                         let gameDate = [];
-                        let dateLimit = new Date( '2022-01-01' ).getTime() / 1000;
+                        let dateLimit = new Date( '2021-01-01' ).getTime() / 1000;
 
                         lines.some( ( line, index ) =>
                         {
@@ -1189,7 +1189,7 @@ function myFunction ()
             home += ( sum1 > sum2 ) + ( score1 > score2 ) + (master > 0) + Math.max( 0, head2headValue );
             away += ( sum2 > sum1 ) + ( score2 > score1 ) + (master < 0) + Math.max( 0, -head2headValue );
 
-            result = home > away + 2 ? true : ( away > home + 2 ? false : null );
+            result = home > away + 3 ? true : ( away > home + 3 ? false : null );
         }
         else if ( selType.value === 'draw' )
         {
