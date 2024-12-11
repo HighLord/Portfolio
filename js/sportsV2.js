@@ -757,7 +757,7 @@ function myFunction ()
                         let homescores = [];
                         let awayscores = [];
                         let gameDate = [];
-                        let dateLimit = new Date( '2021-01-01' ).getTime() / 1000;
+                        let dateLimit = new Date( '2022-01-01' ).getTime() / 1000;
 
                         lines.some( ( line, index ) =>
                         {
