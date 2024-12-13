@@ -392,7 +392,7 @@ function myFunction ()
 
                 let niceJson = await sortGame( key );
 
-                let calculatedJson = await predict( niceJson, amountOfBooking, gameTime, gameType, gameMode )
+                let calculatedJson = await predict( niceJson, gameMode )
 
                 let predictedOutcome = await outcomes( calculatedJson, niceJson);
                 amounted++;
@@ -691,124 +691,108 @@ function myFunction ()
         } );
     }
 
-    function sortGame ( key, time )
+    async function sortGame ( key )
     {
-        return new Promise( ( resolve, reject ) =>
+        const url = `https://d.livescore.in/x/feed/df_hh_4_${key}`;
+
+        try
         {
-            const url = `https://d.livescore.in/x/feed/df_hh_4_${key}`;
+            const response = await fetch( url, {
+                method: 'GET',
+                headers: { "x-fsign": "SW9D1eZo" },
+            } );
 
-            fetch( url,
+            if ( !response.ok )
+            {
+                const responseText = await response.text();
+                throw new Error( `HTTP error! Status: ${response.status}, Response: ${responseText}` );
+            }
+
+            const matches = await response.text();
+
+            const getNames = () =>
+            {
+                const lines = matches.replace( /¬/g, '÷' ).split( '÷' );
+                const wordCount = [];
+                let counts = 0;
+
+                lines.forEach( ( line ) =>
                 {
-                    method: 'GET',
-                    headers:
+                    if ( line.includes( 'Last matches:' ) && counts < 3 )
                     {
-                        "x-fsign": "SW9D1eZo"
-                    },
-                } )
-                .then( response =>
+                        counts += 1;
+                        wordCount.push( line.replace( 'Last matches: ', '' ) );
+                    }
+                } );
+
+                return {
+                    team1name: wordCount[0] || null,
+                    team2name: wordCount[1] || null,
+                };
+            };
+
+            const getTeams = () =>
+            {
+                const lines = matches.replace( /¬/g, '÷' ).split( '÷' );
+                const hometeams = [];
+                const awayteams = [];
+                const homescores = [];
+                const awayscores = [];
+                const gameDate = [];
+                const dateLimit = new Date( '2022-01-01' ).getTime() / 1000;
+                let count = 0;
+
+                for ( let i = 0; i < lines.length; i++ )
                 {
-                    if ( !response.ok )
+                    const line = lines[i];
+
+                    if ( line.includes( 'Last matches' ) )
                     {
-                        return response.text().then( responseText =>
-                        {
-                            console.error( `HTTP error! Status: ${response.status}` );
-                            reject( "Response:", responseText );
-                        } );
-                    }
-                    return response.text();
-                } )
-                .then( matches =>
-                {
-                    function getNames ()
+                        count += 1;
+                    } else if ( line.match( /(\d+):(\d+)/ ) && count <= 2 )
                     {
-                        let lines1 = matches.replace( /¬/g, '÷' ).split( '÷' );
-                        let counts = 0;
-                        let wordCount = [];
-                        let homie, awayie;
+                        const [_, homeScore, awayScore] = line.match( /(\d+):(\d+)/ );
+                        const awayTeam = lines[i - 4] || '';
+                        const homeTeam = lines[i - 10] || '';
+                        const dTime = lines[i - 26] || '';
+                        const dTime2 = lines[i - 30] || '';
 
-                        lines1.forEach( ( line1 ) =>
+                        const time100 = dTime.length === 10 ? dTime : ( dTime2.length === 10 ? dTime2 : null );
+
+                        if ( time100 > dateLimit && !/\b\w*\.png\w*\b/.test( homeTeam ) && !/\b\w*\.png\w*\b/.test( awayTeam ) )
                         {
-                            if ( line1.match( /^(.*?Last matches.*)$/ ) )
-                            {
-                                counts += 1;
-                                if ( counts < 3 )
-                                {
-                                    let namie = line1.replace( /Last matches: /, '' );
-                                    wordCount.push( namie );
-                                }
-                            }
-                        } );
-
-                        homie = wordCount[0];
-                        awayie = wordCount[1];
-
-                        return teamNames = {
-                            team1name: homie,
-                            team2name: awayie
-                        };
+                            hometeams.push( homeTeam );
+                            awayteams.push( awayTeam );
+                            homescores.push( homeScore );
+                            awayscores.push( awayScore );
+                            gameDate.push( time100 );
+                        }
                     }
+                }
 
-                    function getTeams ()
-                    {
-                        let lines = matches.replace( /¬/g, '÷' ).split( '÷' );
-                        let count = 0;
-                        let hometeams = [];
-                        let awayteams = [];
-                        let homescores = [];
-                        let awayscores = [];
-                        let gameDate = [];
-                        let dateLimit = new Date( '2022-01-01' ).getTime() / 1000;
+                return {
+                    hometeams,
+                    awayteams,
+                    homescores,
+                    awayscores,
+                    gameDate,
+                };
+            };
 
-                        lines.some( ( line, index ) =>
-                        {
-                            if ( count > 2 ) return;
-                            if ( line.includes( 'Last matches' ) )
-                            {
-                                count += 1;
-                            }
-                            else if ( line.match( /(\d+):(\d+)/ ) )
-                            {
-                                let scores = line.match( /(\d+):(\d+)/ );
-                                let homeScore = scores[1];
-                                let awayScore = scores[2];
+            return {
+                names: getNames(),
+                ...getTeams(),
+            };
 
-                                let awayTeam = lines[index - 4];
-                                let homeTeam = lines[index - 10];
-                                let dTime = lines[index - 26];
-                                let dTime2 = lines[index - 30];
-
-                                let time100 = ( dTime.length === 10 ) ? dTime : ( ( dTime2.length === 10 ) ? dTime2 : null );
-
-
-                                if ( !homeTeam.match( /\b\w*\.png\w*\b/ ) || !awayTeam.match( /\b\w*\.png\w*\b/ ) )
-                                {
-                                    if ( time100 > dateLimit )
-                                    {
-                                        hometeams.push( homeTeam );
-                                        awayteams.push( awayTeam );
-                                        homescores.push( homeScore );
-                                        awayscores.push( awayScore );
-                                        gameDate.push( time100 );
-                                    }
-                                }
-                            }
-                        } )
-
-                        resolve( jsons = {
-                            names: getNames(),
-                            hometeams: hometeams,
-                            awayteams: awayteams,
-                            homescores: homescores,
-                            awayscores: awayscores,
-                            gameDate: gameDate
-                        } );
-                    }
-                    getTeams();
-                } )
-        } );
+        } catch ( error )
+        {
+            console.error( `Error fetching or processing data: ${error.message}` );
+            throw error;
+        }
     }
 
-    function predict ( niceJson, amountOfBooking, gameTime, gameType, gameMode )
+
+    function predict ( niceJson, gameMode )
     {
         function matchAllTeamNames ()
         {
@@ -825,312 +809,221 @@ function myFunction ()
             let teamHeads = [];
             const maxNumber = Math.max( hometeams.length, awayteams.length );
 
-            for ( let index = 0; index < maxNumber; index++ )
+            function addMatch ( array, homeTeam, homeScore, awayTeam, awayScore, date )
             {
-                if ( team1name == hometeams[index] )
+                array.push( {
+                    [homeTeam]: homeScore,
+                    [awayTeam]: awayScore,
+                    ["date"]: date
+                } );
+            }
+
+            function addUniqueMatch ( array, homeTeam, homeScore, awayTeam, awayScore, date )
+            {
+                if ( array.findIndex( obj =>
+                    obj[homeTeam] === homeScore &&
+                    obj[awayTeam] === awayScore &&
+                    obj["date"] === date
+                ) === -1 )
                 {
-                    if ( awayteams[index] != team2name )
-                    {
-                        team1.push(
-                            {
-                                [hometeams[index]]: homescores[index],
-                                [awayteams[index]]: awayscores[index],
-                                ["date"]: gameDate[index]
-                            }
-                        );
-                    }
-                    else
-                    {
-                        if ( teamHeads.findIndex( obj =>
-                            obj[hometeams[index]] === homescores[index] &&
-                            obj[awayteams[index]] === awayscores[index] &&
-                            obj["date"] === gameDate[index]
-                        ) === -1 )
-                        {
-                            teamHeads.push(
-                                {
-                                    [hometeams[index]]: homescores[index],
-                                    [awayteams[index]]: awayscores[index],
-                                    ["date"]: gameDate[index]
-                                }
-                            );
-                        }
-                    }
-                }
-                if ( team1name == awayteams[index] )
-                {
-                    if ( hometeams[index] != team2name )
-                    {
-                        team1.push(
-                            {
-                                [awayteams[index]]: awayscores[index],
-                                [hometeams[index]]: homescores[index],
-                                ["date"]: gameDate[index]
-                            }
-                        );
-                    }
-                    else
-                    {
-                        if ( teamHeads.findIndex( obj =>
-                            obj[hometeams[index]] === homescores[index] &&
-                            obj[awayteams[index]] === awayscores[index] &&
-                            obj["date"] === gameDate[index]
-                        ) === -1 )
-                        {
-                            teamHeads.push(
-                                {
-                                    [awayteams[index]]: awayscores[index],
-                                    [hometeams[index]]: homescores[index],
-                                    ["date"]: gameDate[index]
-                                }
-                            );
-                        }
-                    }
-                }
-                if ( team2name == hometeams[index] )
-                {
-                    if ( awayteams[index] != team1name )
-                    {
-                        team2.push(
-                            {
-                                [hometeams[index]]: homescores[index],
-                                [awayteams[index]]: awayscores[index],
-                                ["date"]: gameDate[index]
-                            }
-                        );
-                    }
-                    else
-                    {
-                        if ( teamHeads.findIndex( obj =>
-                            obj[hometeams[index]] === homescores[index] &&
-                            obj[awayteams[index]] === awayscores[index] &&
-                            obj["date"] === gameDate[index]
-                        ) === -1 )
-                        {
-                            teamHeads.push(
-                                {
-                                    [awayteams[index]]: awayscores[index],
-                                    [hometeams[index]]: homescores[index],
-                                    ["date"]: gameDate[index]
-                                }
-                            );
-                        }
-                    }
-                }
-                if ( team2name == awayteams[index] )
-                {
-                    if ( hometeams[index] != team1name )
-                    {
-                        team2.push(
-                            {
-                                [awayteams[index]]: awayscores[index],
-                                [hometeams[index]]: homescores[index],
-                                ["date"]: gameDate[index]
-                            }
-                        );
-                    }
-                    else
-                    {
-                        if ( teamHeads.findIndex( obj =>
-                            obj[hometeams[index]] === homescores[index] &&
-                            obj[awayteams[index]] === awayscores[index] &&
-                            obj["date"] === gameDate[index]
-                        ) === -1 )
-                        {
-                            teamHeads.push(
-                                {
-                                    [hometeams[index]]: homescores[index],
-                                    [awayteams[index]]: awayscores[index],
-                                    ["date"]: gameDate[index]
-                                }
-                            );
-                        }
-                    }
+                    addMatch( array, homeTeam, homeScore, awayTeam, awayScore, date );
                 }
             }
 
-            return ( {
+            for ( let index = 0; index < maxNumber; index++ )
+            {
+                const homeTeam = hometeams[index];
+                const awayTeam = awayteams[index];
+                const homeScore = Number(homescores[index]);
+                const awayScore = Number(awayscores[index]);
+                const date = gameDate[index];
+
+                if ( team1name === homeTeam )
+                {
+                    if ( awayTeam !== team2name ) addMatch( team1, homeTeam, homeScore, awayTeam, awayScore, date );
+                    else addUniqueMatch( teamHeads, homeTeam, homeScore, awayTeam, awayScore, date );
+                }
+                if ( team1name === awayTeam )
+                {
+                    if ( homeTeam !== team2name ) addMatch( team1, awayTeam, awayScore, homeTeam, homeScore, date );
+                    else addUniqueMatch( teamHeads, awayTeam, awayScore, homeTeam, homeScore, date );
+                }
+                if ( team2name === homeTeam )
+                {
+                    if ( awayTeam !== team1name ) addMatch( team2, homeTeam, homeScore, awayTeam, awayScore, date );
+                    else addUniqueMatch( teamHeads, homeTeam, homeScore, awayTeam, awayScore, date );
+                }
+                if ( team2name === awayTeam )
+                {
+                    if ( homeTeam !== team1name ) addMatch( team2, awayTeam, awayScore, homeTeam, homeScore, date );
+                    else addUniqueMatch( teamHeads, awayTeam, awayScore, homeTeam, homeScore, date );
+                }
+            }
+
+            return {
                 "team1": team1,
                 "team2": team2,
                 "teamHeads": teamHeads
-            } );
+            };
         }
         const matchJson = matchAllTeamNames();
-        //console.log(matchJson);
 
         function getSum ()
         {
             let sum1 = 0;
             let sum2 = 0;
             let iteration = 0;
-            const minNumber = Math.min( matchJson.team1.length, matchJson.team2.length );
-            for ( let i = 0; i < minNumber; i++ )
+            const numMatchesToIterate = Math.min( matchJson.team1.length, matchJson.team2.length );
+
+            // Return early if no matches or gameMode is 0
+            if ( numMatchesToIterate === 0 || gameMode === 0 )
+            {
+                return { iteration: 0, sum1: 0, sum2: 0 };
+            }
+
+            for ( let i = 0; i < numMatchesToIterate; i++ )
             {
                 if ( iteration < gameMode )
                 {
                     const firstMatch = matchJson.team1[i];
                     const homeTeam = Object.keys( firstMatch )[0];
-                    const homeScore = firstMatch[homeTeam];
+                    const homeScore = Number( firstMatch[homeTeam] );
 
-                    sum1 = sum1 + JSON.parse( homeScore );
+                    // Ensure valid number for homeScore
+                    if ( !isNaN( homeScore ) )
+                    {
+                        sum1 += homeScore;
+                    }
 
                     const secondMatch = matchJson.team2[i];
                     const awayTeam = Object.keys( secondMatch )[0];
-                    const awayScore = secondMatch[awayTeam];
+                    const awayScore = Number( secondMatch[awayTeam] );
 
-                    sum2 = sum2 + JSON.parse( awayScore );
+                    // Ensure valid number for awayScore
+                    if ( !isNaN( awayScore ) )
+                    {
+                        sum2 += awayScore;
+                    }
+
                     iteration++;
                 }
             }
+
             return {
                 iteration: iteration,
                 sum1: sum1,
                 sum2: sum2
-            }
+            };
         }
+
         const sum = getSum();
-        //console.log(sum);
 
-        function getScore ()
+        function getScore () 
         {
-            let score1 = 0;
-            let score2 = 0;
-            let draw = 0;
-            let iteration1 = 0;
-            let iteration2 = 0;
+            let score1 = 0, score2 = 0, draw = 0;
 
-            for ( let i = 0; i < matchJson.team1.length; i++ )
+            const calculateScores = ( matches, gameMode ) =>
             {
-                if ( iteration1 < gameMode )
+                let localScore = 0, localDraw = 0, iteration = 0;
+
+                for ( let i = 0; i < matches.length && iteration < gameMode; i++ )
                 {
-                    const firstMatch = matchJson.team1[i];
-                    const homeTeam = Object.keys( firstMatch )[0];
-                    const homeScore = firstMatch[homeTeam];
-                    const awayTeam = Object.keys( firstMatch )[1];
-                    const awayScore = firstMatch[awayTeam];
+                    const match = matches[i];
+                    const homeTeam = Object.keys( match )[0];
+                    const homeScore = Number( match[homeTeam] );
+                    const awayTeam = Object.keys( match )[1];
+                    const awayScore = Number( match[awayTeam] );
 
                     if ( homeScore > awayScore )
                     {
-                        score1 += 1;
-                    }
-                    if ( homeScore == awayScore )
+                        localScore += 1;
+                    } else if ( homeScore === awayScore )
                     {
-                        draw += 1;
+                        localDraw += 1;
                     }
-                    iteration1++;
-                }
-            }
 
-            for ( let i = 0; i < matchJson.team2.length; i++ )
-            {
-                if ( iteration2 < gameMode )
-                {
-                    const secondMatch = matchJson.team2[i];
-                    const homeTeam = Object.keys( secondMatch )[0];
-                    const homeScore = secondMatch[homeTeam];
-                    const awayTeam = Object.keys( secondMatch )[1];
-                    const awayScore = secondMatch[awayTeam];
-                    if ( homeScore > awayScore )
-                    {
-                        score2 += 1;
-                    }
-                    if ( homeScore == awayScore )
-                    {
-                        draw += 1;
-                    }
-                    iteration2++;
+                    iteration++;
                 }
-            }
+
+                return { localScore, localDraw, iteration };
+            };
+
+            const team1Result = calculateScores( matchJson.team1, gameMode );
+            const team2Result = calculateScores( matchJson.team2, gameMode );
+
+            score1 = team1Result.localScore;
+            score2 = team2Result.localScore;
+            draw = team1Result.localDraw + team2Result.localDraw;
 
             return {
-                iteration1: iteration1,
-                iteration2: iteration2,
-                draw: draw >= iteration1 || draw >= iteration2 ? true : false,
+                iteration1: team1Result.iteration,
+                iteration2: team2Result.iteration,
+                draw: draw >= score1 && draw >= score2,
                 score1: score1,
                 score2: score2
-            }
+            };
         }
+
         const score = getScore();
 
         function h2h ()
         {
             const h2H = matchJson.teamHeads;
-            let highValue = 0;
-            let draw = 0;
-
-            h2H.forEach( Match =>
-            {
-                const homeTeam = Object.keys( Match )[0];
-                const homeScore = Match[homeTeam];
-                const awayTeam = Object.keys( Match )[1];
-                const awayScore = Match[awayTeam];
-
-                if ( homeScore > awayScore)
+            
+            const { highValue, draw } = h2H.reduce(
+                ( acc, Match ) =>
                 {
-                    highValue += 1;
-                }
-                if ( awayScore > homeScore)
-                {
-                    highValue -= 1;
-                }
-                if ( homeScore == 0 && awayScore == 0 )
-                {
-                    draw += 1;
-                }
-            } );
+                    const homeTeam = Object.keys( Match )[0];
+                    const awayTeam = Object.keys( Match )[1];
+                    const homeScore = Number(Match[homeTeam]);
+                    const awayScore = Number(Match[awayTeam]);
 
-            if ( highValue > 0 )
-            {
-                draw = draw > highValue ? true : false;
-                //highValue = 1;
-            }
-            else if ( highValue < 0 )
-            {
-                draw = draw * -1 > highValue ? true : false;
-                //highValue = -1;
-            }
-            else
-            {
-                draw = draw > highValue ? true : false;
-                highValue = 0;
-            }
+                    if ( homeScore > awayScore ) acc.highValue++;
+                    if ( awayScore > homeScore ) acc.highValue--;
+                    else acc.draw++;
+                    
+                    return acc;
+                },
+                { highValue: 0, draw: 0 } // Initial accumulator values
+            );
+
             return {
-                highValue: highValue,
-                draw: draw
-            }
+                highValue,
+                draw: draw > Math.abs( highValue )
+            };
+
         }
         const head2head = h2h();
-
 
         function calculatePercentage ()
         {
             let master = 0;
             let limit = 0;
             let draw = 0;
-            const checkedAlready = [];
-            const minNumber = Math.min( matchJson.team1.length, matchJson.team2.length );
+            const checkedAlready = new Set();
+            const minNumber = Math.min( Number( matchJson.team1.length ), Number(matchJson.team2.length) );
 
-            outerloop: for ( let i = 0; i < minNumber; i++ )
+            for ( let i = 0; i < minNumber; i++ )
             {
-                if ( limit > ( gameMode ) ) { break outerloop; };
                 const firstMatch = matchJson.team1[i];
                 const homeTeam1 = Object.keys( firstMatch )[0];
                 const awayTeam1 = Object.keys( firstMatch )[1];
-                const homeScore1 = firstMatch[homeTeam1];
-                const awayScore1 = firstMatch[awayTeam1];
+                const homeScore1 = Number(firstMatch[homeTeam1]);
+                const awayScore1 = Number(firstMatch[awayTeam1]);
 
                 for ( let j = 0; j < minNumber; j++ )
                 {
                     const secondMatch = matchJson.team2[j];
                     const homeTeam2 = Object.keys( secondMatch )[0];
                     const awayTeam2 = Object.keys( secondMatch )[1];
-                    const homeScore2 = secondMatch[homeTeam2];
-                    const awayScore2 = secondMatch[awayTeam2];
+                    const homeScore2 = Number(secondMatch[homeTeam2]);
+                    const awayScore2 = Number(secondMatch[awayTeam2]);
 
-                    if ( awayTeam1 == awayTeam2 )
+                    if ( awayTeam1 === awayTeam2 && !checkedAlready.has( awayTeam1 ) ) 
                     {
-                        if ( checkedAlready.includes( awayTeam1 ) ) { continue; } else { checkedAlready.push( awayTeam1 ); }
-                        if ( homeScore1 > awayScore1)
+                        checkedAlready.add( awayTeam1 );
+
+                        if ( homeScore1 > awayScore1 )
                         {
                             master += 1;
                             limit += 1;
@@ -1143,13 +1036,16 @@ function myFunction ()
                         if ( homeScore1 == 0 && homeScore2 == 0 )
                         {
                             draw += 1;
+                            limit++;
                         }
+                        if ( limit >= gameMode ) break;
                     }
                 }
+                if ( limit >= gameMode ) break;
             }
             return {
-                master: master,
-                draw: draw = draw > 0 ? true : false
+                master,
+                draw: draw > Math.abs( master )
             }
         }
         const percent = calculatePercentage();
@@ -1209,10 +1105,14 @@ function myFunction ()
             home,
             away
         };
-        //console.log(log);
-        
+
         calculatedJson.result = result;
+        /*if ( team1name == "Sichuan" || team2name == "Sichuan" )
+        {
+            console.log( calculatedJson );
+            console.log( log );
+        }*/
+            
         return log;
-        //return result !== null ? calculatedJson : null;
     }
 };
