@@ -55,40 +55,70 @@ function myFunction ()
     updateOptions( document.getElementById( 'mySelect4' ) );
 
 
-    const bell = document.getElementsByClassName( 'fa-bell' )[0];
-    const count = document.getElementsByClassName( 'count' )[0];
-    const notification = document.getElementsByClassName( 'notify-text' )[0];
-    let amount = 1;
-    [bell, count, notification].forEach( ( element ) =>
+    const bell = document.querySelector( '.fa-bell' );
+    const count = document.querySelector( '.count' );
+    const notification = document.querySelector( '.notify-text' );
+    const input = document.getElementById( 'share' );
+    const saveButton = document.querySelector( '.save' );
+    let blurActive = false;
+
+    [bell, count, saveButton].forEach( ( element ) =>
     {
         element.addEventListener( 'click', () =>
         {
             $( notification ).toggle( '500', function ()
             {
-                if ( amount == 1 )
+                // Handle blur logic only for non-input elements
+                if ( element !== input )
                 {
-                    $( '.notify' ).css( 'z-index', '1' );
-                    $( 'body>*:not(.notify, .fa-bell, .count)' ).css( 'filter', 'blur(5px)' );
-                    amount = 2;
-                }
-                else
-                {
-                    $( '.notify' ).css( 'z-index', '0' );
-                    $( 'body>*:not(.notify)' ).css( 'filter', 'blur(0px)' );
-                    amount = 1;
+                    toggleBlur();
                 }
             } );
+            if ( element === saveButton )
+            {
+                ( async () =>
+                {
+                    const reload = await manageGame( "get", null, input.value );
+                    if ( reload === null )
+                    {
+                        result.innerHTML = `<p id='error' style='padding: 5px; font-size: 11px;'>Share code ${input.value} is not valid or has expired</p>`;
+                    }
+                    
+                    Object.keys( reload ).forEach( ( key ) =>
+                    {
+                        const value = reload[key];
+                        if ( Array.isArray( value ) )
+                        {
+                            results += generateResults( value );
+                        }
+                    } )
+                    result.innerHTML = results;
+                    Array.from( result.querySelectorAll( 'div' ) ).forEach( ( div ) =>
+                    {
+                        div.style.display = 'block';
+                    } );
+                } )();
+            }
         } );
     } );
 
-    const result = document.getElementById( 'result' );
-    const save = document.getElementsByClassName( 'save' )[0];
-    save.addEventListener( 'click', () =>
+    function toggleBlur ()
     {
-        let savedData = localStorage.getItem( 'savedData' );
-        result.innerHTML = savedData !== null ? savedData : "No saved data available";
-    } )
+        if ( !blurActive )
+        {
+            $( '.notify' ).css( 'z-index', '1' );
+            $( 'body > *:not(.notify, .fa-bell, .count, #share)' ).css( 'filter', 'blur(5px)' );
+            blurActive = true;
+        } else
+        {
+            $( '.notify' ).css( 'z-index', '0' );
+            $( 'body > *:not(.notify)' ).css( 'filter', 'blur(0px)' );
+            blurActive = false;
+        }
+    }
 
+
+    const result = document.getElementById( 'result' );
     var click = true;
     var amountOfBooking;
     var stop = false;
@@ -109,6 +139,156 @@ function myFunction ()
         }
     } );
 
+    function generateResults ( array )
+    {
+        let results = '';
+        const [times, key, time, league, statement, predictedOutcome] = array;
+
+        results += `
+            <div class="hover" id="${times}" style="display: none; z-index: 1;">
+            ${time}<br>
+            ${league}<br>
+            ${statement}<br>
+            <a href="https://www.livescore.in/match/${key}/#/h2h/overall" target="_blank"><button style="z-index: 9999;" class="link">Link</button></a>
+            <table class="popup" style="width:100%; border-collapse: collapse; font-size: 8px; text-align: left;">
+                <thead>
+                    <tr>
+                        <th style="width:30%; border: 1px solid white;">TEAMS</th>
+                        <th style="width:35%; border: 1px solid white;">${predictedOutcome.team1}</th>
+                        <th style="width:35%; border: 1px solid white;">${predictedOutcome.team2}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th style="width:30%; border: 1px solid white;">SCORE</th>
+                        <td style="width:35%; border: 1px solid white;">${predictedOutcome.score1}</td>
+                        <td style="width:35%; border: 1px solid white;">${predictedOutcome.score2}</td>
+                    </tr>
+                    <tr>
+                        <th style="width:30%; border: 1px solid white;">SUM</th>
+                        <td style="width:35%; border: 1px solid white;">${predictedOutcome.sum1}</td>
+                        <td style="width:35%; border: 1px solid white;">${predictedOutcome.sum2}</td>
+                    </tr>
+                    <tr>
+                        <th style="width:30%; border: 1px solid white;">OUTCOME</th>
+                        <td style="width:35%; border: 1px solid white;">Head2head: ${predictedOutcome.head2head}</td>
+                        <td style="width:35%; border: 1px solid white;">Master: ${predictedOutcome.master}</td>
+                    </tr>
+                    <tr>
+                        <th style="width:30%; border: 1px solid white;">${predictedOutcome.result}</th>
+                        <td style="width:35%; border: 1px solid white;">${predictedOutcome.home}</td>
+                        <td style="width:35%; border: 1px solid white;">${predictedOutcome.away}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br><p id='success'></p></div>`;
+
+        return results;
+    }
+
+    async function manageGame ( action, data = null, lastValue = null )
+    {
+        const apiUrl = "https://github.webapps.com.ng/paste.php";
+        const pin = "3728"; // Pin for secure access
+
+        // Fetch saved data using jQuery AJAX
+        async function fetchData ()
+        {
+            return new Promise( ( resolve, reject ) =>
+            {
+                $.ajax( {
+                    url: `${apiUrl}?saved`,
+                    method: "GET",
+                    dataType: "json",
+                    success: function ( response )
+                    {
+                        if ( response.Status === "200" && response.data.trim() !== "" )
+                        {
+                            resolve( JSON.parse( response.data ) ); // return the promise with the decoded data
+                        }
+                        else
+                        {
+                            resolve( {} ); // return with an empty object for invalid/empty data
+                        }
+                    },
+                    error: function ( error )
+                    {
+                        console.error( error );
+                        reject( error );
+                    },
+                } );
+            } );
+        };
+
+
+        // Save data using jQuery AJAX
+        async function saveData ( payload )
+        {
+            return new Promise( ( resolve, reject ) =>
+            {
+                $.ajax( {
+                    url: apiUrl,
+                    method: "POST",
+                    data: {
+                        save: JSON.stringify( payload ),
+                        pin: pin,
+                    },
+                    dataType: 'json',
+                    timeout: 8000,
+                    success: function ( response )
+                    {
+                        resolve( response ); // Resolve the promise with the decoded data
+                    },
+                    error: function ( error )
+                    {
+                        reject( error );
+                    },
+                } );
+            } );
+        };
+
+        const now = new Date();
+        const threeDaysAgo = new Date( now.getTime() - 3 * 24 * 60 * 60 * 1000 );
+
+        // Perform actions
+        if ( action === "save" )
+        {
+            const uniqueKey = now.toISOString();
+            let storedData = await fetchData();
+            storedData = storedData || {};
+            storedData[uniqueKey] = data;
+            await saveData( storedData );
+        }
+        else if ( action === "get" )
+        {
+            let storedData = await fetchData();
+            if ( storedData )
+            {
+                let matchedArray = null;
+
+                Object.keys( storedData ).forEach( ( key ) =>
+                {
+                    const array = storedData[key];
+                    const savedDate = new Date( key );
+
+                    if ( Array.isArray( array ) && array[array.length - 1] === lastValue )
+                    {
+                        matchedArray = array;
+                    }
+                    else if ( savedDate < threeDaysAgo )
+                    {
+                        delete storedData[key];
+                    }
+                } );
+
+                await saveData( storedData );
+
+                return matchedArray;
+            }
+        }
+    }
+
+
     const button = document.getElementById( 'button' );
     button.addEventListener( 'click', () =>
     {
@@ -127,6 +307,7 @@ function myFunction ()
     var results = '';
     var visited = [];
     var label = false;
+    var save_game = [];
 
     function updateProgressBar ( value, max )
     {
@@ -293,16 +474,17 @@ function myFunction ()
                                                 {
                                                     shareCode = responses.data.shareCode;
                                                 }
+
                                                 var http = "https://www.sportybet.com?shareCode=" + shareCode + "&c=ng";
                                                 var addon = '<a href="' + http + '" target="_blank"><button style="float:right; background-color: orange;" class="link">Play</button></a>';
-                                                var data = "Sportybet booking code: " + shareCode + "<br>Amount of games booked: " + total + "<br>Total odds: " + odds + addon;
+                                                var data = `Sportybet booking code: ${shareCode}<br>Amount of games booked: ${total}<br>Total odds: ${odds} ${addon}`;
                                                 results += "<p id='success' style='padding: 5px; margin-right: 0px; font-size: 10px'>" + data + "</p>";
                                                 var container = document.createElement( 'div' );
                                                 var store = document.createElement( 'div' );
                                                 container.innerHTML = results;
 
                                                 var num = 1;
-
+                                                let matchedGames = [];
                                                 Array.from( container.children ).forEach( element =>
                                                 {
                                                     var elementID = element.id;
@@ -311,12 +493,24 @@ function myFunction ()
                                                     {
                                                         if ( key == elementID )
                                                         {
+                                                            save_game.forEach( game => 
+                                                            {
+                                                                if ( Array.isArray( game ) && game[0] == key )
+                                                                {
+                                                                    matchedGames.push( game );
+                                                                }
+                                                            } );
+
                                                             element.style.display = "block";
                                                             element.innerHTML = "<br>" + num + ". Odd: " + values + "<br>" + element.innerHTML;
                                                             num++;
                                                         }
                                                     }
                                                 } );
+
+                                                save_game = matchedGames;
+                                                save_game.push( shareCode );
+                                                manageGame( "save", save_game );
 
                                                 Array.from( store.children ).forEach( element =>
                                                 {
@@ -333,7 +527,6 @@ function myFunction ()
                                                 result.innerHTML = container.innerHTML;
 
                                                 results = "";
-                                                localStorage.setItem( 'savedData', result.innerHTML );
                                                 button.innerHTML = "Search";
                                                 clear.innerHTML = "Clear";
                                                 click = true;
@@ -394,10 +587,11 @@ function myFunction ()
 
                 let calculatedJson = await predict( niceJson, gameMode )
 
-                let predictedOutcome = await outcomes( calculatedJson, niceJson);
+                let predictedOutcome = await outcomes( calculatedJson, niceJson );
                 amounted++;
+
                 if ( predictedOutcome.result !== null )
-                {                   
+                {
                     return new Promise( ( resolve ) =>
                     {
                         var homeT = niceJson["names"]["team1name"];
@@ -454,49 +648,18 @@ function myFunction ()
                             "outcome": outcome,
                             "gameNo": ( times + 1 )
                         };
-                        
                         dataKing["NO" + times] = data;
 
-                        var data1 = time + ".|" + league + ".|" + statement;
-                        data1 = data1.replace( /\|/g, "<br>" );
-                        results += '<div class="hover" id="' + ( times + 1 ) + '" style="display: none; z-index: 1;">' + data1;
-
-                        const link = "https://www.livescore.in/match/" + key + "/#/h2h/overall";
-                        results += '<a href="' + link + '" target="_blank"><button style="z-index: 9999;" class="link">Link</button></a>';
-                        results += `
-                            <table class="popup" style="width:100%; border-collapse: collapse; font-size: 8px; text-align: left;">
-                            <thead>
-                                <tr>
-                                    <th style="width:30%; border: 1px solid white;">TEAMS</th>
-                                    <th style="width:35%; border: 1px solid white;">${predictedOutcome.team1}</th>
-                                    <th style="width:35%; border: 1px solid white;">${predictedOutcome.team2}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th style="width:30%; border: 1px solid white;">SCORE</th>
-                                    <td style="width:35%; border: 1px solid white;">${predictedOutcome.score1}</td>
-                                    <td style="width:35%; border: 1px solid white;">${predictedOutcome.score2}</td>
-                                </tr>
-                                <tr>
-                                    <th style="width:30%; border: 1px solid white;">SUM</th>
-                                    <td style="width:35%; border: 1px solid white;">${predictedOutcome.sum1}</td>
-                                    <td style="width:35%; border: 1px solid white;">${predictedOutcome.sum2}</td>
-                                </tr>
-                                <tr>
-                                    <th style="width:30%; border: 1px solid white;">OUTCOME</th>
-                                    <td style="width:35%; border: 1px solid white;">Head2head: ${predictedOutcome.head2head}</td>
-                                    <td style="width:35%; border: 1px solid white;">Master: ${predictedOutcome.master}</td>
-                                </tr>
-                                <tr>
-                                    <th style="width:30%; border: 1px solid white;">${predictedOutcome.result}</th>
-                                    <td style="width:35%; border: 1px solid white;">${predictedOutcome.home}</td>
-                                    <td style="width:35%; border: 1px solid white;">${predictedOutcome.away}</td>
-                                </tr>
-                            </tbody>
-                        </table>`;
-                        results += "<br><p id='success'></p></div>";
-                        
+                        const game = [
+                            times + 1,
+                            key,
+                            time,
+                            league,
+                            statement,
+                            predictedOutcome
+                        ];
+                        results += generateResults( game );
+                        save_game.push( game );
                         updateProgressBar( amounted, amountOfBooking );
                         resolve();
                         return false;
@@ -663,7 +826,7 @@ function myFunction ()
                     .catch( error =>
                     {
 
-                        console.error( 'Fetch error:', error.message );
+                        console.error( error.message );
                         results += "<p id='error' style='padding: 5px'>" + error.message + "</p>";
                         button.innerHTML = "Search";
                         clear.innerHTML = "Clear";
@@ -834,8 +997,8 @@ function myFunction ()
             {
                 const homeTeam = hometeams[index];
                 const awayTeam = awayteams[index];
-                const homeScore = Number(homescores[index]);
-                const awayScore = Number(awayscores[index]);
+                const homeScore = Number( homescores[index] );
+                const awayScore = Number( awayscores[index] );
                 const date = gameDate[index];
 
                 if ( team1name === homeTeam )
@@ -969,19 +1132,19 @@ function myFunction ()
         function h2h ()
         {
             const h2H = matchJson.teamHeads;
-            
+
             const { highValue, draw } = h2H.reduce(
                 ( acc, Match ) =>
                 {
                     const homeTeam = Object.keys( Match )[0];
                     const awayTeam = Object.keys( Match )[1];
-                    const homeScore = Number(Match[homeTeam]);
-                    const awayScore = Number(Match[awayTeam]);
+                    const homeScore = Number( Match[homeTeam] );
+                    const awayScore = Number( Match[awayTeam] );
 
                     if ( homeScore > awayScore ) acc.highValue++;
                     if ( awayScore > homeScore ) acc.highValue--;
                     else acc.draw++;
-                    
+
                     return acc;
                 },
                 { highValue: 0, draw: 0 } // Initial accumulator values
@@ -1001,23 +1164,23 @@ function myFunction ()
             let limit = 0;
             let draw = 0;
             const checkedAlready = new Set();
-            const minNumber = Math.min( Number( matchJson.team1.length ), Number(matchJson.team2.length) );
+            const minNumber = Math.min( Number( matchJson.team1.length ), Number( matchJson.team2.length ) );
 
             for ( let i = 0; i < minNumber; i++ )
             {
                 const firstMatch = matchJson.team1[i];
                 const homeTeam1 = Object.keys( firstMatch )[0];
                 const awayTeam1 = Object.keys( firstMatch )[1];
-                const homeScore1 = Number(firstMatch[homeTeam1]);
-                const awayScore1 = Number(firstMatch[awayTeam1]);
+                const homeScore1 = Number( firstMatch[homeTeam1] );
+                const awayScore1 = Number( firstMatch[awayTeam1] );
 
                 for ( let j = 0; j < minNumber; j++ )
                 {
                     const secondMatch = matchJson.team2[j];
                     const homeTeam2 = Object.keys( secondMatch )[0];
                     const awayTeam2 = Object.keys( secondMatch )[1];
-                    const homeScore2 = Number(secondMatch[homeTeam2]);
-                    const awayScore2 = Number(secondMatch[awayTeam2]);
+                    const homeScore2 = Number( secondMatch[homeTeam2] );
+                    const awayScore2 = Number( secondMatch[awayTeam2] );
 
                     if ( awayTeam1 === awayTeam2 && !checkedAlready.has( awayTeam1 ) ) 
                     {
@@ -1028,7 +1191,7 @@ function myFunction ()
                             master += 1;
                             limit += 1;
                         }
-                        if ( homeScore2 > awayScore2)
+                        if ( homeScore2 > awayScore2 )
                         {
                             master -= 1;
                             limit += 1;
@@ -1082,8 +1245,8 @@ function myFunction ()
 
         if ( selType.value === 'winner' || selType.value === 'double_chance' )
         {
-            home += ( sum1 > sum2 ) + ( score1 > score2 ) + (master > 0) + Math.max( 0, head2headValue );
-            away += ( sum2 > sum1 ) + ( score2 > score1 ) + (master < 0) + Math.max( 0, -head2headValue );
+            home += ( sum1 > sum2 ) + ( score1 > score2 ) + ( master > 0 ) + Math.max( 0, head2headValue );
+            away += ( sum2 > sum1 ) + ( score2 > score1 ) + ( master < 0 ) + Math.max( 0, -head2headValue );
 
             result = home > away + 3 ? true : ( away > home + 3 ? false : null );
         }
@@ -1112,7 +1275,7 @@ function myFunction ()
             console.log( calculatedJson );
             console.log( log );
         }*/
-            
+
         return log;
     }
 };
