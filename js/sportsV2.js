@@ -20,7 +20,7 @@ function myFunction ()
     const selType = document.getElementById( 'mySelect6' );
     function updateOptions ( selectElement )
     {
-        selType.innerHTML = ''; // Clear existing options
+        selType.innerHTML = '<i class="fa fa-spinner fa-spin"></i>'; // Clear existing options
 
         if ( selectElement.value == 'football' || selectElement.value == 'icehockey' || selectElement.value == 'handball' )
         {
@@ -60,43 +60,83 @@ function myFunction ()
     const notification = document.querySelector( '.notify-text' );
     const input = document.getElementById( 'share' );
     const saveButton = document.querySelector( '.save' );
+    const result = document.getElementById( 'result' );
     let blurActive = false;
+    let allData = [];
 
     [bell, count, saveButton].forEach( ( element ) =>
     {
         element.addEventListener( 'click', () =>
         {
-            $( notification ).toggle( '500', function ()
+            if ( element !== saveButton )
             {
-                // Handle blur logic only for non-input elements
-                if ( element !== input )
+                $( notification ).toggle( '500', function ()
                 {
-                    toggleBlur();
-                }
-            } );
+                    // Handle blur logic only for non-input elements
+                    if ( element !== input )
+                    {
+                        toggleBlur();
+                    }
+                } );
+            }
             if ( element === saveButton )
             {
                 ( async () =>
                 {
-                    const reload = await manageGame( "get", null, input.value );
-                    if ( reload === null )
+                    saveButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+                    saveButton.disabled = true;
+
+                    allData = await manageGame( "get", null, null );
+
+                    const select = document.createElement( "select" );
+                    select.id = "load";
+                    Object.values( allData ).forEach( subArrays =>
                     {
-                        result.innerHTML = `<p id='error' style='padding: 5px; font-size: 11px;'>Share code ${input.value} is not valid or has expired</p>`;
-                    }
+                        const option = document.createElement( "option" );
+                        option.value = subArrays[subArrays.length - 1];
+                        option.textContent = subArrays[subArrays.length - 1];
+                        select.appendChild( option );
+                    } );
+                    input.innerHTML = '';
+                    input.appendChild( select );
+
+                    select.addEventListener( "change", function ()
+                    {
+                        const selectedValue = this.value;
+            
+                        let matchingArray = null;
                     
-                    Object.keys( reload ).forEach( ( key ) =>
-                    {
-                        const value = reload[key];
-                        if ( Array.isArray( value ) )
+                        Object.keys( allData ).forEach( key =>
                         {
-                            results += generateResults( value );
+                            const array = allData[key]
+                            if ( Array.isArray( array ) && array[array.length - 1] ===  selectedValue )
+                            {
+                                matchingArray = array; // Set the matching array
+                            }
+                        } );
+                        
+                        if ( matchingArray )
+                        {
+                            matchingArray.forEach( ( sub ) =>
+                            {
+                                if ( Array.isArray( sub ) )
+                                {
+                                    result.innerHTML += generateResults( sub );
+                                }
+                            } );
+                            const http = "https://www.sportybet.com?shareCode=" + selectedValue + "&c=ng";
+                            const addon = '<a href="' + http + '" target="_blank"><button style="float:right; background-color: orange;" class="link">Play</button></a>';
+                            const data = `Sportybet booking code: ${selectedValue}<br>Amount of games booked: ${matchingArray.length - 1} ${addon}`;
+                            result.innerHTML += "<p id='success' style='padding: 5px; margin-right: 0px; font-size: 10px'>" + data + "</p>";
+                            $( notification ).toggle( '500' );
+                            toggleBlur();
+
+                            Array.from( result.querySelectorAll( 'div' ) ).forEach( ( div ) =>
+                            {
+                                div.style.display = 'block';
+                            } );
                         }
                     } )
-                    result.innerHTML = results;
-                    Array.from( result.querySelectorAll( 'div' ) ).forEach( ( div ) =>
-                    {
-                        div.style.display = 'block';
-                    } );
                 } )();
             }
         } );
@@ -117,8 +157,6 @@ function myFunction ()
         }
     }
 
-
-    const result = document.getElementById( 'result' );
     var click = true;
     var amountOfBooking;
     var stop = false;
@@ -264,26 +302,18 @@ function myFunction ()
             let storedData = await fetchData();
             if ( storedData )
             {
-                let matchedArray = null;
-
                 Object.keys( storedData ).forEach( ( key ) =>
                 {
                     const array = storedData[key];
                     const savedDate = new Date( key );
-
-                    if ( Array.isArray( array ) && array[array.length - 1] === lastValue )
-                    {
-                        matchedArray = array;
-                    }
-                    else if ( savedDate < threeDaysAgo )
+                    if ( savedDate < threeDaysAgo )
                     {
                         delete storedData[key];
                     }
                 } );
 
                 await saveData( storedData );
-
-                return matchedArray;
+                return storedData;
             }
         }
     }

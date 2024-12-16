@@ -255,9 +255,7 @@ span.notify-text{
     flex-direction: column;
     align-items: center;
 }
-span.notify-text div{
-    display: inline-flex;
-}
+
 /***** checkboxes *****/
 #divCheckbox {
     width: 155px;
