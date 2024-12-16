@@ -128,6 +128,7 @@ function myFunction ()
                             const addon = '<a href="' + http + '" target="_blank"><button style="float:right; background-color: orange;" class="link">Play</button></a>';
                             const data = `Sportybet booking code: ${selectedValue}<br>Amount of games booked: ${matchingArray.length - 1} ${addon}`;
                             result.innerHTML += "<p id='success' style='padding: 5px; margin-right: 0px; font-size: 10px'>" + data + "</p>";
+                            
                             $( notification ).toggle( '500' );
                             toggleBlur();
 
