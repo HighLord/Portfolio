@@ -136,7 +136,7 @@ option {
     justify-content: center;
 }
 
-button {
+button{
     box-shadow: -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset,
         -5px -5px 5px rgba(255, 255, 255, 0.2) inset, 15px 15px 15px rgba(0, 0, 0, 0.1) inset;
     transition: all 1s;

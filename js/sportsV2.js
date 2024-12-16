@@ -90,6 +90,10 @@ function myFunction ()
 
                     const select = document.createElement( "select" );
                     select.id = "load";
+                    select.style.width = "150px";
+                    const option = document.createElement( "option" );
+                    option.textContent = "Select a game code";
+                    select.appendChild( option );
                     Object.values( allData ).forEach( subArrays =>
                     {
                         const option = document.createElement( "option" );
