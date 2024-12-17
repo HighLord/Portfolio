@@ -54,94 +54,149 @@ function myFunction ()
 
     updateOptions( document.getElementById( 'mySelect4' ) );
 
-
     const bell = document.querySelector( '.fa-bell' );
     const count = document.querySelector( '.count' );
     const notification = document.querySelector( '.notify-text' );
-    const input = document.getElementById( 'share' );
-    const saveButton = document.querySelector( '.save' );
     const result = document.getElementById( 'result' );
+
     let blurActive = false;
     let allData = [];
 
-    [bell, count, saveButton].forEach( ( element ) =>
+    let sug = document.getElementById( 'sug' );
+
+    [bell, count].forEach( ( element ) =>
     {
         element.addEventListener( 'click', () =>
         {
-            if ( element !== saveButton )
-            {
-                $( notification ).toggle( '500', function ()
-                {
-                    // Handle blur logic only for non-input elements
-                    if ( element !== input )
-                    {
-                        toggleBlur();
-                    }
-                } );
-            }
-            if ( element === saveButton )
+            $( notification ).toggle( '500', () => toggleBlur() );
+
+            if ( !blurActive )
             {
                 ( async () =>
                 {
-                    saveButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
-                    saveButton.disabled = true;
-
+                    sug.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
                     allData = await manageGame( "get", null, null );
+                    sug.innerHTML = null;
 
-                    const select = document.createElement( "select" );
-                    select.id = "load";
-                    select.style.width = "150px";
-                    const option = document.createElement( "option" );
-                    option.textContent = "Select a game code";
-                    select.appendChild( option );
-                    Object.values( allData ).forEach( subArrays =>
-                    {
-                        const option = document.createElement( "option" );
-                        option.value = subArrays[subArrays.length - 1];
-                        option.textContent = subArrays[subArrays.length - 1];
-                        select.appendChild( option );
-                    } );
-                    input.innerHTML = '';
-                    input.appendChild( select );
+                    const input = document.createElement( 'input' );
+                    input.id = "input";
+                    input.type = 'text';
+                    input.list = '';
+                    input.placeholder = 'Start typing a team name';
+                    input.style.padding = '10px 10px';
+                    input.style.width = '280px';
+                    input.style.border = 'none';
+                    input.style.outline = 'none';
+                    input.style.fontSize = '12px';
+                    input.style.textAlign = 'center';
+                    input.style.borderRadius = '5px';
 
-                    select.addEventListener( "change", function ()
+                    sug.appendChild( input );
+
+                    const scroll = document.createElement( 'div' );
+                    scroll.id = "scroll";
+
+                    const datalist = document.createElement( 'datalist' )
+                    datalist.id = "game";
+
+                    scroll.appendChild( datalist );
+                    sug.appendChild( scroll );
+
+                    Object.values( allData ).forEach( subArrays => 
                     {
-                        const selectedValue = this.value;
-            
-                        let matchingArray = null;
-                    
-                        Object.keys( allData ).forEach( key =>
+                        const gameDiv = document.createElement( "option" );
+                        gameDiv.id = 'gamediv';
+                        gameDiv.value = subArrays[subArrays.length - 1];
+                        gameDiv.textContent = subArrays[subArrays.length - 1];
+                        datalist.appendChild( gameDiv );
+
+                        subArrays.forEach( ( array, index ) => 
                         {
-                            const array = allData[key]
-                            if ( Array.isArray( array ) && array[array.length - 1] ===  selectedValue )
+                            if ( Array.isArray( array ) ) // Check if it's an array
                             {
-                                matchingArray = array; // Set the matching array
+                                const [times, key, time, league, statement, predictedOutcome] = array;
+                                gameDiv.dataset[`teamA${index}`] = predictedOutcome.team1;
+                                gameDiv.dataset[`teamB${index}`] = predictedOutcome.team2;
+                            }
+                            else
+                            {
+                                gameDiv.dataset[`identifier`] = subArrays[subArrays.length - 1];
                             }
                         } );
-                        
-                        if ( matchingArray )
+
+                        gameDiv.onclick = function () 
                         {
-                            matchingArray.forEach( ( sub ) =>
+                            input.value = gameDiv.value;
+
+                            datalist.style.display = 'none';
+
+                            Object.keys( allData ).forEach( key =>
                             {
-                                if ( Array.isArray( sub ) )
+                                const array = allData[key]
+                                if ( Array.isArray( array ) && array[array.length - 1] === gameDiv.value )
                                 {
-                                    result.innerHTML += generateResults( sub );
+                                    array.forEach( ( sub ) =>
+                                    {
+                                        if ( Array.isArray( sub ) )
+                                        {
+                                            result.innerHTML += generateResults( sub );
+                                        }
+                                    } );
+                                    const http = "https://www.sportybet.com?shareCode=" + gameDiv.value + "&c=ng";
+                                    const addon = '<a href="' + http + '" target="_blank"><button style="float:right; background-color: orange;" class="link">Play</button></a>';
+                                    const data = `Sportybet booking code: ${gameDiv.value}<br>Amount of games booked: ${array.length - 1} ${addon}`;
+                                    result.innerHTML += "<p id='success' style='padding: 5px; margin-right: 0px; font-size: 10px'>" + data + "</p>";
+
+                                    $( notification ).toggle( '500' );
+                                    toggleBlur();
+
+                                    Array.from( result.querySelectorAll( 'div' ) ).forEach( ( div ) =>
+                                    {
+                                        div.style.display = 'block';
+                                    } );
                                 }
                             } );
-                            const http = "https://www.sportybet.com?shareCode=" + selectedValue + "&c=ng";
-                            const addon = '<a href="' + http + '" target="_blank"><button style="float:right; background-color: orange;" class="link">Play</button></a>';
-                            const data = `Sportybet booking code: ${selectedValue}<br>Amount of games booked: ${matchingArray.length - 1} ${addon}`;
-                            result.innerHTML += "<p id='success' style='padding: 5px; margin-right: 0px; font-size: 10px'>" + data + "</p>";
-                            
-                            $( notification ).toggle( '500' );
-                            toggleBlur();
-
-                            Array.from( result.querySelectorAll( 'div' ) ).forEach( ( div ) =>
-                            {
-                                div.style.display = 'block';
-                            } );
                         }
-                    } )
+                    } );
+
+                    ['input', 'click'].forEach( eventType =>
+                    {
+                        input.addEventListener( eventType, () =>
+                        {
+                            datalist.style.display = 'block';
+
+                            for ( let option of datalist.options ) 
+                            {
+                                let shouldDisplay = false;
+
+                                if ( option.value.toUpperCase().indexOf( input.value.toUpperCase() ) > -1 )
+                                {
+                                    shouldDisplay = true;
+                                }
+                                else
+                                {
+                                    Object.keys( option.dataset ).forEach( key =>
+                                    {
+                                        if ( option.dataset[key].toUpperCase().indexOf( input.value.toUpperCase() ) > -1 )
+                                        {
+                                            shouldDisplay = true;
+                                        }
+                                    } );
+                                }
+                                option.style.display = shouldDisplay ? 'block' : 'none';
+
+                                option.style.backgroundColor = '';
+                                option.style.color = '';
+
+                                if ( input.value.toUpperCase() == option.value.toUpperCase() )
+                                {
+                                    option.style.backgroundColor = 'green';
+                                    option.style.color = 'white';
+                                    option.scrollIntoView( { behavior: 'smooth', block: 'nearest' } );
+                                }
+                            }
+                        } )
+                    } );
                 } )();
             }
         } );
@@ -152,7 +207,7 @@ function myFunction ()
         if ( !blurActive )
         {
             $( '.notify' ).css( 'z-index', '1' );
-            $( 'body > *:not(.notify, .fa-bell, .count, #share)' ).css( 'filter', 'blur(5px)' );
+            $( 'body > *:not(.notify, .fa-bell, .count)' ).css( 'filter', 'blur(5px)' );
             blurActive = true;
         } else
         {
@@ -834,7 +889,7 @@ function myFunction ()
                                 }
                             };
                             jsonData = JSON.stringify(jsonData);
-
+ 
                             resolve(jsonData);*/
                             resolve( json );
                         } else
