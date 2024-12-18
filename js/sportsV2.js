@@ -589,9 +589,6 @@ function myFunction ()
                                                 } );
                                                 visited.splice( 0, visited.length );
 
-
-                                                result.innerHTML = container.innerHTML;
-
                                                 results = "";
                                                 button.innerHTML = "Search";
                                                 clear.innerHTML = "Clear";
