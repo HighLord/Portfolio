@@ -231,6 +231,7 @@ function myFunction ()
         const oddsLength = odds ? Object.keys( odds ).length : 0;
         const key = array[array.length - 1];
         let calcOdds = 1;
+        let number = 0;
 
         let results = '';
         array.forEach( ( item, index ) =>
@@ -239,12 +240,12 @@ function myFunction ()
             {
                 const gameOdds = odds[item.game.num];
                 let display = gameOdds ? 'block' : 'none';
-                
+                if ( gameOdds ) number++;
                 calcOdds *= gameOdds || 1;
 
                 results += `
                     <div class="hover" id="${item.game.num}" style="display: ${display}; z-index: 1;">
-                    ${index + 1}. Odd: ${gameOdds}<br>
+                    ${number}. Odd: ${gameOdds}<br>
                     ${item.game.time}<br>
                     ${item.game.league}<br>
                     ${item.game.statement}<br>
