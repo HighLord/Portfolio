@@ -276,7 +276,7 @@ div.notify span {
     margin: auto;
     font-size: 13px;
     line-height: 1.3;
-    height: 80vw;
+    height: 300px;
     width: 290px;
     filter: blur(0px);
 }
