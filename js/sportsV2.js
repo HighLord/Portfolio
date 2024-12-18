@@ -556,6 +556,7 @@ function myFunction ()
                                                         delete dataKing[key];
                                                     } );
                                                     visited.splice( 0, visited.length );
+                                                    save_game.splice( 0, save_game.length );
                                                     button.innerHTML = "Search";
                                                     clear.innerHTML = "Clear";
                                                     click = true;
@@ -583,6 +584,7 @@ function myFunction ()
 
                                                 generateResults( save_game );
                                                 manageGame( "save", save_game );
+                                                save_game.splice( 0, save_game.length );
 
                                                 Object.keys( dataKing ).forEach( function ( key )
                                                 {
@@ -608,6 +610,7 @@ function myFunction ()
                                                     delete dataKing[key];
                                                 } );
                                                 visited.splice( 0, visited.length );
+                                                save_game.splice( 0, save_game.length );
                                                 button.innerHTML = "Search";
                                                 clear.innerHTML = "Clear";
                                                 click = true;
@@ -631,6 +634,7 @@ function myFunction ()
                                                 delete dataKing[key];
                                             } );
                                             visited.splice( 0, visited.length );
+                                            save_game.splice( 0, save_game.length );
                                             result.innerHTML = results;
                                             results = "";
                                             book = true;
@@ -880,6 +884,7 @@ function myFunction ()
                                 delete dataKing[key];
                             } );
                             visited.splice( 0, visited.length );
+                            save_game.splice( 0, save_game.length );
                             result.innerHTML = results;
                             results = "";
                             book = true;
@@ -903,6 +908,7 @@ function myFunction ()
                             delete dataKing[key];
                         } );
                         visited.splice( 0, visited.length );
+                        save_game.splice( 0, save_game.length );
                         result.innerHTML = results;
                         results = "";
                         book = true;
