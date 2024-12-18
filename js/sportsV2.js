@@ -509,7 +509,7 @@ function myFunction ()
                                     contentType: "application/json",
                                     timeout: 18000,
                                     success:
-                                        function ( responses )
+                                        async function ( responses )
                                         {
                                             var message = responses.message;
                                             var innerMsg = responses.innerMsg;
@@ -583,7 +583,7 @@ function myFunction ()
                                                 save_game.push( shareCode );
 
                                                 generateResults( save_game );
-                                                manageGame( "save", save_game );
+                                                await manageGame( "save", save_game );
                                                 save_game.splice( 0, save_game.length );
 
                                                 Object.keys( dataKing ).forEach( function ( key )
