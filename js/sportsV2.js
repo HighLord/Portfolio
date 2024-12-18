@@ -76,6 +76,7 @@ function myFunction ()
                 {
                     sug.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
                     allData = await manageGame( "get", null, null );
+
                     sug.innerHTML = null;
 
                     const input = document.createElement( 'input' );
@@ -110,22 +111,20 @@ function myFunction ()
                         gameDiv.textContent = subArrays[subArrays.length - 1];
                         datalist.appendChild( gameDiv );
 
-                        subArrays.forEach( ( array, index ) => 
+                        subArrays.forEach( ( item, index ) => 
                         {
-                            if ( Array.isArray( array ) ) // Check if it's an array
+                            if ( item.log )
                             {
-                                const [times, key, time, league, statement, predictedOutcome] = array;
-                                gameDiv.dataset[`teamA${index}`] = predictedOutcome.team1;
-                                gameDiv.dataset[`teamB${index}`] = predictedOutcome.team2;
-                            }
-                            else
-                            {
-                                gameDiv.dataset[`identifier`] = subArrays[subArrays.length - 1];
+                                gameDiv.dataset[`teamA${index}`] = item.log.team1;
+                                gameDiv.dataset[`teamB${index}`] = item.log.team2;
                             }
                         } );
+                        gameDiv.dataset[`identifier`] = subArrays[subArrays.length - 1];
+
 
                         gameDiv.onclick = function () 
                         {
+                            searchText.value = input.value;
                             input.value = gameDiv.value;
 
                             datalist.style.display = 'none';
@@ -133,27 +132,14 @@ function myFunction ()
                             Object.keys( allData ).forEach( key =>
                             {
                                 const array = allData[key]
-                                if ( Array.isArray( array ) && array[array.length - 1] === gameDiv.value )
+
+                                if ( array[array.length - 1] === gameDiv.value )
                                 {
-                                    array.forEach( ( sub ) =>
-                                    {
-                                        if ( Array.isArray( sub ) )
-                                        {
-                                            result.innerHTML += generateResults( sub );
-                                        }
-                                    } );
-                                    const http = "https://www.sportybet.com?shareCode=" + gameDiv.value + "&c=ng";
-                                    const addon = '<a href="' + http + '" target="_blank"><button style="float:right; background-color: orange;" class="link">Play</button></a>';
-                                    const data = `Sportybet booking code: ${gameDiv.value}<br>Amount of games booked: ${array.length - 1} ${addon}`;
-                                    result.innerHTML += "<p id='success' style='padding: 5px; margin-right: 0px; font-size: 10px'>" + data + "</p>";
+                                    generateResults( array );
 
                                     $( notification ).toggle( '500' );
                                     toggleBlur();
-
-                                    Array.from( result.querySelectorAll( 'div' ) ).forEach( ( div ) =>
-                                    {
-                                        div.style.display = 'block';
-                                    } );
+                                    searchAndScroll();
                                 }
                             } );
                         }
@@ -239,48 +225,72 @@ function myFunction ()
 
     function generateResults ( array )
     {
+        const odds = array.find( item => item.odds )?.odds;
+        const oddsLength = odds ? Object.keys( odds ).length : 0;
+        const key = array[array.length - 1];
+        let calcOdds = 1;
+
         let results = '';
-        const [times, key, time, league, statement, predictedOutcome] = array;
+        array.forEach( ( item, index ) =>
+        {
+            if ( item.game && item.log )
+            {
+                const gameOdds = odds[item.game.num];
+                let display = gameOdds ? 'block' : 'none';
+                
+                calcOdds *= gameOdds || 1;
 
-        results += `
-            <div class="hover" id="${times}" style="display: none; z-index: 1;">
-            ${time}<br>
-            ${league}<br>
-            ${statement}<br>
-            <a href="https://www.livescore.in/match/${key}/#/h2h/overall" target="_blank"><button style="z-index: 9999;" class="link">Link</button></a>
-            <table class="popup" style="width:100%; border-collapse: collapse; font-size: 8px; text-align: left;">
-                <thead>
-                    <tr>
-                        <th style="width:30%; border: 1px solid white;">TEAMS</th>
-                        <th style="width:35%; border: 1px solid white;">${predictedOutcome.team1}</th>
-                        <th style="width:35%; border: 1px solid white;">${predictedOutcome.team2}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th style="width:30%; border: 1px solid white;">SCORE</th>
-                        <td style="width:35%; border: 1px solid white;">${predictedOutcome.score1}</td>
-                        <td style="width:35%; border: 1px solid white;">${predictedOutcome.score2}</td>
-                    </tr>
-                    <tr>
-                        <th style="width:30%; border: 1px solid white;">SUM</th>
-                        <td style="width:35%; border: 1px solid white;">${predictedOutcome.sum1}</td>
-                        <td style="width:35%; border: 1px solid white;">${predictedOutcome.sum2}</td>
-                    </tr>
-                    <tr>
-                        <th style="width:30%; border: 1px solid white;">OUTCOME</th>
-                        <td style="width:35%; border: 1px solid white;">Head2head: ${predictedOutcome.head2head}</td>
-                        <td style="width:35%; border: 1px solid white;">Master: ${predictedOutcome.master}</td>
-                    </tr>
-                    <tr>
-                        <th style="width:30%; border: 1px solid white;">${predictedOutcome.result}</th>
-                        <td style="width:35%; border: 1px solid white;">${predictedOutcome.home}</td>
-                        <td style="width:35%; border: 1px solid white;">${predictedOutcome.away}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <br><p id='success'></p></div>`;
+                results += `
+                    <div class="hover" id="${item.game.num}" style="display: ${display}; z-index: 1;">
+                    ${index + 1}. Odd: ${gameOdds}<br>
+                    ${item.game.time}<br>
+                    ${item.game.league}<br>
+                    ${item.game.statement}<br>
+                    <a href="https://www.livescore.in/match/${item.game.key}/#/h2h/overall" target="_blank"><button style="z-index: 9999;" class="link">Link</button></a>
+                    <table class="popup" style="width:100%; border-collapse: collapse; font-size: 8px; text-align: left;">
+                        <thead>
+                            <tr>
+                                <th style="width:30%; border: 1px solid white;">TEAMS</th>
+                                <th style="width:35%; border: 1px solid white;">${item.log.team1}</th>
+                                <th style="width:35%; border: 1px solid white;">${item.log.team2}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th style="width:30%; border: 1px solid white;">SCORE</th>
+                                <td style="width:35%; border: 1px solid white;">${item.log.score1}</td>
+                                <td style="width:35%; border: 1px solid white;">${item.log.score2}</td>
+                            </tr>
+                            <tr>
+                                <th style="width:30%; border: 1px solid white;">SUM</th>
+                                <td style="width:35%; border: 1px solid white;">${item.log.sum1}</td>
+                                <td style="width:35%; border: 1px solid white;">${item.log.sum2}</td>
+                            </tr>
+                            <tr>
+                                <th style="width:30%; border: 1px solid white;">OUTCOME</th>
+                                <td style="width:35%; border: 1px solid white;">Head2head: ${item.log.head2head}</td>
+                                <td style="width:35%; border: 1px solid white;">Master: ${item.log.master}</td>
+                            </tr>
+                            <tr>
+                                <th style="width:30%; border: 1px solid white;">${item.log.result}</th>
+                                <td style="width:35%; border: 1px solid white;">${item.log.home}</td>
+                                <td style="width:35%; border: 1px solid white;">${item.log.away}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br><p id='success'></p>
+                </div>`;
+            }
+        } );
 
+        const addon = `<a href="https://www.sportybet.com?shareCode=${key}&c=ng" target="_blank">
+                        <button style="float:right; background-color: orange;" class="link">Play</button></a>`;
+        const data = `Sportybet booking code: ${key}<br>
+                        Amount of games booked: ${oddsLength}<br>
+                        Total odds: ${calcOdds.toFixed( 2 )} ${addon}`;
+        results += `<p id='success' style='padding: 5px; margin-right: 0px; font-size: 10px'>${data}</p>`;
+
+        result.innerHTML = results;
         return results;
     }
 
@@ -364,7 +374,6 @@ function myFunction ()
             {
                 Object.keys( storedData ).forEach( ( key ) =>
                 {
-                    const array = storedData[key];
                     const savedDate = new Date( key );
                     if ( savedDate < threeDaysAgo )
                     {
@@ -509,7 +518,6 @@ function myFunction ()
                                                 var debug = responses.debug;
                                                 amounts = total;
 
-                                                const entries = Object.entries( gamesBooked );
 
                                                 Object.keys( dataKing ).forEach( function ( key )
                                                 {
@@ -564,48 +572,14 @@ function myFunction ()
                                                 {
                                                     shareCode = responses.data.shareCode;
                                                 }
-
-                                                var http = "https://www.sportybet.com?shareCode=" + shareCode + "&c=ng";
-                                                var addon = '<a href="' + http + '" target="_blank"><button style="float:right; background-color: orange;" class="link">Play</button></a>';
-                                                var data = `Sportybet booking code: ${shareCode}<br>Amount of games booked: ${total}<br>Total odds: ${odds} ${addon}`;
-                                                results += "<p id='success' style='padding: 5px; margin-right: 0px; font-size: 10px'>" + data + "</p>";
-                                                var container = document.createElement( 'div' );
-                                                var store = document.createElement( 'div' );
-                                                container.innerHTML = results;
-
-                                                var num = 1;
-                                                let matchedGames = [];
-                                                Array.from( container.children ).forEach( element =>
-                                                {
-                                                    var elementID = element.id;
-
-                                                    for ( let [key, values] of entries )
-                                                    {
-                                                        if ( key == elementID )
-                                                        {
-                                                            save_game.forEach( game => 
-                                                            {
-                                                                if ( Array.isArray( game ) && game[0] == key )
-                                                                {
-                                                                    matchedGames.push( game );
-                                                                }
-                                                            } );
-
-                                                            element.style.display = "block";
-                                                            element.innerHTML = "<br>" + num + ". Odd: " + values + "<br>" + element.innerHTML;
-                                                            num++;
-                                                        }
-                                                    }
+                                                
+                                                save_game.push( {
+                                                    odds: gamesBooked
                                                 } );
-
-                                                save_game = matchedGames;
                                                 save_game.push( shareCode );
-                                                manageGame( "save", save_game );
 
-                                                Array.from( store.children ).forEach( element =>
-                                                {
-                                                    element.style.display = "block";
-                                                } );
+                                                generateResults( save_game );
+                                                manageGame( "save", save_game );
 
                                                 Object.keys( dataKing ).forEach( function ( key )
                                                 {
@@ -740,16 +714,19 @@ function myFunction ()
                         };
                         dataKing["NO" + times] = data;
 
-                        const game = [
-                            times + 1,
+                        const game = {
+                            num: times + 1,
                             key,
                             time,
                             league,
-                            statement,
-                            predictedOutcome
-                        ];
-                        results += generateResults( game );
-                        save_game.push( game );
+                            statement
+                        };
+                        //results += generateResults( game );
+                        save_game.push( {
+                            game: game,
+                            log: predictedOutcome
+                        } );
+
                         updateProgressBar( amounted, amountOfBooking );
                         resolve();
                         return false;
