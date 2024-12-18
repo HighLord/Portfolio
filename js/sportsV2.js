@@ -91,6 +91,7 @@ function myFunction ()
                     input.style.fontSize = '12px';
                     input.style.textAlign = 'center';
                     input.style.borderRadius = '5px';
+                    input.autocomplete = 'off';
 
                     sug.appendChild( input );
 
@@ -99,6 +100,7 @@ function myFunction ()
 
                     const datalist = document.createElement( 'datalist' )
                     datalist.id = "game";
+                    input.setAttribute( 'list', 'game' );
 
                     scroll.appendChild( datalist );
                     sug.appendChild( scroll );
