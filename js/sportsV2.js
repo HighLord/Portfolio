@@ -576,7 +576,7 @@ function myFunction ()
                                                 {
                                                     shareCode = responses.data.shareCode;
                                                 }
-                                                
+
                                                 save_game.push( {
                                                     odds: gamesBooked
                                                 } );
