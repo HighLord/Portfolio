@@ -1,5 +1,5 @@
 body {
-    background-color: rgb(45, 11, 139);
+    background-color: hsl(256, 85%, 29%);
     color: white;
     height: 90%;
     width: 96%;
@@ -346,7 +346,7 @@ option.active,
     overflow: hidden;
     color: rgb(255, 255, 255);
     width: 40px;
-    background-color: rgb(45, 11, 139);
+    background-color: hsl(256, 85%, 29%);
     font-size: 12px;
     height: 34px;
     line-height: 35px;
