@@ -59,10 +59,11 @@ h3 {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 253px;
 }
 
 #scroll {
-    height: 210px;
+    height: 100%;
     width: 99.8%;
     text-align: center;
     overflow: scroll;
