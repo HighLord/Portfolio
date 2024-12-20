@@ -209,7 +209,7 @@ div.notify {
     justify-content: center;
     align-items: center;
     display: flex;
-    z-index: 90;
+    z-index: 0;
     top: 14%;
     height: 370px;
 }
