@@ -359,7 +359,7 @@ function myFunction ()
         };
 
         const now = new Date();
-        const threeDaysAgo = new Date( now.getTime() - 3 * 24 * 60 * 60 * 1000 );
+        const twoDaysAgo = new Date( now.getTime() - 2 * 24 * 60 * 60 * 1000 );
 
         // Perform actions
         if ( action === "save" )
@@ -378,7 +378,7 @@ function myFunction ()
                 Object.keys( storedData ).forEach( ( key ) =>
                 {
                     const savedDate = new Date( key );
-                    if ( savedDate < threeDaysAgo )
+                    if ( savedDate < twoDaysAgo )
                     {
                         delete storedData[key];
                     }
