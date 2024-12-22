@@ -75,116 +75,123 @@ function myFunction ()
                 ( async () =>
                 {
                     sug.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
-                    allData = await manageGame( "get", null, null );
-
-                    sug.innerHTML = null;
-
-                    const input = document.createElement( 'input' );
-                    input.id = "input";
-                    input.type = 'text';
-                    input.list = '';
-                    input.placeholder = 'Start typing a team name';
-                    input.style.padding = '10px 10px';
-                    input.style.width = '280px';
-                    input.style.border = 'none';
-                    input.style.outline = 'none';
-                    input.style.fontSize = '12px';
-                    input.style.textAlign = 'center';
-                    input.style.borderRadius = '5px';
-                    input.autocomplete = 'off';
-
-                    sug.appendChild( input );
-
-                    const scroll = document.createElement( 'div' );
-                    scroll.id = "scroll";
-
-                    const datalist = document.createElement( 'datalist' )
-                    datalist.id = "game";
-                    input.setAttribute( 'list', 'game' );
-
-                    scroll.appendChild( datalist );
-                    sug.appendChild( scroll );
-
-                    Object.values( allData ).forEach( subArrays => 
+                    try 
                     {
-                        const gameDiv = document.createElement( "option" );
-                        gameDiv.id = 'gamediv';
-                        gameDiv.value = subArrays[subArrays.length - 1];
-                        gameDiv.textContent = subArrays[subArrays.length - 1];
-                        datalist.appendChild( gameDiv );
+                        allData = await manageGame( "get", null, null );
 
-                        subArrays.forEach( ( item, index ) => 
+                        sug.innerHTML = null;
+
+                        const input = document.createElement( 'input' );
+                        input.id = "input";
+                        input.type = 'text';
+                        input.list = '';
+                        input.placeholder = 'Start typing a team name';
+                        input.style.padding = '10px 10px';
+                        input.style.width = '280px';
+                        input.style.border = 'none';
+                        input.style.outline = 'none';
+                        input.style.fontSize = '12px';
+                        input.style.textAlign = 'center';
+                        input.style.borderRadius = '5px';
+                        input.autocomplete = 'off';
+
+                        sug.appendChild( input );
+
+                        const scroll = document.createElement( 'div' );
+                        scroll.id = "scroll";
+
+                        const datalist = document.createElement( 'datalist' )
+                        datalist.id = "game";
+                        input.setAttribute( 'list', 'game' );
+
+                        scroll.appendChild( datalist );
+                        sug.appendChild( scroll );
+
+                        Object.values( allData ).forEach( subArrays => 
                         {
-                            if ( item.log )
+                            const gameDiv = document.createElement( "option" );
+                            gameDiv.id = 'gamediv';
+                            gameDiv.value = subArrays[subArrays.length - 1];
+                            gameDiv.textContent = subArrays[subArrays.length - 1];
+                            datalist.appendChild( gameDiv );
+
+                            subArrays.forEach( ( item, index ) => 
                             {
-                                gameDiv.dataset[`teamA${index}`] = item.log.team1;
-                                gameDiv.dataset[`teamB${index}`] = item.log.team2;
-                            }
-                        } );
-                        gameDiv.dataset[`identifier`] = subArrays[subArrays.length - 1];
-
-
-                        gameDiv.onclick = function () 
-                        {
-                            searchText.value = input.value;
-                            input.value = gameDiv.value;
-
-                            datalist.style.display = 'none';
-
-                            Object.keys( allData ).forEach( key =>
-                            {
-                                const array = allData[key]
-
-                                if ( array[array.length - 1] === gameDiv.value )
+                                if ( item.log )
                                 {
-                                    generateResults( array );
-
-                                    $( notification ).toggle( '500' );
-                                    toggleBlur();
-                                    searchAndScroll();
+                                    gameDiv.dataset[`teamA${index}`] = item.log.team1;
+                                    gameDiv.dataset[`teamB${index}`] = item.log.team2;
                                 }
                             } );
-                        }
-                    } );
+                            gameDiv.dataset[`identifier`] = subArrays[subArrays.length - 1];
 
-                    ['input', 'click'].forEach( eventType =>
-                    {
-                        input.addEventListener( eventType, () =>
-                        {
-                            datalist.style.display = 'block';
 
-                            for ( let option of datalist.options ) 
+                            gameDiv.onclick = function () 
                             {
-                                let shouldDisplay = false;
+                                searchText.value = input.value;
+                                input.value = gameDiv.value;
 
-                                if ( option.value.toUpperCase().indexOf( input.value.toUpperCase() ) > -1 )
+                                datalist.style.display = 'none';
+
+                                Object.keys( allData ).forEach( key =>
                                 {
-                                    shouldDisplay = true;
-                                }
-                                else
-                                {
-                                    Object.keys( option.dataset ).forEach( key =>
+                                    const array = allData[key]
+
+                                    if ( array[array.length - 1] === gameDiv.value )
                                     {
-                                        if ( option.dataset[key].toUpperCase().indexOf( input.value.toUpperCase() ) > -1 )
-                                        {
-                                            shouldDisplay = true;
-                                        }
-                                    } );
-                                }
-                                option.style.display = shouldDisplay ? 'block' : 'none';
+                                        generateResults( array );
 
-                                option.style.backgroundColor = '';
-                                option.style.color = '';
-
-                                if ( input.value.toUpperCase() == option.value.toUpperCase() )
-                                {
-                                    option.style.backgroundColor = 'green';
-                                    option.style.color = 'white';
-                                    option.scrollIntoView( { behavior: 'smooth', block: 'nearest' } );
-                                }
+                                        $( notification ).toggle( '500' );
+                                        toggleBlur();
+                                        searchAndScroll();
+                                    }
+                                } );
                             }
-                        } )
-                    } );
+                        } );
+
+                        ['input', 'click'].forEach( eventType =>
+                        {
+                            input.addEventListener( eventType, () =>
+                            {
+                                datalist.style.display = 'block';
+
+                                for ( let option of datalist.options ) 
+                                {
+                                    let shouldDisplay = false;
+
+                                    if ( option.value.toUpperCase().indexOf( input.value.toUpperCase() ) > -1 )
+                                    {
+                                        shouldDisplay = true;
+                                    }
+                                    else
+                                    {
+                                        Object.keys( option.dataset ).forEach( key =>
+                                        {
+                                            if ( option.dataset[key].toUpperCase().indexOf( input.value.toUpperCase() ) > -1 )
+                                            {
+                                                shouldDisplay = true;
+                                            }
+                                        } );
+                                    }
+                                    option.style.display = shouldDisplay ? 'block' : 'none';
+
+                                    option.style.backgroundColor = '';
+                                    option.style.color = '';
+
+                                    if ( input.value.toUpperCase() == option.value.toUpperCase() )
+                                    {
+                                        option.style.backgroundColor = 'green';
+                                        option.style.color = 'white';
+                                        option.scrollIntoView( { behavior: 'smooth', block: 'nearest' } );
+                                    }
+                                }
+                            } )
+                        } );
+                    } catch ( error )
+                    {
+                        $( notification ).toggle( '500', () => toggleBlur() );
+                        result.innerHTML = "<p id='error' style='padding: 5px; font-size: 11px;'>A network error has occurred, try again!</p>";
+                    }
                 } )();
             }
         } );
@@ -584,13 +591,15 @@ function myFunction ()
 
                                                 generateResults( save_game );
                                                 manageGame( "save", save_game );
-                                                save_game.splice( 0, save_game.length );
-
-                                                Object.keys( dataKing ).forEach( function ( key )
+                                                setTimeout( () => 
                                                 {
-                                                    delete dataKing[key];
-                                                } );
-                                                visited.splice( 0, visited.length );
+                                                    save_game.splice( 0, save_game.length );
+                                                    Object.keys( dataKing ).forEach( function ( key )
+                                                    {
+                                                        delete dataKing[key];
+                                                    } );
+                                                    visited.splice( 0, visited.length );
+                                                }, 5000);
 
                                                 results = "";
                                                 button.innerHTML = "Search";
