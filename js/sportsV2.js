@@ -331,7 +331,6 @@ function myFunction ()
                     },
                     error: function ( error )
                     {
-                        console.error( error );
                         reject( error );
                     },
                 } );
@@ -371,6 +370,7 @@ function myFunction ()
         // Perform actions
         if ( action === "save" )
         {
+            if ( data === null || data === "" ) return;
             const uniqueKey = now.toISOString();
             let storedData = await fetchData();
             storedData = storedData || {};
