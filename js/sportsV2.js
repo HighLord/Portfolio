@@ -304,8 +304,9 @@ function myFunction ()
         return results;
     }
 
-    async function manageGame ( action, data = null, lastValue = null )
+    async function manageGame ( action, datas = null, lastValue = null )
     {
+        let data = datas;
         const apiUrl = "https://github.webapps.com.ng/paste.php";
         const pin = "3728"; // Pin for secure access
 
@@ -370,9 +371,23 @@ function myFunction ()
         // Perform actions
         if ( action === "save" )
         {
-            if ( data === null || data === "" ) return;
+            if ( data.length === 0 ) return false;
             const uniqueKey = now.toISOString();
             let storedData = await fetchData();
+            let cond = false;
+            Object.values( storedData ).forEach( subArrays => 
+            {
+                const lastElement = subArrays[subArrays.length - 1];
+                const thisElement = data[data.length - 1];
+                if ( lastElement === thisElement )
+                {
+                    cond = true;
+                }
+            } );
+            if ( cond === true )
+            {
+                return false;
+            }
             storedData = storedData || {};
             storedData[uniqueKey] = data;
             await saveData( storedData );
@@ -380,11 +395,16 @@ function myFunction ()
         else if ( action === "get" )
         {
             let storedData = await fetchData();
+
             if ( storedData )
             {
+                const comp = new Set();
+
                 Object.keys( storedData ).forEach( ( key ) =>
                 {
                     const savedDate = new Date( key );
+                    const lastElement = key[key.length - 1];
+                    
                     if ( savedDate < twoDaysAgo )
                     {
                         delete storedData[key];
