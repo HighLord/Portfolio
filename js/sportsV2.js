@@ -1234,6 +1234,7 @@ function myFunction ()
         function h2h ()
         {
             const h2H = matchJson.teamHeads;
+            let add = 0;
 
             const { highValue, draw } = h2H.reduce(
                 ( acc, Match ) =>
@@ -1243,8 +1244,8 @@ function myFunction ()
                     const homeScore = Number( Match[homeTeam] );
                     const awayScore = Number( Match[awayTeam] );
 
-                    if ( homeScore > awayScore ) acc.highValue++;
-                    if ( awayScore > homeScore ) acc.highValue--;
+                    if ( homeScore > awayScore ) add++, acc.highValue += add;
+                    if ( awayScore > homeScore ) add++, acc.highValue -= add;
                     else acc.draw++;
 
                     return acc;
@@ -1265,7 +1266,6 @@ function myFunction ()
             let master = 0;
             let limit = 0;
             let draw = 0;
-            let add = 0;
             const checkedAlready = new Set();
             const minNumber = Math.min( Number( matchJson.team1.length ), Number( matchJson.team2.length ) );
 
@@ -1291,14 +1291,12 @@ function myFunction ()
 
                         if ( homeScore1 > awayScore1 )
                         {
-                            add++;
-                            master += add;
+                            master += 1;
                             limit += 1;
                         }
                         if ( homeScore2 > awayScore2 )
                         {
-                            add++;
-                            master -= add;
+                            master -= 1;
                             limit += 1;
                         }
                         if ( homeScore1 == 0 && homeScore2 == 0 )
