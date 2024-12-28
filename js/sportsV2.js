@@ -1265,6 +1265,7 @@ function myFunction ()
             let master = 0;
             let limit = 0;
             let draw = 0;
+            let add = 0;
             const checkedAlready = new Set();
             const minNumber = Math.min( Number( matchJson.team1.length ), Number( matchJson.team2.length ) );
 
@@ -1290,12 +1291,14 @@ function myFunction ()
 
                         if ( homeScore1 > awayScore1 )
                         {
-                            master += 1;
+                            add++;
+                            master += add;
                             limit += 1;
                         }
                         if ( homeScore2 > awayScore2 )
                         {
-                            master -= 1;
+                            add++;
+                            master -= add;
                             limit += 1;
                         }
                         if ( homeScore1 == 0 && homeScore2 == 0 )
