@@ -1234,20 +1234,22 @@ function myFunction ()
         function h2h ()
         {
             const h2H = matchJson.teamHeads;
+            
             let add = 0;
 
-            const { highValue, draw } = h2H.reduce(
+            const { highValue, draw } = h2H.slice().reverse().reduce(
                 ( acc, Match ) =>
                 {
                     const homeTeam = Object.keys( Match )[0];
                     const awayTeam = Object.keys( Match )[1];
+
                     const homeScore = Number( Match[homeTeam] );
                     const awayScore = Number( Match[awayTeam] );
 
                     if ( homeScore > awayScore ) add++, acc.highValue += add;
                     if ( awayScore > homeScore ) add++, acc.highValue -= add;
                     else acc.draw++;
-
+                    
                     return acc;
                 },
                 { highValue: 0, draw: 0 } // Initial accumulator values
