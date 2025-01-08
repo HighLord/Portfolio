@@ -366,7 +366,7 @@ function myFunction ()
         };
 
         const now = new Date();
-        const twoDaysAgo = new Date( now.getTime() - 2 * 24 * 60 * 60 * 1000 );
+        const twoDaysAgo = new Date( now.getTime() - 1 * 24 * 60 * 60 * 1000 );
 
         // Perform actions
         if ( action === "save" )
