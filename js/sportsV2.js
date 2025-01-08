@@ -1353,7 +1353,7 @@ function myFunction ()
             home += ( sum1 > sum2 ) + ( score1 > score2 ) + ( master > 0 ) + Math.max( 0, head2headValue );
             away += ( sum2 > sum1 ) + ( score2 > score1 ) + ( master < 0 ) + Math.max( 0, -head2headValue );
 
-            result = home > away + 3 && master > 1 ? true : ( away > home + 3 && master < 1 ? false : null );
+            result = home > away + 3 && master > 1 ? true : ( away > home + 3 && master < -1 ? false : null );
         }
         else if ( selType.value === 'draw' )
         {
