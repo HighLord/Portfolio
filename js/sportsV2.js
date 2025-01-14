@@ -1004,7 +1004,7 @@ function myFunction ()
                 const homescores = [];
                 const awayscores = [];
                 const gameDate = [];
-                const dateLimit = new Date( '2022-01-01' ).getTime() / 1000;
+                const dateLimit = new Date( '2023-01-01' ).getTime() / 1000;
                 let count = 0;
 
                 for ( let i = 0; i < lines.length; i++ )
