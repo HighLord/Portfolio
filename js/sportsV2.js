@@ -232,7 +232,56 @@ function myFunction ()
         }
     } );
 
-    function generateResults ( array )
+    async function checkLiveScores ( key )
+    {
+        const url = `https://d.livescore.in/x/feed/df_hh_4_${key}`;
+        let retries = 10;
+
+        while ( retries > 0 )
+        {
+            try
+            {
+                const response = await fetch( url,
+                    {
+                        method: 'GET',
+                        headers: { "x-fsign": "SW9D1eZo" },
+                    } );
+
+                if ( response.ok )
+                {
+                    const matches = await response.text();
+                    const lines = matches.replace( /¬/g, '÷' ).split( '÷' );
+
+                    for ( let i = 0; i < lines.length; i++ )
+                    {
+                        const line = lines[i];
+                        const match = line.match( /(\d+):(\d+)/ );
+
+                        if ( match )
+                        {
+                            return match[0]; // Return the matched score
+                        }
+                    }
+                }
+            }
+            catch ( error )
+            {
+                console.error( 'Error fetching live scores:', error );
+            }
+            retries--;
+            await new Promise( ( resolve ) => setTimeout( resolve, 3000 ) );
+        }
+        return "Not started";
+    }
+
+    function rvs ( score )
+    {
+        const [homeScore, awayScore] = score.split( ':' );
+        return `${awayScore}:${homeScore}`;
+    }
+
+
+    async function generateResults ( array )
     {
         const odds = array.find( item => item.odds )?.odds;
         const oddsLength = odds ? Object.keys( odds ).length : 0;
@@ -256,6 +305,7 @@ function myFunction ()
                     ${item.game.time}<br>
                     ${item.game.league}<br>
                     ${item.game.statement}<br>
+                    Livescores: <span id="score-${item.game.key}">Loading...</span><br>
                     <a href="https://www.livescore.in/match/${item.game.key}/#/h2h/overall" target="_blank"><button style="z-index: 9999;" class="link">Link</button></a>
                     <table class="popup" style="width:100%; border-collapse: collapse; font-size: 8px; text-align: left;">
                         <thead>
@@ -290,6 +340,36 @@ function myFunction ()
                     </table>
                     <br><p id='success'></p>
                 </div>`;
+                ( async () =>
+                {
+
+                    let liveScores = await checkLiveScores( item.game.key );
+
+                    // If the result is false and home score is greater than away score, reverse the score
+                    if ( !item.log.result )
+                    {
+                        liveScores = rvs( liveScores );
+                    }
+
+                    // Get the home and away scores from liveScores (assuming liveScores is in the format "home:away")
+                    const [homeScore, awayScore] = liveScores.split( ':' ).map( Number );
+
+                    // Get the result element (assumed it has the ID format 'score-[gameKey]')
+                    const scoreElement = document.getElementById( `score-${item.game.key}` );
+                    scoreElement.innerText = liveScores;
+
+
+                    if ( homeScore > awayScore )
+                    {
+                        // Add FontAwesome red "X" for incorrect outcome
+                        scoreElement.innerHTML += ' <i class="fa fa-check" style="color:green;"></i>';
+                    }
+                    else
+                    {
+                        scoreElement.innerHTML += ' <i class="fa fa-times" style="color:red;"></i>';
+                    }
+
+                } )();
             }
         } );
 
@@ -301,6 +381,7 @@ function myFunction ()
         results += `<p id='success' style='padding: 5px; margin-right: 0px; font-size: 10px'>${data}</p>`;
 
         result.innerHTML = results;
+
         return results;
     }
 
@@ -404,7 +485,7 @@ function myFunction ()
                 {
                     const savedDate = new Date( key );
                     const lastElement = key[key.length - 1];
-                    
+
                     if ( savedDate < twoDaysAgo )
                     {
                         delete storedData[key];
@@ -619,7 +700,7 @@ function myFunction ()
                                                         delete dataKing[key];
                                                     } );
                                                     visited.splice( 0, visited.length );
-                                                }, 5000);
+                                                }, 5000 );
 
                                                 results = "";
                                                 button.innerHTML = "Search";
@@ -1234,7 +1315,7 @@ function myFunction ()
         function h2h ()
         {
             const h2H = matchJson.teamHeads;
-            
+
             let add = 0;
 
             const { highValue, draw } = h2H.slice().reverse().reduce(
@@ -1249,7 +1330,7 @@ function myFunction ()
                     if ( homeScore > awayScore ) add++, acc.highValue += add;
                     if ( awayScore > homeScore ) add++, acc.highValue -= add;
                     else acc.draw++;
-                    
+
                     return acc;
                 },
                 { highValue: 0, draw: 0 } // Initial accumulator values
