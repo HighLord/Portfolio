@@ -232,16 +232,46 @@ function myFunction ()
         }
     } );
 
+    function parseLine ( words )
+    {
+        let values = {
+            currenttime: null,
+            starttime: null,
+            home: null,
+            away: null
+        };
+
+        for ( let i = 0; i < words.length; i++ )
+        {
+            if ( words[i] === "DD" )
+            {
+                values.currenttime = words[i + 1]; // Value after "DD"
+            } else if ( words[i] === "DC" )
+            {
+                values.starttime = words[i + 1]; // Value after "DC"
+            } else if ( words[i] === "DE" )
+            {
+                values.home = words[i + 1]; // Value after "DE"
+            } else if ( words[i] === "DF" )
+            {
+                values.away = words[i + 1]; // Value after "DF"
+            }
+        }
+
+        return values;
+    }
+
     async function checkLiveScores ( key )
     {
-        const url = `https://d.livescore.in/x/feed/df_hh_4_${key}`;
-        let retries = 10;
+        //const url = `https://d.livescore.in/x/feed/df_hh_4_${key}`;
+        const url2 = `https://global.flashscore.ninja/50/x/feed/dc_4_${key}`;
+        let retries = 1;
 
         while ( retries > 0 )
         {
             try
             {
-                const response = await fetch( url,
+                const response = await fetch( url2,
                     {
                         method: 'GET',
                         headers: { "x-fsign": "SW9D1eZo" },
@@ -252,50 +282,17 @@ function myFunction ()
                     const matches = await response.text();
                     const lines = matches.replace( /¬/g, '÷' ).split( '÷' );
 
-                    let matchfound;
-                    let timefound;
-                    for ( let i = 0; i < lines.length; i++ )
-                    {
-                        const line = lines[i];
-
-                        const match = line.match( /(\d+):(\d+)/ );
-
-                        const timestampMatch = line.match( /\d{10}/ ); // 10-digit timestamp
-
-                        if ( match )
-                        {
-                            matchfound = match[0];
-                        }
-                        
-                        if ( timestampMatch )
-                        {
-                            timefound = timestampMatch[0];
-                        }
-
-                        if ( matchfound && timefound)
-                        {
-                            return {
-                                score: matchfound,
-                                timestamp: timefound,
-                            }
-                        }
-                    }
+                    return parseLine( lines );
                 }
             }
             catch ( error )
             {
-                console.error( 'Error fetching live scores:', error );
+                console.error( error );
             }
             retries--;
             await new Promise( ( resolve ) => setTimeout( resolve, 3000 ) );
         }
         return "Not started";
-    }
-
-    function rvs ( score )
-    {
-        const [homeScore, awayScore] = score.split( ':' );
-        return `${awayScore}:${homeScore}`;
     }
 
     function formatTime ( timestamp )
@@ -330,6 +327,7 @@ function myFunction ()
         return date;
     }
 
+    let liveScoreInterval;
     async function generateResults ( array )
     {
         const odds = array.find( item => item.odds )?.odds;
@@ -392,35 +390,32 @@ function myFunction ()
                 ( async () =>
                 {
 
-                    let liveScores = await checkLiveScores( item.game.key );  
+                    let liveScores = await checkLiveScores( item.game.key );
 
+                    let text = `${liveScores.home}:${liveScores.away}`;
                     // If the result is false and home score is greater than away score, reverse the score
                     if ( !item.log.result )
                     {
-                        liveScores.score = rvs( liveScores.score );
+                        text = `${liveScores.away}:${liveScores.home}`;
                     }
-
-                    // Get the home and away scores from liveScores (assuming liveScores is in the format "home:away")
-                    const [homeScore, awayScore] = liveScores.score.split( ':' ).map( Number );
 
                     // Get the result element (assumed it has the ID format 'score-[gameKey]')
                     const scoreElement = document.getElementById( `score-${item.game.key}` );
-                    
-                    if ( item.game.time !== liveScores.timestamp)
+
+                    if ( liveScores.currenttime < item.game.time || liveScores.home == null && liveScores.away == null )
                     {
                         scoreElement.innerText = "Not yet started";
                     }
                     else
                     {
-                        scoreElement.innerText = liveScores.score;
-                        if ( homeScore > awayScore )
+                        if ( liveScores.home > liveScores.away && item.log.result )
                         {
                             // Add FontAwesome red "X" for incorrect outcome
-                            scoreElement.innerHTML += ' <i class="fa fa-check" style="color:#1dda13;"></i>';
+                            scoreElement.innerHTML = `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`;
                         }
                         else
                         {
-                            scoreElement.innerHTML += ' <i class="fa fa-times" style="color:red;"></i>';
+                            scoreElement.innerHTML = `${text} <i class="fa fa-times" style="color:red;"></i>`;
                         }
                     }
                 } )();
@@ -435,6 +430,61 @@ function myFunction ()
         results += `<p id='success' style='padding: 5px; margin-right: 0px; font-size: 10px'>${data}</p>`;
 
         result.innerHTML = results;
+
+        async function updateLiveScores ( array )
+        {
+            for ( const item of array )
+            {
+                if ( item.game && item.log )
+                {
+
+                    let liveScores = await checkLiveScores( item.game.key );
+
+                    let text = `${liveScores.home}:${liveScores.away}`;
+                    if ( !item.log.result )
+                    {
+                        text = `${liveScores.away}:${liveScores.home}`;
+                    }
+
+                    // Get the result element (assumed it has the ID format 'score-[gameKey]')
+                    const scoreElement = document.getElementById( `score-${item.game.key}` );
+                    if ( scoreElement )
+                    {
+                        if (
+                            liveScores.currenttime < item.game.time ||
+                            liveScores.home == null ||
+                            liveScores.away == null
+                        )
+                        {
+                            scoreElement.innerText = "Not yet started";
+                        } else
+                        {
+                            if ( liveScores.home > liveScores.away && item.log.result )
+                            {
+                                // Add FontAwesome green check for correct outcome
+                                scoreElement.innerHTML = `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`;
+                            } else
+                            {
+                                // Add FontAwesome red "X" for incorrect outcome
+                                scoreElement.innerHTML = `${text} <i class="fa fa-times" style="color:red;"></i>`;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Clear any existing interval before setting a new one
+        if ( liveScoreInterval )
+        {
+            clearInterval( liveScoreInterval );
+        }
+
+        // Set a new interval to update live scores every 20 seconds
+        liveScoreInterval = setInterval( () =>
+        {
+            updateLiveScores( array );
+        }, 20000 );
 
         return results;
     }
@@ -872,7 +922,7 @@ function myFunction ()
                         const date = new Date( time * 1000 );
                         const options = { hour: '2-digit', minute: '2-digit', hour12: true };
                         const formattedTime = date.toLocaleTimeString( 'en-US', options );
-                        
+
                         var data =
                         {
                             "key": key,
