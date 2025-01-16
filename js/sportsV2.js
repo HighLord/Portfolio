@@ -362,7 +362,7 @@ function myFunction ()
                     if ( homeScore > awayScore )
                     {
                         // Add FontAwesome red "X" for incorrect outcome
-                        scoreElement.innerHTML += ' <i class="fa fa-check" style="color:green;"></i>';
+                        scoreElement.innerHTML += ' <i class="fa fa-check" style="color:#1dda13;"></i>';
                     }
                     else
                     {
