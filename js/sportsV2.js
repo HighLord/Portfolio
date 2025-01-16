@@ -20,7 +20,7 @@ function myFunction ()
     const selType = document.getElementById( 'mySelect6' );
     function updateOptions ( selectElement )
     {
-        selType.innerHTML = '<i class="fa fa-spinner fa-spin"></i>'; // Clear existing options
+        selType.innerHTML = ''; // Clear existing options
 
         if ( selectElement.value == 'football' || selectElement.value == 'icehockey' || selectElement.value == 'handball' )
         {
@@ -337,7 +337,8 @@ function myFunction ()
         let number = 0;
 
         let results = '';
-        array.forEach( ( item, index ) =>
+        const validGames = array.filter( item => item.game && item.log && odds[item.game.num] ); // Only process items with functional gameOdds
+        validGames.forEach( ( item, index ) =>
         {
             if ( item.game && item.log )
             {
@@ -408,7 +409,7 @@ function myFunction ()
                     }
                     else
                     {
-                        if ( liveScores.home > liveScores.away && item.log.result )
+                        if ( liveScores.home > liveScores.away && item.log.result || liveScores.home < liveScores.away && !item.log.result )
                         {
                             // Add FontAwesome red "X" for incorrect outcome
                             scoreElement.innerHTML = `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`;
@@ -433,11 +434,11 @@ function myFunction ()
 
         async function updateLiveScores ( array )
         {
-            for ( const item of array )
+            const validGames = array.filter( item => item.game && item.log && odds[item.game.num] ); // Only process items with functional gameOdds
+            for ( const item of validGames )
             {
                 if ( item.game && item.log )
                 {
-
                     let liveScores = await checkLiveScores( item.game.key );
 
                     let text = `${liveScores.home}:${liveScores.away}`;
@@ -459,7 +460,7 @@ function myFunction ()
                             scoreElement.innerText = "Not yet started";
                         } else
                         {
-                            if ( liveScores.home > liveScores.away && item.log.result )
+                            if ( liveScores.home > liveScores.away && item.log.result || liveScores.home < liveScores.away && !item.log.result )
                             {
                                 // Add FontAwesome green check for correct outcome
                                 scoreElement.innerHTML = `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`;
