@@ -252,14 +252,32 @@ function myFunction ()
                     const matches = await response.text();
                     const lines = matches.replace( /¬/g, '÷' ).split( '÷' );
 
+                    let matchfound;
+                    let timefound;
                     for ( let i = 0; i < lines.length; i++ )
                     {
                         const line = lines[i];
+
                         const match = line.match( /(\d+):(\d+)/ );
+
+                        const timestampMatch = line.match( /\d{10}/ ); // 10-digit timestamp
 
                         if ( match )
                         {
-                            return match[0]; // Return the matched score
+                            matchfound = match[0];
+                        }
+                        
+                        if ( timestampMatch )
+                        {
+                            timefound = timestampMatch[0];
+                        }
+
+                        if ( matchfound && timefound)
+                        {
+                            return {
+                                score: matchfound,
+                                timestamp: timefound,
+                            }
                         }
                     }
                 }
@@ -280,6 +298,37 @@ function myFunction ()
         return `${awayScore}:${homeScore}`;
     }
 
+    function formatTime ( timestamp )
+    {
+        if ( !/^\d{10}$/.test( timestamp ) )
+        {
+            return timestamp; // Return the original timestamp if it's not valid
+        }
+        const currentTimestamp = Math.floor( Date.now() / 1000 );
+        const currentDateTime = new Date( currentTimestamp * 1000 );
+        const nextDateTime = new Date( timestamp * 1000 );
+        const currentDate = currentDateTime.toISOString().split( 'T' )[0];
+        const nextDate = nextDateTime.toISOString().split( 'T' )[0];
+
+        let date;
+        const options = { hour: '2-digit', minute: '2-digit' };
+
+        // Options for formatting the day, month, and year
+        const dateFormatOptions = { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' };
+
+        if ( currentDate !== nextDate )
+        {
+            // Format the next date with the day, month, and year
+            const formattedDate = nextDateTime.toLocaleDateString( undefined, dateFormatOptions );
+            const formattedTime = nextDateTime.toLocaleTimeString( undefined, options );
+            date = `${formattedDate} : ${formattedTime}`;
+        } else
+        {
+            const formattedTime = nextDateTime.toLocaleTimeString( undefined, options );
+            date = `Today : ${formattedTime}`;
+        }
+        return date;
+    }
 
     async function generateResults ( array )
     {
@@ -302,7 +351,7 @@ function myFunction ()
                 results += `
                     <div class="hover" id="${item.game.num}" style="display: ${display}; z-index: 1;">
                     ${number}. Odd: ${gameOdds}<br>
-                    ${item.game.time}<br>
+                    ${formatTime( item.game.time )}<br>
                     ${item.game.league}<br>
                     ${item.game.statement}<br>
                     Livescores: <span id="score-${item.game.key}">Loading...</span><br>
@@ -343,32 +392,37 @@ function myFunction ()
                 ( async () =>
                 {
 
-                    let liveScores = await checkLiveScores( item.game.key );
+                    let liveScores = await checkLiveScores( item.game.key );  
 
                     // If the result is false and home score is greater than away score, reverse the score
                     if ( !item.log.result )
                     {
-                        liveScores = rvs( liveScores );
+                        liveScores.score = rvs( liveScores.score );
                     }
 
                     // Get the home and away scores from liveScores (assuming liveScores is in the format "home:away")
-                    const [homeScore, awayScore] = liveScores.split( ':' ).map( Number );
+                    const [homeScore, awayScore] = liveScores.score.split( ':' ).map( Number );
 
                     // Get the result element (assumed it has the ID format 'score-[gameKey]')
                     const scoreElement = document.getElementById( `score-${item.game.key}` );
-                    scoreElement.innerText = liveScores;
-
-
-                    if ( homeScore > awayScore )
+                    
+                    if ( item.game.time !== liveScores.timestamp)
                     {
-                        // Add FontAwesome red "X" for incorrect outcome
-                        scoreElement.innerHTML += ' <i class="fa fa-check" style="color:#1dda13;"></i>';
+                        scoreElement.innerText = "Not yet started";
                     }
                     else
                     {
-                        scoreElement.innerHTML += ' <i class="fa fa-times" style="color:red;"></i>';
+                        scoreElement.innerText = liveScores.score;
+                        if ( homeScore > awayScore )
+                        {
+                            // Add FontAwesome red "X" for incorrect outcome
+                            scoreElement.innerHTML += ' <i class="fa fa-check" style="color:#1dda13;"></i>';
+                        }
+                        else
+                        {
+                            scoreElement.innerHTML += ' <i class="fa fa-times" style="color:red;"></i>';
+                        }
                     }
-
                 } )();
             }
         } );
@@ -760,7 +814,6 @@ function myFunction ()
             }
             async function doSomethingWithElement ( key, time, league )
             {
-
                 let niceJson = await sortGame( key );
 
                 let calculatedJson = await predict( niceJson, gameMode )
@@ -816,13 +869,16 @@ function myFunction ()
                             default:
                                 break;
                         }
-                        var parsedtime = time.match( /\d+:\d+ [AP]M/ )[0];//time.match(/\d{2}:\d{2} [AP]M/)[0];
+                        const date = new Date( time * 1000 );
+                        const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+                        const formattedTime = date.toLocaleTimeString( 'en-US', options );
+                        
                         var data =
                         {
                             "key": key,
                             "home": homeT,
                             "away": awayT,
-                            "time": parsedtime,
+                            "time": formattedTime,
                             "outcome": outcome,
                             "gameNo": ( times + 1 )
                         };
@@ -929,6 +985,7 @@ function myFunction ()
                                     codes2 = timeMatch[1];
                                     if ( currentTime < codes2 )
                                     {
+
                                         const currentDateTime = new Date( currentTimestamp * 1000 );
                                         const nextDateTime = new Date( codes2 * 1000 );
                                         const currentDate = currentDateTime.toISOString().split( 'T' )[0];
@@ -949,7 +1006,7 @@ function myFunction ()
                                         {
                                             leagues[codes1] = {};
                                         }
-                                        leagues[codes1][date] = league;
+                                        leagues[codes1][codes2] = league;
                                     }
                                 }
                             }
@@ -1059,6 +1116,7 @@ function myFunction ()
             const getNames = () =>
             {
                 const lines = matches.replace( /¬/g, '÷' ).split( '÷' );
+
                 const wordCount = [];
                 let counts = 0;
 
