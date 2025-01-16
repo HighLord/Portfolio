@@ -250,14 +250,14 @@ function myFunction ()
         {
             if ( words[i] === "DD" )
             {
-                values.currenttime = words[i + 1]; // Value after "DD"
+                values.currenttime = Number( words[i + 1]); // Value after "DD"
             } else if ( words[i] === "DC" )
             {
-                values.starttime = words[i + 1]; // Value after "DC"
-            } else if ( words[i] === "DE" )
+                values.starttime = Number( words[i + 1]); // Value after "DC"
+            } else if ( words[i] === "DG" )
             {
                 values.home = Number( words[i + 1]); // Value after "DE"
-            } else if ( words[i] === "DF" )
+            } else if ( words[i] === "DH" )
             {
                 values.away = Number( words[i + 1]); // Value after "DF"
             } else if ( words[i] === "CO" )
