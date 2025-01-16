@@ -223,6 +223,10 @@ function myFunction ()
         {
             result.innerHTML = '';
             results = "";
+            if ( liveScoreInterval )
+            {
+                clearInterval( liveScoreInterval );
+            }
         }
         if ( click === false )
         {
@@ -342,7 +346,7 @@ function myFunction ()
         let results = '';
         let notStart = false;
         let hold = [];
-        
+
         const validGames = array.filter( item => item.game && item.log && odds[item.game.num] ); // Only process items with functional gameOdds
         validGames.forEach( ( item, index ) =>
         {
