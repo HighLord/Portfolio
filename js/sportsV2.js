@@ -238,7 +238,8 @@ function myFunction ()
             currenttime: null,
             starttime: null,
             home: null,
-            away: null
+            away: null,
+            live: false
         };
 
         for ( let i = 0; i < words.length; i++ )
@@ -255,6 +256,9 @@ function myFunction ()
             } else if ( words[i] === "DF" )
             {
                 values.away = words[i + 1]; // Value after "DF"
+            } else if ( words[i] === "CO" )
+            {
+                values.live = true;
             }
         }
 
@@ -263,15 +267,14 @@ function myFunction ()
 
     async function checkLiveScores ( key )
     {
-        //const url = `https://d.livescore.in/x/feed/df_hh_4_${key}`;
-        const url2 = `https://global.flashscore.ninja/50/x/feed/dc_4_${key}`;
+        const url = `https://global.flashscore.ninja/50/x/feed/dc_4_${key}`;
         let retries = 1;
 
         while ( retries > 0 )
         {
             try
             {
-                const response = await fetch( url2,
+                const response = await fetch( url,
                     {
                         method: 'GET',
                         headers: { "x-fsign": "SW9D1eZo" },
@@ -409,15 +412,13 @@ function myFunction ()
                     }
                     else
                     {
-                        if ( liveScores.home > liveScores.away && item.log.result || liveScores.home < liveScores.away && !item.log.result )
-                        {
-                            // Add FontAwesome red "X" for incorrect outcome
-                            scoreElement.innerHTML = `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`;
-                        }
-                        else
-                        {
-                            scoreElement.innerHTML = `${text} <i class="fa fa-times" style="color:red;"></i>`;
-                        }
+                        scoreElement.innerHTML =
+                            ( liveScores.live )
+                                ? `${text} <i class="fa fa-spinner fa-spin" style="${( liveScores.home > liveScores.away && item.log.result ) || ( liveScores.home < liveScores.away && !item.log.result ) ? 'color:#1dda13;' : 'color:red;'}"></i>`
+                                : ( ( liveScores.home > liveScores.away && item.log.result ) || ( liveScores.home < liveScores.away && !item.log.result )
+                                    ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
+                                    : `${text} <i class="fa fa-times" style="color:red;"></i>` );
+
                     }
                 } )();
             }
@@ -460,15 +461,13 @@ function myFunction ()
                             scoreElement.innerText = "Not yet started";
                         } else
                         {
-                            if ( liveScores.home > liveScores.away && item.log.result || liveScores.home < liveScores.away && !item.log.result )
-                            {
-                                // Add FontAwesome green check for correct outcome
-                                scoreElement.innerHTML = `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`;
-                            } else
-                            {
-                                // Add FontAwesome red "X" for incorrect outcome
-                                scoreElement.innerHTML = `${text} <i class="fa fa-times" style="color:red;"></i>`;
-                            }
+                            scoreElement.innerHTML =
+                                ( liveScores.live )
+                                    ? `${text} <i class="fa fa-spinner fa-spin" style="${( liveScores.home > liveScores.away && item.log.result ) || ( liveScores.home < liveScores.away && !item.log.result ) ? 'color:#1dda13;' : 'color:red;'}"></i>`
+                                    : ( ( liveScores.home > liveScores.away && item.log.result ) || ( liveScores.home < liveScores.away && !item.log.result )
+                                        ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
+                                        : `${text} <i class="fa fa-times" style="color:red;"></i>` );
+
                         }
                     }
                 }
