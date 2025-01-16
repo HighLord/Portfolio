@@ -256,10 +256,10 @@ function myFunction ()
                 values.starttime = words[i + 1]; // Value after "DC"
             } else if ( words[i] === "DE" )
             {
-                values.home = words[i + 1]; // Value after "DE"
+                values.home = Number( words[i + 1]); // Value after "DE"
             } else if ( words[i] === "DF" )
             {
-                values.away = words[i + 1]; // Value after "DF"
+                values.away = Number( words[i + 1]); // Value after "DF"
             } else if ( words[i] === "CO" )
             {
                 values.live = true;
