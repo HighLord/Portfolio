@@ -341,6 +341,8 @@ function myFunction ()
 
         let results = '';
         let notStart = false;
+        let hold = [];
+        
         const validGames = array.filter( item => item.game && item.log && odds[item.game.num] ); // Only process items with functional gameOdds
         validGames.forEach( ( item, index ) =>
         {
@@ -410,6 +412,7 @@ function myFunction ()
                     if ( liveScores.currenttime < item.game.time || liveScores.home == null && liveScores.away == null )
                     {
                         scoreElement.innerText = "Not yet started";
+                        hold.push( item );
                         notStart = true;
                     }
                     else
@@ -422,7 +425,7 @@ function myFunction ()
                                     : `${text} <i class="fa fa-times" style="color:red;"></i>` );
 
                     }
-                    if ( liveScores.live ) notStart = true;
+                    if ( liveScores.live ) notStart = true, hold.push( item );
                 } )();
             }
         } );
@@ -439,7 +442,9 @@ function myFunction ()
         async function updateLiveScores ( array )
         {
             notStart = false
-            const validGames = array.filter( item => item.game && item.log && odds[item.game.num] ); // Only process items with functional gameOdds
+            const validGames = hold.filter( item => item.game && item.log && odds[item.game.num] ); // Only process items with functional gameOdds
+            hold = [];
+
             for ( const item of validGames )
             {
                 if ( item.game && item.log )
@@ -464,6 +469,7 @@ function myFunction ()
                         {
                             scoreElement.innerText = "Not yet started";
                             notStart = true;
+                            hold.push( item )
                         } else
                         {
                             scoreElement.innerHTML =
@@ -474,7 +480,7 @@ function myFunction ()
                                         : `${text} <i class="fa fa-times" style="color:red;"></i>` );
 
                         }
-                        if ( liveScores.live ) notStart = true;
+                        if ( liveScores.live ) notStart = true, hold.push( item );
                     }
                 }
             }
