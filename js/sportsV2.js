@@ -422,6 +422,7 @@ function myFunction ()
                                     : `${text} <i class="fa fa-times" style="color:red;"></i>` );
 
                     }
+                    if ( liveScores.live ) notStart = true;
                 } )();
             }
         } );
@@ -473,6 +474,7 @@ function myFunction ()
                                         : `${text} <i class="fa fa-times" style="color:red;"></i>` );
 
                         }
+                        if ( liveScores.live ) notStart = true;
                     }
                 }
             }
@@ -485,13 +487,14 @@ function myFunction ()
         }
 
         // Set a new interval to update live scores every 20 seconds
-        if ( notStart )
+        
+        liveScoreInterval = setInterval( () =>
         {
-            liveScoreInterval = setInterval( () =>
+            if ( notStart )
             {
                 updateLiveScores( array );
-            }, 20000 );
-        }
+            }
+        }, 20000 );
 
         return results;
     }
