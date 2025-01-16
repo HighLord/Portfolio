@@ -340,6 +340,7 @@ function myFunction ()
         let number = 0;
 
         let results = '';
+        let notStart = false;
         const validGames = array.filter( item => item.game && item.log && odds[item.game.num] ); // Only process items with functional gameOdds
         validGames.forEach( ( item, index ) =>
         {
@@ -409,6 +410,7 @@ function myFunction ()
                     if ( liveScores.currenttime < item.game.time || liveScores.home == null && liveScores.away == null )
                     {
                         scoreElement.innerText = "Not yet started";
+                        notStart = true;
                     }
                     else
                     {
@@ -435,6 +437,7 @@ function myFunction ()
 
         async function updateLiveScores ( array )
         {
+            notStart = false
             const validGames = array.filter( item => item.game && item.log && odds[item.game.num] ); // Only process items with functional gameOdds
             for ( const item of validGames )
             {
@@ -459,6 +462,7 @@ function myFunction ()
                         )
                         {
                             scoreElement.innerText = "Not yet started";
+                            notStart = true;
                         } else
                         {
                             scoreElement.innerHTML =
@@ -481,10 +485,13 @@ function myFunction ()
         }
 
         // Set a new interval to update live scores every 20 seconds
-        liveScoreInterval = setInterval( () =>
+        if ( notStart )
         {
-            updateLiveScores( array );
-        }, 20000 );
+            liveScoreInterval = setInterval( () =>
+            {
+                updateLiveScores( array );
+            }, 20000 );
+        }
 
         return results;
     }
