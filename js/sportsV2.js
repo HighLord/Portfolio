@@ -512,9 +512,11 @@ function myFunction ()
     async function manageGame ( action, datas = null, lastValue = null )
     {
         let data = datas;
-        const odds = Object.keys( data.find( item => item.odds )?.odds || {} ).map( Number );
-        const filteredData = data.filter( item => item.game && odds.includes( item.game.num ) );
-
+        if ( data )
+        {
+            const odds = Object.keys( data.find( item => item.odds )?.odds || {} ).map( Number );
+            const filteredData = data.filter( item => item.game && odds.includes( item.game.num ) );
+        }
         const apiUrl = "https://github.webapps.com.ng/paste.php";
         const pin = "3728"; // Pin for secure access
 
@@ -601,7 +603,8 @@ function myFunction ()
                 .map( item => parseInt( item.game.time, 10 ) ); // Extract the time values and convert to integers
 
             const largestTime = Math.max( ...times ); // Find the largest time
-            const isoString = new Date( largestTime * 1000 ).toISOString(); // Convert to ISO string
+            const adjustedTime = new Date( ( largestTime + 3600 ) * 1000 ); // Add 1 hour to adjust for Lagos time
+            const isoString = adjustedTime.toISOString();
 
             storedData[isoString] = filteredData;
             
@@ -610,7 +613,7 @@ function myFunction ()
         else if ( action === "get" )
         {
             let storedData = await fetchData();
-
+            
             if ( storedData )
             {
                 Object.keys( storedData ).forEach( ( key ) =>
