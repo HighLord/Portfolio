@@ -512,6 +512,9 @@ function myFunction ()
     async function manageGame ( action, datas = null, lastValue = null )
     {
         let data = datas;
+        const odds = Object.keys( data.find( item => item.odds )?.odds || {} ).map( Number );
+        const filteredData = data.filter( item => item.game && odds.includes( item.game.num ) );
+
         const apiUrl = "https://github.webapps.com.ng/paste.php";
         const pin = "3728"; // Pin for secure access
 
@@ -576,8 +579,7 @@ function myFunction ()
         // Perform actions
         if ( action === "save" )
         {
-            if ( data.length === 0 ) return false;
-            const uniqueKey = now.toISOString();
+            if ( filteredData.length === 0 ) return false;
             let storedData = await fetchData();
             let cond = false;
             Object.values( storedData ).forEach( subArrays => 
@@ -594,7 +596,15 @@ function myFunction ()
                 return false;
             }
             storedData = storedData || {};
-            storedData[uniqueKey] = data;
+            const times = filteredData
+                .filter( item => item.game && item.game.time ) // Filter only objects with a 'game' and 'time'
+                .map( item => parseInt( item.game.time, 10 ) ); // Extract the time values and convert to integers
+
+            const largestTime = Math.max( ...times ); // Find the largest time
+            const isoString = new Date( largestTime * 1000 ).toISOString(); // Convert to ISO string
+
+            storedData[isoString] = filteredData;
+            
             await saveData( storedData );
         }
         else if ( action === "get" )
@@ -603,12 +613,9 @@ function myFunction ()
 
             if ( storedData )
             {
-                const comp = new Set();
-
                 Object.keys( storedData ).forEach( ( key ) =>
                 {
                     const savedDate = new Date( key );
-                    const lastElement = key[key.length - 1];
 
                     if ( savedDate < twoDaysAgo )
                     {
@@ -813,7 +820,7 @@ function myFunction ()
                                                     odds: gamesBooked
                                                 } );
                                                 save_game.push( shareCode );
-
+                                                
                                                 generateResults( save_game );
                                                 manageGame( "save", save_game );
                                                 setTimeout( () => 
@@ -961,7 +968,7 @@ function myFunction ()
                             league,
                             statement
                         };
-                        //results += generateResults( game );
+
                         save_game.push( {
                             game: game,
                             log: predictedOutcome
