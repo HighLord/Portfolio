@@ -512,11 +512,19 @@ function myFunction ()
     async function manageGame ( action, datas = null, lastValue = null )
     {
         let data = datas;
+        let filteredData;
         if ( data )
         {
-            const odds = Object.keys( data.find( item => item.odds )?.odds || {} ).map( Number );
-            const filteredData = data.filter( item => item.game && odds.includes( item.game.num ) );
+            const oddsObject = data.find( ( item ) => item.odds );
+            const odds = Object.keys( oddsObject?.odds || {} ).map( Number );
+            const result = data.filter( ( item ) => item.game && odds.includes( item.game.num ) );
+            const lastKey = data.find( ( item ) => typeof item === "string" );
+
+            result.push( { odds: oddsObject?.odds } );
+            result.push( lastKey );
+            filteredData = result;
         }
+        
         const apiUrl = "https://github.webapps.com.ng/paste.php";
         const pin = "3728"; // Pin for secure access
 
@@ -607,7 +615,6 @@ function myFunction ()
             const isoString = adjustedTime.toISOString();
 
             storedData[isoString] = filteredData;
-            
             await saveData( storedData );
         }
         else if ( action === "get" )
@@ -1572,7 +1579,7 @@ function myFunction ()
             home += ( sum1 > sum2 ) + ( score1 > score2 ) + ( master > 0 ) + Math.max( 0, head2headValue );
             away += ( sum2 > sum1 ) + ( score2 > score1 ) + ( master < 0 ) + Math.max( 0, -head2headValue );
 
-            result = home > away + 3 && master > 1 ? true : ( away > home + 3 && master < -1 ? false : null );
+            result = home > away + 4 && master > 1 ? true : ( away > home + 4 && master < -1 ? false : null );
         }
         else if ( selType.value === 'draw' )
         {
