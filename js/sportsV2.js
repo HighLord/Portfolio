@@ -311,25 +311,26 @@ function myFunction ()
         const currentTimestamp = Math.floor( Date.now() / 1000 );
         const currentDateTime = new Date( currentTimestamp * 1000 );
         const nextDateTime = new Date( timestamp * 1000 );
+
         const currentDate = currentDateTime.toISOString().split( 'T' )[0];
         const nextDate = nextDateTime.toISOString().split( 'T' )[0];
 
         let date;
-        const options = { hour: '2-digit', minute: '2-digit' };
+        const timeOptions = { hour: '2-digit', minute: '2-digit' }; // Options for time formatting
 
-        // Options for formatting the day, month, and year
-        const dateFormatOptions = { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' };
-
-        if ( currentDate !== nextDate )
+        if ( currentDate === nextDate )
         {
-            // Format the next date with the day, month, and year
-            const formattedDate = nextDateTime.toLocaleDateString( undefined, dateFormatOptions );
-            const formattedTime = nextDateTime.toLocaleTimeString( undefined, options );
-            date = `${formattedDate} : ${formattedTime}`;
-        } else
-        {
-            const formattedTime = nextDateTime.toLocaleTimeString( undefined, options );
+            // If the dates match, return "Today" with the formatted time
+            const formattedTime = nextDateTime.toLocaleTimeString( undefined, timeOptions );
             date = `Today : ${formattedTime}`;
+        }
+        else
+        {
+            // If the dates don't match, format the full date and time
+            const dayOptions = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }; // Short date format
+            const formattedDate = nextDateTime.toLocaleDateString( undefined, dayOptions );
+            const formattedTime = nextDateTime.toLocaleTimeString( undefined, timeOptions );
+            date = `${formattedDate}: ${formattedTime}`;
         }
         return date;
     }
@@ -356,7 +357,7 @@ function myFunction ()
                 let display = gameOdds ? 'block' : 'none';
                 if ( gameOdds ) number++;
                 calcOdds *= gameOdds || 1;
-
+                
                 results += `
                     <div class="hover" id="${item.game.num}" style="display: ${display}; z-index: 1;">
                     ${number}. Odd: ${gameOdds}<br>
@@ -467,7 +468,7 @@ function myFunction ()
                     {
                         if (
                             liveScores.currenttime < item.game.time ||
-                            liveScores.home == null ||
+                            liveScores.home == null &&
                             liveScores.away == null
                         )
                         {
@@ -584,7 +585,6 @@ function myFunction ()
         };
 
         const now = new Date();
-        const twoDaysAgo = new Date( now.getTime() - 1 * 24 * 60 * 60 * 1000 );
 
         // Perform actions
         if ( action === "save" )
@@ -623,11 +623,17 @@ function myFunction ()
             
             if ( storedData )
             {
+                const currentDate = new Date();
+                
                 Object.keys( storedData ).forEach( ( key ) =>
                 {
                     const savedDate = new Date( key );
 
-                    if ( savedDate < twoDaysAgo )
+                    // Check if the saved date is more than one day older than the current date
+                    const differenceInTime = currentDate - savedDate; // Difference in milliseconds
+                    const differenceInDays = differenceInTime / ( 24 * 60 * 60 * 1000 ); // Convert to days
+
+                    if ( differenceInDays > 1 )
                     {
                         delete storedData[key];
                     }
