@@ -238,17 +238,6 @@ p#error {
     overflow: hidden;
 }
 
-#sug2{
-    height: 10%;
-}
-#sug {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 90%;
-}
-
 #scroll {
     height: 100%;
     width: 300px;

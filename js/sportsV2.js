@@ -59,27 +59,27 @@ function myFunction ()
     const notification = document.querySelector( '.notify-text' );
     const result = document.getElementById( 'result' );
 
-    let blurActive = false;
     let allData = [];
-
-    let sug = document.getElementById( 'sug' );
+    let sug;
+    let reload = false;
 
     [bell, count].forEach( ( element ) =>
     {
         element.addEventListener( 'click', () =>
         {
-            $( notification ).toggle( '500', () => toggleBlur() );
-
-            if ( !blurActive )
+            if ( reload === false )
             {
+                reload = true;
                 ( async () =>
                 {
-                    sug.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+                    sug = result.innerHTML;
+                    result.style.textAlign = 'center';
+                    result.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
                     try 
                     {
                         allData = await manageGame( "get", null, null );
 
-                        sug.innerHTML = null;
+                        result.innerHTML = null;
 
                         const input = document.createElement( 'input' );
                         input.id = "input";
@@ -95,7 +95,7 @@ function myFunction ()
                         input.style.borderRadius = '5px';
                         input.autocomplete = 'off';
 
-                        sug.appendChild( input );
+                        result.appendChild( input );
 
                         const scroll = document.createElement( 'div' );
                         scroll.id = "scroll";
@@ -105,7 +105,7 @@ function myFunction ()
                         input.setAttribute( 'list', 'game' );
 
                         scroll.appendChild( datalist );
-                        sug.appendChild( scroll );
+                        result.appendChild( scroll );
 
                         Object.values( allData ).forEach( subArrays => 
                         {
@@ -130,6 +130,8 @@ function myFunction ()
                             {
                                 searchText.value = input.value;
                                 input.value = gameDiv.value;
+                                result.style.textAlign = 'left';
+                                reload = false;
 
                                 datalist.style.display = 'none';
 
@@ -189,28 +191,18 @@ function myFunction ()
                         } );
                     } catch ( error )
                     {
-                        $( notification ).toggle( '500', () => toggleBlur() );
                         result.innerHTML = "<p id='error' style='padding: 5px; font-size: 11px;'>A network error has occurred, try again!</p>";
                     }
                 } )();
             }
+            else
+            {
+                reload = false;
+                result.style.textAlign = 'left';
+                result.innerHTML = sug;
+            }
         } );
     } );
-
-    function toggleBlur ()
-    {
-        if ( !blurActive )
-        {
-            $( '.notify' ).css( 'z-index', '1' );
-            $( 'body > *:not(.notify, .fa-bell, .count)' ).css( 'filter', 'blur(5px)' );
-            blurActive = true;
-        } else
-        {
-            $( '.notify' ).css( 'z-index', '0' );
-            $( 'body > *:not(.notify)' ).css( 'filter', 'blur(0px)' );
-            blurActive = false;
-        }
-    }
 
     var click = true;
     var amountOfBooking;
@@ -250,16 +242,16 @@ function myFunction ()
         {
             if ( words[i] === "DD" )
             {
-                values.currenttime = Number( words[i + 1]); // Value after "DD"
+                values.currenttime = Number( words[i + 1] ); // Value after "DD"
             } else if ( words[i] === "DC" )
             {
-                values.starttime = Number( words[i + 1]); // Value after "DC"
+                values.starttime = Number( words[i + 1] ); // Value after "DC"
             } else if ( words[i] === "DG" )
             {
-                values.home = Number( words[i + 1]); // Value after "DE"
+                values.home = Number( words[i + 1] ); // Value after "DE"
             } else if ( words[i] === "DH" )
             {
-                values.away = Number( words[i + 1]); // Value after "DF"
+                values.away = Number( words[i + 1] ); // Value after "DF"
             } else if ( words[i] === "CO" )
             {
                 values.live = true;
@@ -357,7 +349,7 @@ function myFunction ()
                 let display = gameOdds ? 'block' : 'none';
                 if ( gameOdds ) number++;
                 calcOdds *= gameOdds || 1;
-                
+
                 results += `
                     <div class="hover" id="${item.game.num}" style="display: ${display}; z-index: 1;">
                     ${number}. Odd: ${gameOdds}<br>
@@ -498,7 +490,7 @@ function myFunction ()
         }
 
         // Set a new interval to update live scores every 20 seconds
-        
+
         liveScoreInterval = setInterval( () =>
         {
             if ( notStart )
@@ -525,7 +517,7 @@ function myFunction ()
             result.push( lastKey );
             filteredData = result;
         }
-        
+
         const apiUrl = "https://github.webapps.com.ng/paste.php";
         const pin = "3728"; // Pin for secure access
 
@@ -620,11 +612,11 @@ function myFunction ()
         else if ( action === "get" )
         {
             let storedData = await fetchData();
-            
+
             if ( storedData )
             {
                 const currentDate = new Date();
-                
+
                 Object.keys( storedData ).forEach( ( key ) =>
                 {
                     const savedDate = new Date( key );
@@ -836,7 +828,7 @@ function myFunction ()
                                                     odds: gamesBooked
                                                 } );
                                                 save_game.push( shareCode );
-                                                
+
                                                 generateResults( save_game );
                                                 manageGame( "save", save_game );
                                                 setTimeout( () => 
