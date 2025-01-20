@@ -54,7 +54,7 @@ function myFunction ()
 
     updateOptions( document.getElementById( 'mySelect4' ) );
 
-    const bell = document.querySelector( '.fa-bell' );
+    const bell = document.querySelector( '.fa-refresh' );
     const count = document.querySelector( '.count' );
     const notification = document.querySelector( '.notify-text' );
     const result = document.getElementById( 'result' );
