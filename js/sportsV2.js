@@ -682,7 +682,7 @@ function myFunction ()
     const selectElement4 = document.getElementById( 'mySelect4' );
     function analyse ( selEle, timer )
     {
-        var gameMode = selectElement.value;
+        var gameMode  = Math.floor( Math.random() * ( 40 - 10 + 1 ) ) + 10;
         amountOfBooking = selectElement2.value;
         if ( selEle !== false ) { amountOfBooking = selEle; }
         var gameTime = selectElement3.value;
@@ -1577,7 +1577,7 @@ function myFunction ()
             home += ( sum1 > sum2 ) + ( score1 > score2 ) + ( master > 1 ) + ( head2headValue > 2);
             away += ( sum2 > sum1 ) + ( score2 > score1 ) + ( master < -1 ) + (head2headValue < -2);
 
-            result = home > away + 3 ? true : ( away > home + 3 ? false : null );
+            result = home > away + selectElement.value ? true : ( away > home + selectElement.value ? false : null );
         }
         else if ( selType.value === 'draw' )
         {
