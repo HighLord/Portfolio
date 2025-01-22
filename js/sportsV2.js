@@ -1574,10 +1574,10 @@ function myFunction ()
 
         if ( selType.value === 'winner' || selType.value === 'double_chance' )
         {
-            home += ( sum1 > sum2 ) + ( score1 > score2 ) + ( master > 0 ) + Math.max( 0, head2headValue );
-            away += ( sum2 > sum1 ) + ( score2 > score1 ) + ( master < 0 ) + Math.max( 0, -head2headValue );
+            home += ( sum1 > sum2 ) + ( score1 > score2 ) + ( master > 1 ) + ( head2headValue > 2);
+            away += ( sum2 > sum1 ) + ( score2 > score1 ) + ( master < -1 ) + (head2headValue < -2);
 
-            result = home > away + 4 && master > 1 ? true : ( away > home + 4 && master < -1 ? false : null );
+            result = home > away + 3 ? true : ( away > home + 3 ? false : null );
         }
         else if ( selType.value === 'draw' )
         {
