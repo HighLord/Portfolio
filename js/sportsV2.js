@@ -682,7 +682,8 @@ function myFunction ()
     const selectElement4 = document.getElementById( 'mySelect4' );
     function analyse ( selEle, timer )
     {
-        var gameMode = Math.floor( Math.random() * ( 40 - 10 + 1 ) ) + 10;
+        var gameMode = Math.floor( Math.random() * ( 60 - 20 + 1 ) ) + 20;
+
         amountOfBooking = selectElement2.value;
         if ( selEle !== false ) { amountOfBooking = selEle; }
         var gameTime = selectElement3.value;
