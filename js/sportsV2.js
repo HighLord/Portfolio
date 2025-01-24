@@ -682,7 +682,7 @@ function myFunction ()
     const selectElement4 = document.getElementById( 'mySelect4' );
     function analyse ( selEle, timer )
     {
-        var gameMode  = Math.floor( Math.random() * ( 40 - 10 + 1 ) ) + 10;
+        var gameMode = Math.floor( Math.random() * ( 40 - 10 + 1 ) ) + 10;
         amountOfBooking = selectElement2.value;
         if ( selEle !== false ) { amountOfBooking = selEle; }
         var gameTime = selectElement3.value;
@@ -1574,10 +1574,11 @@ function myFunction ()
 
         if ( selType.value === 'winner' || selType.value === 'double_chance' )
         {
-            home += ( sum1 > sum2 ) + ( score1 > score2 ) + ( master > 1 ) + ( head2headValue > 2);
-            away += ( sum2 > sum1 ) + ( score2 > score1 ) + ( master < -1 ) + (head2headValue < -2);
+            home += ( score1 > score2 ) + ( sum1 > sum2 ) + ( master > selectElement.value ) + ( head2headValue > selectElement.value );
+            away += ( score1 < score2 ) + ( sum1 < sum2 ) + ( master < (selectElement.value * -1) ) + ( head2headValue < (selectElement.value * -1) );
 
             result = home > away + selectElement.value ? true : ( away > home + selectElement.value ? false : null );
+
         }
         else if ( selType.value === 'draw' )
         {
