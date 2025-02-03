@@ -80,6 +80,7 @@ function myFunction ()
                         allData = await manageGame( "get", null, null );
 
                         result.innerHTML = null;
+                        result.style.textAlign = 'left';
 
                         const input = document.createElement( 'input' );
                         input.id = "input";
