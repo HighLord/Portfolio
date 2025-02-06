@@ -74,7 +74,7 @@ function myFunction ()
                 reload = true;
                 ( async () =>
                 {
-                    if ( result.innerHTML === '' || result.innerHTML.length == 37 ) sug = result.innerHTML;
+                    if ( result.innerHTML === '' || result.innerHTML.length > 37 ) sug = result.innerHTML;
                     result.style.textAlign = 'center';
                     result.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
 
