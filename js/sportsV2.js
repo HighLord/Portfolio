@@ -62,6 +62,7 @@ function myFunction ()
     let allData = [];
     let sug;
     let reload = false;
+    let clickCount = 0;
 
     [bell, count].forEach( ( element ) =>
     {
@@ -69,130 +70,145 @@ function myFunction ()
         {
             if ( reload === false )
             {
+                clickCount++;
                 reload = true;
                 ( async () =>
                 {
-                    sug = result.innerHTML;
+                    if ( result.innerHTML === '' || result.innerHTML.length == 37 ) sug = result.innerHTML;
                     result.style.textAlign = 'center';
                     result.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+
                     try 
                     {
-                        allData = await manageGame( "get", null, null );
-
-                        result.innerHTML = null;
-                        result.style.textAlign = 'left';
-
-                        const input = document.createElement( 'input' );
-                        input.id = "input";
-                        input.type = 'text';
-                        input.list = '';
-                        input.placeholder = 'Start typing a team name';
-                        input.style.padding = '10px 10px';
-                        input.style.width = '280px';
-                        input.style.border = 'none';
-                        input.style.outline = 'none';
-                        input.style.fontSize = '12px';
-                        input.style.textAlign = 'center';
-                        input.style.borderRadius = '5px';
-                        input.autocomplete = 'off';
-
-                        result.appendChild( input );
-
-                        const scroll = document.createElement( 'div' );
-                        scroll.id = "scroll";
-
-                        const datalist = document.createElement( 'datalist' )
-                        datalist.id = "game";
-                        input.setAttribute( 'list', 'game' );
-
-                        scroll.appendChild( datalist );
-                        result.appendChild( scroll );
-
-                        Object.values( allData ).forEach( subArrays => 
+                        if ( Object.values( allData ).length > 0 && clickCount > 5 )
                         {
-                            const gameDiv = document.createElement( "option" );
-                            gameDiv.id = 'gamediv';
-                            gameDiv.value = subArrays[subArrays.length - 1];
-                            gameDiv.textContent = subArrays[subArrays.length - 1];
-                            datalist.appendChild( gameDiv );
+                            allData = [];
+                            clickCount = 0;
+                        }
 
-                            subArrays.forEach( ( item, index ) => 
+                        if ( Object.values( allData ).length == 0 )
+                        {
+                            allData = await manageGame( "get", null, null );
+                        }
+
+                        if ( reload === true )
+                        {
+                            result.innerHTML = null;
+                            result.style.textAlign = 'left';
+
+                            const input = document.createElement( 'input' );
+                            input.id = "input";
+                            input.type = 'text';
+                            input.list = '';
+                            input.placeholder = 'Start typing a team name';
+                            input.style.padding = '10px 10px';
+                            input.style.width = '280px';
+                            input.style.border = 'none';
+                            input.style.outline = 'none';
+                            input.style.fontSize = '12px';
+                            input.style.textAlign = 'center';
+                            input.style.borderRadius = '5px';
+                            input.autocomplete = 'off';
+
+                            result.appendChild( input );
+
+                            const scroll = document.createElement( 'div' );
+                            scroll.id = "scroll";
+
+                            const datalist = document.createElement( 'datalist' )
+                            datalist.id = "game";
+                            input.setAttribute( 'list', 'game' );
+
+                            scroll.appendChild( datalist );
+                            result.appendChild( scroll );
+
+                            Object.values( allData ).forEach( subArrays => 
                             {
-                                if ( item.log )
+                                const gameDiv = document.createElement( "option" );
+                                gameDiv.id = 'gamediv';
+                                gameDiv.value = subArrays[subArrays.length - 1];
+                                gameDiv.textContent = subArrays[subArrays.length - 1];
+                                datalist.appendChild( gameDiv );
+
+                                subArrays.forEach( ( item, index ) => 
                                 {
-                                    gameDiv.dataset[`teamA${index}`] = item.log.team1;
-                                    gameDiv.dataset[`teamB${index}`] = item.log.team2;
-                                }
-                            } );
-                            gameDiv.dataset[`identifier`] = subArrays[subArrays.length - 1];
-
-
-                            gameDiv.onclick = function () 
-                            {
-                                searchText.value = input.value;
-                                input.value = gameDiv.value;
-                                result.style.textAlign = 'left';
-                                reload = false;
-
-                                datalist.style.display = 'none';
-
-                                Object.keys( allData ).forEach( key =>
-                                {
-                                    const array = allData[key]
-
-                                    if ( array[array.length - 1] === gameDiv.value )
+                                    if ( item.log )
                                     {
-                                        generateResults( array );
-
-                                        $( notification ).toggle( '500' );
-                                        toggleBlur();
-                                        searchAndScroll();
+                                        gameDiv.dataset[`teamA${index}`] = item.log.team1;
+                                        gameDiv.dataset[`teamB${index}`] = item.log.team2;
                                     }
                                 } );
-                            }
-                        } );
+                                gameDiv.dataset[`identifier`] = subArrays[subArrays.length - 1];
 
-                        ['input', 'click'].forEach( eventType =>
-                        {
-                            input.addEventListener( eventType, () =>
-                            {
-                                datalist.style.display = 'block';
 
-                                for ( let option of datalist.options ) 
+                                gameDiv.onclick = function () 
                                 {
-                                    let shouldDisplay = false;
+                                    searchText.value = input.value;
+                                    input.value = gameDiv.value;
+                                    result.style.textAlign = 'left';
+                                    reload = false;
 
-                                    if ( option.value.toUpperCase().indexOf( input.value.toUpperCase() ) > -1 )
+                                    datalist.style.display = 'none';
+
+                                    Object.keys( allData ).forEach( key =>
                                     {
-                                        shouldDisplay = true;
-                                    }
-                                    else
-                                    {
-                                        Object.keys( option.dataset ).forEach( key =>
+                                        const array = allData[key]
+
+                                        if ( array[array.length - 1] === gameDiv.value )
                                         {
-                                            if ( option.dataset[key].toUpperCase().indexOf( input.value.toUpperCase() ) > -1 )
-                                            {
-                                                shouldDisplay = true;
-                                            }
-                                        } );
-                                    }
-                                    option.style.display = shouldDisplay ? 'block' : 'none';
+                                            generateResults( array );
 
-                                    option.style.backgroundColor = '';
-                                    option.style.color = '';
-
-                                    if ( input.value.toUpperCase() == option.value.toUpperCase() )
-                                    {
-                                        option.style.backgroundColor = 'green';
-                                        option.style.color = 'white';
-                                        option.scrollIntoView( { behavior: 'smooth', block: 'nearest' } );
-                                    }
+                                            $( notification ).toggle( '500' );
+                                            toggleBlur();
+                                            searchAndScroll();
+                                        }
+                                    } );
                                 }
-                            } )
-                        } );
+                            } );
+
+                            ['input', 'click'].forEach( eventType =>
+                            {
+                                input.addEventListener( eventType, () =>
+                                {
+                                    datalist.style.display = 'block';
+
+                                    for ( let option of datalist.options ) 
+                                    {
+                                        let shouldDisplay = false;
+
+                                        if ( option.value.toUpperCase().indexOf( input.value.toUpperCase() ) > -1 )
+                                        {
+                                            shouldDisplay = true;
+                                        }
+                                        else
+                                        {
+                                            Object.keys( option.dataset ).forEach( key =>
+                                            {
+                                                if ( option.dataset[key].toUpperCase().indexOf( input.value.toUpperCase() ) > -1 )
+                                                {
+                                                    shouldDisplay = true;
+                                                }
+                                            } );
+                                        }
+                                        option.style.display = shouldDisplay ? 'block' : 'none';
+
+                                        option.style.backgroundColor = '';
+                                        option.style.color = '';
+
+                                        if ( input.value.toUpperCase() == option.value.toUpperCase() )
+                                        {
+                                            option.style.backgroundColor = 'green';
+                                            option.style.color = 'white';
+                                            option.scrollIntoView( { behavior: 'smooth', block: 'nearest' } );
+                                        }
+                                    }
+                                } )
+                            } );
+                        }
                     } catch ( error )
                     {
-                        result.innerHTML = "<p id='error' style='padding: 5px; font-size: 11px;'>A network error has occurred, try again!</p>";
+                        if ( reload ) result.innerHTML = "<p id='error' style='padding: 5px; font-size: 11px;'>A network error has occurred, try again!</p>";
+                        reload = false;
                     }
                 } )();
             }
@@ -394,6 +410,11 @@ function myFunction ()
                 </div>`;
                 ( async () =>
                 {
+                    const patternWinOrDraw = /win\s+or\s+draw/i;
+                    const winOrDraw = patternWinOrDraw.test( item.game.statement );
+
+                    const patternJustDraw = /(?<!win\s+or\s+)draw/i;
+                    const justDraw = patternJustDraw.test( item.game.statement );
 
                     let liveScores = await checkLiveScores( item.game.key );
 
@@ -415,12 +436,38 @@ function myFunction ()
                     }
                     else
                     {
-                        scoreElement.innerHTML =
-                            ( liveScores.live )
-                                ? `${text} <i class="fa fa-spinner fa-spin" style="${( liveScores.home > liveScores.away && item.log.result ) || ( liveScores.home < liveScores.away && !item.log.result ) ? 'color:#1dda13;' : 'color:red;'}"></i>`
-                                : ( ( liveScores.home > liveScores.away && item.log.result ) || ( liveScores.home < liveScores.away && !item.log.result )
-                                    ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
-                                    : `${text} <i class="fa fa-times" style="color:red;"></i>` );
+                        if ( winOrDraw )
+                        {
+                            scoreElement.innerHTML =
+                                ( liveScores.live )
+                                    ? `${text} <i class="fa fa-spinner fa-spin" style="${( liveScores.home > liveScores.away && item.log.result ) || ( liveScores.home < liveScores.away && !item.log.result ) || ( liveScores.home == liveScores.away )
+                                        ? 'color:#1dda13;' : 'color:red;'}"></i>`
+                                    : ( ( liveScores.home > liveScores.away && item.log.result ) || ( liveScores.home < liveScores.away && !item.log.result ) || ( liveScores.home == liveScores.away )
+                                        ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
+                                        : `${text} <i class="fa fa-times" style="color:red;"></i>` );
+
+                        }
+                        else if ( justDraw )
+                        {
+                            scoreElement.innerHTML =
+                                ( liveScores.live )
+                                    ? `${text} <i class="fa fa-spinner fa-spin" style="${( liveScores.home == liveScores.away )
+                                        ? 'color:#1dda13;' : 'color:red;'}"></i>`
+                                    : ( ( liveScores.home == liveScores.away )
+                                        ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
+                                        : `${text} <i class="fa fa-times" style="color:red;"></i>` );
+
+                        }
+                        else
+                        {
+                            scoreElement.innerHTML =
+                                ( liveScores.live )
+                                    ? `${text} <i class="fa fa-spinner fa-spin" style="${( liveScores.home > liveScores.away && item.log.result ) || ( liveScores.home < liveScores.away && !item.log.result )
+                                        ? 'color:#1dda13;' : 'color:red;'}"></i>`
+                                    : ( ( liveScores.home > liveScores.away && item.log.result ) || ( liveScores.home < liveScores.away && !item.log.result )
+                                        ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
+                                        : `${text} <i class="fa fa-times" style="color:red;"></i>` );
+                        }
 
                     }
                     if ( liveScores.live ) notStart = true, hold.push( item );
@@ -1577,7 +1624,7 @@ function myFunction ()
         if ( selType.value === 'winner' || selType.value === 'double_chance' )
         {
             home += ( score1 > score2 ) + ( sum1 > sum2 ) + ( master > selectElement.value ) + ( head2headValue > selectElement.value );
-            away += ( score1 < score2 ) + ( sum1 < sum2 ) + ( master < (selectElement.value * -1) ) + ( head2headValue < (selectElement.value * -1) );
+            away += ( score1 < score2 ) + ( sum1 < sum2 ) + ( master < ( selectElement.value * -1 ) ) + ( head2headValue < ( selectElement.value * -1 ) );
 
             result = home > away + selectElement.value && master > 0 && head2headValue > 0 ? true : ( away > home + selectElement.value && master < 0 && head2headValue < 0 ? false : null );
 
