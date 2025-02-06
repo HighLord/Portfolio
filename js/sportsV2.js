@@ -468,7 +468,6 @@ function myFunction ()
                                         ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
                                         : `${text} <i class="fa fa-times" style="color:red;"></i>` );
                         }
-
                     }
                     if ( liveScores.live ) notStart = true, hold.push( item );
                 } )();
@@ -494,6 +493,12 @@ function myFunction ()
             {
                 if ( item.game && item.log )
                 {
+                    const patternWinOrDraw = /win\s+or\s+draw/i;
+                    const winOrDraw = patternWinOrDraw.test( item.game.statement );
+
+                    const patternJustDraw = /(?<!win\s+or\s+)draw/i;
+                    const justDraw = patternJustDraw.test( item.game.statement );
+
                     let liveScores = await checkLiveScores( item.game.key );
 
                     let text = `${liveScores.home}:${liveScores.away}`;
@@ -517,13 +522,38 @@ function myFunction ()
                             hold.push( item )
                         } else
                         {
-                            scoreElement.innerHTML =
-                                ( liveScores.live )
-                                    ? `${text} <i class="fa fa-spinner fa-spin" style="${( liveScores.home > liveScores.away && item.log.result ) || ( liveScores.home < liveScores.away && !item.log.result ) ? 'color:#1dda13;' : 'color:red;'}"></i>`
-                                    : ( ( liveScores.home > liveScores.away && item.log.result ) || ( liveScores.home < liveScores.away && !item.log.result )
-                                        ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
-                                        : `${text} <i class="fa fa-times" style="color:red;"></i>` );
+                            if ( winOrDraw )
+                            {
+                                scoreElement.innerHTML =
+                                    ( liveScores.live )
+                                        ? `${text} <i class="fa fa-spinner fa-spin" style="${( liveScores.home > liveScores.away && item.log.result ) || ( liveScores.home < liveScores.away && !item.log.result ) || ( liveScores.home == liveScores.away )
+                                            ? 'color:#1dda13;' : 'color:red;'}"></i>`
+                                        : ( ( liveScores.home > liveScores.away && item.log.result ) || ( liveScores.home < liveScores.away && !item.log.result ) || ( liveScores.home == liveScores.away )
+                                            ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
+                                            : `${text} <i class="fa fa-times" style="color:red;"></i>` );
 
+                            }
+                            else if ( justDraw )
+                            {
+                                scoreElement.innerHTML =
+                                    ( liveScores.live )
+                                        ? `${text} <i class="fa fa-spinner fa-spin" style="${( liveScores.home == liveScores.away )
+                                            ? 'color:#1dda13;' : 'color:red;'}"></i>`
+                                        : ( ( liveScores.home == liveScores.away )
+                                            ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
+                                            : `${text} <i class="fa fa-times" style="color:red;"></i>` );
+
+                            }
+                            else
+                            {
+                                scoreElement.innerHTML =
+                                    ( liveScores.live )
+                                        ? `${text} <i class="fa fa-spinner fa-spin" style="${( liveScores.home > liveScores.away && item.log.result ) || ( liveScores.home < liveScores.away && !item.log.result )
+                                            ? 'color:#1dda13;' : 'color:red;'}"></i>`
+                                        : ( ( liveScores.home > liveScores.away && item.log.result ) || ( liveScores.home < liveScores.away && !item.log.result )
+                                            ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
+                                            : `${text} <i class="fa fa-times" style="color:red;"></i>` );
+                            }
                         }
                         if ( liveScores.live ) notStart = true, hold.push( item );
                     }
