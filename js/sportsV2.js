@@ -121,13 +121,13 @@ function myFunction ()
 
                             scroll.appendChild( datalist );
                             result.appendChild( scroll );
-
-                            Object.values( allData ).forEach( subArrays => 
+                            
+                            Object.entries( allData ).forEach( ( [key, subArrays] ) =>
                             {
                                 const gameDiv = document.createElement( "option" );
                                 gameDiv.id = 'gamediv';
                                 gameDiv.value = subArrays[subArrays.length - 1];
-                                gameDiv.textContent = subArrays[subArrays.length - 1];
+                                gameDiv.textContent = subArrays[subArrays.length - 1] + ` expires ${formatTime( key )} `;
                                 datalist.appendChild( gameDiv );
 
                                 subArrays.forEach( ( item, index ) => 
@@ -313,9 +313,14 @@ function myFunction ()
 
     function formatTime ( timestamp )
     {
+        let isoString = false;
         if ( !/^\d{10}$/.test( timestamp ) )
         {
-            return timestamp; // Return the original timestamp if it's not valid
+            isoString = true;
+            //timestamp = Math.floor( new Date( timestamp ).getTime() / 1000 );
+            let tempDate = new Date( timestamp );
+            tempDate.setDate( tempDate.getDate() + 1 ); // Increase the date by 1
+            timestamp = Math.floor( tempDate.getTime() / 1000 );
         }
         const currentTimestamp = Math.floor( Date.now() / 1000 );
         const currentDateTime = new Date( currentTimestamp * 1000 );
@@ -336,7 +341,8 @@ function myFunction ()
         else
         {
             // If the dates don't match, format the full date and time
-            const dayOptions = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }; // Short date format
+            let dayOptions = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }; // Short date format
+            if ( isoString ) dayOptions = { weekday: 'short', month: 'short', day: 'numeric' }
             const formattedDate = nextDateTime.toLocaleDateString( undefined, dayOptions );
             const formattedTime = nextDateTime.toLocaleTimeString( undefined, timeOptions );
             date = `${formattedDate}: ${formattedTime}`;
