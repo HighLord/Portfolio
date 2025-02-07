@@ -910,6 +910,8 @@ function myFunction ()
 
                                                 generateResults( save_game );
                                                 manageGame( "save", save_game );
+                                                clickCount = 0;
+                                                
                                                 setTimeout( () => 
                                                 {
                                                     save_game.splice( 0, save_game.length );
