@@ -62,7 +62,7 @@ function myFunction ()
     let allData = [];
     let sug;
     let reload = false;
-    let clickCount = 0;
+    var clickCount = 0;
 
     [bell, count].forEach( ( element ) =>
     {
@@ -916,7 +916,6 @@ function myFunction ()
 
                                                 generateResults( save_game );
                                                 manageGame( "save", save_game );
-                                                clickCount = 0;
                                                 
                                                 setTimeout( () => 
                                                 {
@@ -931,6 +930,7 @@ function myFunction ()
                                                 results = "";
                                                 button.innerHTML = "Search";
                                                 clear.innerHTML = "Clear";
+                                                clickCount = 0;
                                                 click = true;
                                                 amounted = 0;
                                                 amounts = 0;
