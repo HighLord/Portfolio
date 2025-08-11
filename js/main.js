@@ -22,10 +22,10 @@ window.onload = function()
     const light = document.getElementsByClassName('display')[0];
     light.addEventListener('click', () =>
     {
-        body.style.background = 'black';
+        body.style.background = 'black'; 
         const set_color = body.getAttribute('class') === 'dark' ? 'light' : 'dark';
         body.setAttribute('class', set_color);
-        let newColor = 'linear-gradient(-45deg, rgb(139, 26, 26), rgba(52, 122, 182, 0.745), rgba(22, 20, 156, 0.871), rgba(51, 198, 169, 0.769), rgba(17, 4, 4, 0.818)) 0% 0% / 150% 100%';
+        let newColor = 'linear-gradient(-45deg, rgb(255, 255, 255), rgba(21, 17, 112, 0.528), rgb(255, 255, 255), rgba(3, 0, 194, 0.318), rgb(255, 255, 255))';
         if (check){}else{check = container.background;}
         const get_bg = container.background === check ? newColor : check;
         container.setProperty("background", get_bg);
