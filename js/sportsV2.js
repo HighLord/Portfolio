@@ -931,6 +931,7 @@ function myFunction ()
                                                 button.innerHTML = "Search";
                                                 clear.innerHTML = "Clear";
                                                 clickCount = 0;
+                                                reload = false;
                                                 click = true;
                                                 amounted = 0;
                                                 amounts = 0;
