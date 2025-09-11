@@ -1672,7 +1672,7 @@ function myFunction ()
             home += ( score1 > score2 ) + ( sum1 > sum2 ) + ( master > selectElement.value ) + ( head2headValue > selectElement.value );
             away += ( score1 < score2 ) + ( sum1 < sum2 ) + ( master < ( selectElement.value * -1 ) ) + ( head2headValue < ( selectElement.value * -1 ) );
 
-            result = home > away + selectElement.value && master > 0 && head2headValue > 0 ? true : ( away > home + selectElement.value && master < 0 && head2headValue < 0 ? false : null );
+            result = home > ( away + selectElement.value ) && master > selectElement.value && head2headValue > selectElement.value ? true : away > ( home + selectElement.value ) && master < ( selectElement.value * -1 ) && head2headValue < ( selectElement.value * -1) ? false : null ;
 
         }
         else if ( selType.value === 'draw' )
