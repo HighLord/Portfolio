@@ -931,7 +931,6 @@ function myFunction ()
                                                 button.innerHTML = "Search";
                                                 clear.innerHTML = "Clear";
                                                 clickCount = 0;
-                                                reload = false;
                                                 click = true;
                                                 amounted = 0;
                                                 amounts = 0;
@@ -1202,6 +1201,7 @@ function myFunction ()
                         } );
 
                         const json = JSON.stringify( shuffledLeagues );
+                        
                         if ( json !== '{}' )
                         {
                             /*let jsonData = {
@@ -1268,7 +1268,7 @@ function myFunction ()
     }
 
     async function sortGame ( key )
-    {
+    {   
         const url = `https://d.livescore.in/x/feed/df_hh_4_${key}`;
 
         try
@@ -1307,6 +1307,7 @@ function myFunction ()
                     team2name: wordCount[1] || null,
                 };
             };
+            
 
             const getTeams = () =>
             {
@@ -1322,19 +1323,22 @@ function myFunction ()
                 for ( let i = 0; i < lines.length; i++ )
                 {
                     const line = lines[i];
-
+                    //console.log( line );
+                    
                     if ( line.includes( 'Last matches' ) )
                     {
                         count += 1;
                     } else if ( line.match( /(\d+):(\d+)/ ) && count <= 2 )
                     {
+                    
                         const [_, homeScore, awayScore] = line.match( /(\d+):(\d+)/ );
                         const awayTeam = lines[i - 4] || '';
-                        const homeTeam = lines[i - 10] || '';
-                        const dTime = lines[i - 26] || '';
-                        const dTime2 = lines[i - 30] || '';
-
+                        const homeTeam = lines[i - 12] || '';
+                        const dTime = lines[i - 34] || '';
+                        const dTime2 = lines[i + 16] || '';
+                        
                         const time100 = dTime.length === 10 ? dTime : ( dTime2.length === 10 ? dTime2 : null );
+                        
 
                         if ( time100 > dateLimit && !/\b\w*\.png\w*\b/.test( homeTeam ) && !/\b\w*\.png\w*\b/.test( awayTeam ) )
                         {
@@ -1343,6 +1347,9 @@ function myFunction ()
                             homescores.push( homeScore );
                             awayscores.push( awayScore );
                             gameDate.push( time100 );
+
+                           // console.log(homeTeam, awayTeam, homeScore, awayScore, time100);
+                            
                         }
                     }
                 }
