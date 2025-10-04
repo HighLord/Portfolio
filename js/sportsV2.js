@@ -62,7 +62,7 @@ function myFunction ()
     let allData = [];
     let sug;
     let reload = false;
-    var clickCount = 0;
+    let clickCount = 0;
 
     [bell, count].forEach( ( element ) =>
     {
@@ -614,6 +614,7 @@ function myFunction ()
                     url: `${apiUrl}?saved`,
                     method: "GET",
                     dataType: "json",
+                    timeout: 8000,
                     success: function ( response )
                     {
                         if ( response.Status === "200" && response.data.trim() !== "" )
@@ -715,7 +716,7 @@ function myFunction ()
                     }
                 } );
 
-                await saveData( storedData );
+                //await saveData( storedData );
                 return storedData;
             }
         }
@@ -852,6 +853,7 @@ function myFunction ()
                                                 var gamesBooked = responses.gamesBooked;
                                                 var debug = responses.debug;
                                                 amounts = total;
+                                                clickCount = 0;
 
 
                                                 Object.keys( dataKing ).forEach( function ( key )
