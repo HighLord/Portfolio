@@ -673,6 +673,7 @@ function myFunction ()
             {
                 const lastElement = subArrays[subArrays.length - 1];
                 const thisElement = data[data.length - 1];
+                
                 if ( lastElement === thisElement )
                 {
                     cond = true;
@@ -692,6 +693,14 @@ function myFunction ()
             const isoString = adjustedTime.toISOString();
 
             storedData[isoString] = filteredData;
+
+            console.log( `largest time: ${ largestTime }` );
+            console.log( `adjusted time: ${adjustedTime}` );
+            console.log( `isostring adjusted time: ${isoString}` );
+            console.log( `isostring largets time: ${largestTime.toISOString()}` );
+            
+            
+            
             await saveData( storedData );
         }
         else if ( action === "get" )
@@ -712,11 +721,11 @@ function myFunction ()
 
                     if ( differenceInDays > 1 )
                     {
-                        delete storedData[key];
+                        //delete storedData[key];
                     }
                 } );
 
-                //await saveData( storedData );
+                await saveData( storedData );
                 return storedData;
             }
         }
@@ -783,6 +792,8 @@ function myFunction ()
         async function ajax ()
         {
             var response = await getGames( gameType, gameTime );
+            console.log(response);
+            
             response = Object.entries( JSON.parse( response ) );
 
             async function processElements ()
@@ -832,6 +843,8 @@ function myFunction ()
                         updateProgressBar( amounted, amountOfBooking );
                         setTimeout( () =>
                         {
+                            console.log(dataKing);
+                            
                             $.ajax
                                 ( {
                                     url: "https://webappsng.vercel.app/api/sportbooking",
