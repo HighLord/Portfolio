@@ -280,7 +280,8 @@ function myFunction ()
 
     async function checkLiveScores ( key )
     {
-        const url = `https://global.flashscore.ninja/50/x/feed/dc_4_${key}`;
+        //const url = `https://global.flashscore.ninja/50/x/feed/dc_4_${key}`;
+        const url = `https://proxy.webapps.com.ng/livefeed.php?50&x&feed&dc_4_${key}`;
         let retries = 1;
 
         while ( retries > 0 )
