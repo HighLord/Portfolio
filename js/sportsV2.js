@@ -1125,7 +1125,9 @@ function myFunction ()
             {
                 const dateIndex = dateMapping[date];
                 const gameIndex = gameMapping[game];
-                const url = `https://d.livescore.in/x/feed/f_${gameIndex}_${dateIndex}_1_en_4`;
+                //https://global.flashscore.ninja/50/x/feed/f_1_0_1_en_4
+                const url = `https://global.flashscore.ninja/x/feed/f_${gameIndex}_${dateIndex}_1_en_4`;
+                //const url = `https://d.livescore.in/x/feed/f_${gameIndex}_${dateIndex}_1_en_4`;
 
                 const controller = new AbortController();
                 const timeoutId = setTimeout( () => controller.abort(), 15000 );
