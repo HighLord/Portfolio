@@ -1286,7 +1286,8 @@ function myFunction ()
 
     async function sortGame ( key )
     {   
-        const url = `https://d.livescore.in/x/feed/df_hh_4_${key}`;
+        //const url = `https://d.livescore.in/x/feed/df_hh_4_${key}`;
+        const url = `https://proxy.webapps.com.ng/loadteam.php?50&x&feed&df_hh_4_${key}`;
 
         try
         {
