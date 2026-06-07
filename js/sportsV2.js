@@ -1126,7 +1126,7 @@ function myFunction ()
                 const dateIndex = dateMapping[date];
                 const gameIndex = gameMapping[game];
                 //https://global.flashscore.ninja/50/x/feed/f_1_0_1_en_4
-                const url = `https://global.flashscore.ninja/50/x/feed/f_${gameIndex}_${dateIndex}_1_en_4`;
+                const url = `https://proxy.webapps.com.ng/livescore.php?50&x&feed&f_${gameIndex}_${dateIndex}_1_en_4`;
                 //const url = `https://d.livescore.in/x/feed/f_${gameIndex}_${dateIndex}_1_en_4`;
 
                 const controller = new AbortController();
