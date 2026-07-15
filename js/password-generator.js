@@ -68,7 +68,7 @@ window.onload = function()
             webname.style.textAlign = 'center';
             $.ajax
             ({
-                url: "https://github.webapps.com.ng/password-generator.php",
+                url: "https://api.webapps.com.ng/v2/security/saltgenerator.php",
 
                 xhrFields: { withCredentials: false},
                 crossOrigin: true,
