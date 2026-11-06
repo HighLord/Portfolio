@@ -693,13 +693,9 @@ function myFunction ()
             const adjustedTime = new Date( ( largestTime + 3600 ) * 1000 ); // Add 1 hour to adjust for Lagos time
             const isoString = adjustedTime.toISOString();
 
-            storedData[isoString] = filteredData;
 
-            console.log( `largest time: ${ largestTime }` );
-            console.log( `adjusted time: ${adjustedTime}` );
-            console.log( `isostring adjusted time: ${isoString}` );
-            console.log( `isostring largets time: ${largestTime.toISOString()}` );
-            
+
+            storedData[isoString] = filteredData;
             
             
             await saveData( storedData );
@@ -793,7 +789,7 @@ function myFunction ()
         async function ajax ()
         {
             var response = await getGames( gameType, gameTime );
-            console.log(response);
+            //console.log(response);
             
             response = Object.entries( JSON.parse( response ) );
 
