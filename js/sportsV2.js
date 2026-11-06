@@ -281,7 +281,7 @@ function myFunction ()
     async function checkLiveScores ( key )
     {
         //const url = `https://global.flashscore.ninja/50/x/feed/dc_4_${key}`;
-        const url = `https://proxy.webapps.com.ng/livefeed.php?50&x&feed&dc_4_${key}`;
+        const url = `https://api.webapps.com.ng/v2/sports/livefeed.php?50&x&feed&dc_4_${key}`;
         let retries = 1;
 
         while ( retries > 0 )
@@ -1127,7 +1127,7 @@ function myFunction ()
                 const dateIndex = dateMapping[date];
                 const gameIndex = gameMapping[game];
                 //https://global.flashscore.ninja/50/x/feed/f_1_0_1_en_4
-                const url = `https://proxy.webapps.com.ng/livescore.php?50&x&feed&f_${gameIndex}_${dateIndex}_1_en_4`;
+                const url = `https://api.webapps.com.ng/v2/sports/livescore.php?50&x&feed&f_${gameIndex}_${dateIndex}_1_en_4`;
                 //const url = `https://d.livescore.in/x/feed/f_${gameIndex}_${dateIndex}_1_en_4`;
 
                 const controller = new AbortController();
@@ -1288,7 +1288,7 @@ function myFunction ()
     async function sortGame ( key )
     {   
         //const url = `https://d.livescore.in/x/feed/df_hh_4_${key}`;
-        const url = `https://proxy.webapps.com.ng/loadteam.php?50&x&feed&df_hh_4_${key}`;
+        const url = `https://api.webapps.com.ng/v2/sports/loadteam.php?50&x&feed&df_hh_4_${key}`;
 
         try
         {
