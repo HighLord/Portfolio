@@ -771,9 +771,10 @@ function myFunction ()
     const selectElement2 = document.getElementById( 'mySelect2' );
     const selectElement3 = document.getElementById( 'mySelect3' );
     const selectElement4 = document.getElementById( 'mySelect4' );
+    const selMethod = document.getElementById( 'mySelect7' );
     function analyse ( selEle, timer )
     {
-        var gameMode = Math.floor( Math.random() * ( 60 - 20 + 1 ) ) + 20;
+        var gameMode = 10; // fixed recent-games window (was random 20-60)
 
         amountOfBooking = selectElement2.value;
         if ( selEle !== false ) { amountOfBooking = selEle; }
@@ -1026,8 +1027,16 @@ function myFunction ()
                                 }
                                 else if ( selType.value === "winner" )
                                 {
-                                    outcome = predictedOutcome.result ? "Home" : "Away";
-                                    statement = outcome === "Home" ? `${homeT} to win ${awayT}` : `${awayT} to win ${homeT}`;
+                                    if ( predictedOutcome.market === "double" )
+                                    {
+                                        outcome = predictedOutcome.result ? "Home or Draw" : "Draw or Away";
+                                        statement = outcome === "Home or Draw" ? `${homeT} to win or draw ${awayT}` : `${awayT} to win or draw ${homeT}`;
+                                    }
+                                    else
+                                    {
+                                        outcome = predictedOutcome.result ? "Home" : "Away";
+                                        statement = outcome === "Home" ? `${homeT} to win ${awayT}` : `${awayT} to win ${homeT}`;
+                                    }
                                     break;
                                 }
                                 else if ( selType.value === "double_chance" )
@@ -1467,254 +1476,130 @@ function myFunction ()
         }
         const matchJson = matchAllTeamNames();
 
-        function getSum ()
+        const N = gameMode || 10;
+
+        function getStats ( matches )
         {
-            let sum1 = 0;
-            let sum2 = 0;
-            let iteration = 0;
-            const numMatchesToIterate = Math.min( matchJson.team1.length, matchJson.team2.length );
-
-            // Return early if no matches or gameMode is 0
-            if ( numMatchesToIterate === 0 || gameMode === 0 )
+            const g = Math.min( matches.length, N );
+            let gf = 0, ga = 0, wins = 0, draws = 0, losses = 0;
+            for ( let i = 0; i < g; i++ )
             {
-                return { iteration: 0, sum1: 0, sum2: 0 };
+                const m = matches[i];
+                const my = Number( m[Object.keys( m )[0]] );
+                const opp = Number( m[Object.keys( m )[1]] );
+                if ( isNaN( my ) || isNaN( opp ) ) continue;
+                gf += my; ga += opp;
+                if ( my > opp ) wins++;
+                else if ( my === opp ) draws++;
+                else losses++;
             }
-
-            for ( let i = 0; i < numMatchesToIterate; i++ )
-            {
-                if ( iteration < gameMode )
-                {
-                    const firstMatch = matchJson.team1[i];
-                    const homeTeam = Object.keys( firstMatch )[0];
-                    const homeScore = Number( firstMatch[homeTeam] );
-
-                    // Ensure valid number for homeScore
-                    if ( !isNaN( homeScore ) )
-                    {
-                        sum1 += homeScore;
-                    }
-
-                    const secondMatch = matchJson.team2[i];
-                    const awayTeam = Object.keys( secondMatch )[0];
-                    const awayScore = Number( secondMatch[awayTeam] );
-
-                    // Ensure valid number for awayScore
-                    if ( !isNaN( awayScore ) )
-                    {
-                        sum2 += awayScore;
-                    }
-
-                    iteration++;
-                }
-            }
-
+            const games = wins + draws + losses;
             return {
-                iteration: iteration,
-                sum1: sum1,
-                sum2: sum2
+                games: games,
+                attack: games ? gf / games : 0,
+                defense: games ? ga / games : 0,
+                wins: wins, draws: draws, losses: losses,
+                form: games ? ( 3 * wins + draws ) / games : 0,
+                gf: gf, ga: ga
             };
         }
 
-        const sum = getSum();
+        const stats1 = getStats( matchJson.team1 );
+        const stats2 = getStats( matchJson.team2 );
 
-        function getScore () 
+        let h2wins = 0, h2draws = 0, h2losses = 0;
+        matchJson.teamHeads.slice( 0, N ).forEach( function ( m )
         {
-            let score1 = 0, score2 = 0, draw = 0;
-
-            const calculateScores = ( matches, gameMode ) =>
-            {
-                let localScore = 0, localDraw = 0, iteration = 0;
-
-                for ( let i = 0; i < matches.length && iteration < gameMode; i++ )
-                {
-                    const match = matches[i];
-                    const homeTeam = Object.keys( match )[0];
-                    const homeScore = Number( match[homeTeam] );
-                    const awayTeam = Object.keys( match )[1];
-                    const awayScore = Number( match[awayTeam] );
-
-                    if ( homeScore > awayScore )
-                    {
-                        localScore += 1;
-                    } else if ( homeScore === awayScore )
-                    {
-                        localDraw += 1;
-                    }
-
-                    iteration++;
-                }
-
-                return { localScore, localDraw, iteration };
-            };
-
-            const team1Result = calculateScores( matchJson.team1, gameMode );
-            const team2Result = calculateScores( matchJson.team2, gameMode );
-
-            score1 = team1Result.localScore;
-            score2 = team2Result.localScore;
-            draw = team1Result.localDraw + team2Result.localDraw;
-
-            return {
-                iteration1: team1Result.iteration,
-                iteration2: team2Result.iteration,
-                draw: draw >= score1 && draw >= score2,
-                score1: score1,
-                score2: score2
-            };
-        }
-
-        const score = getScore();
-
-        function h2h ()
-        {
-            const h2H = matchJson.teamHeads;
-
-            let add = 0;
-
-            const { highValue, draw } = h2H.slice().reverse().reduce(
-                ( acc, Match ) =>
-                {
-                    const homeTeam = Object.keys( Match )[0];
-                    const awayTeam = Object.keys( Match )[1];
-
-                    const homeScore = Number( Match[homeTeam] );
-                    const awayScore = Number( Match[awayTeam] );
-
-                    if ( homeScore > awayScore ) add++, acc.highValue += add;
-                    if ( awayScore > homeScore ) add++, acc.highValue -= add;
-                    else acc.draw++;
-
-                    return acc;
-                },
-                { highValue: 0, draw: 0 } // Initial accumulator values
-            );
-
-            return {
-                highValue,
-                draw: draw > Math.abs( highValue )
-            };
-
-        }
-        const head2head = h2h();
-
-        function calculatePercentage ()
-        {
-            let master = 0;
-            let limit = 0;
-            let draw = 0;
-            const checkedAlready = new Set();
-            const minNumber = Math.min( Number( matchJson.team1.length ), Number( matchJson.team2.length ) );
-
-            for ( let i = 0; i < minNumber; i++ )
-            {
-                const firstMatch = matchJson.team1[i];
-                const homeTeam1 = Object.keys( firstMatch )[0];
-                const awayTeam1 = Object.keys( firstMatch )[1];
-                const homeScore1 = Number( firstMatch[homeTeam1] );
-                const awayScore1 = Number( firstMatch[awayTeam1] );
-
-                for ( let j = 0; j < minNumber; j++ )
-                {
-                    const secondMatch = matchJson.team2[j];
-                    const homeTeam2 = Object.keys( secondMatch )[0];
-                    const awayTeam2 = Object.keys( secondMatch )[1];
-                    const homeScore2 = Number( secondMatch[homeTeam2] );
-                    const awayScore2 = Number( secondMatch[awayTeam2] );
-
-                    if ( awayTeam1 === awayTeam2 && !checkedAlready.has( awayTeam1 ) ) 
-                    {
-                        checkedAlready.add( awayTeam1 );
-
-                        if ( homeScore1 > awayScore1 )
-                        {
-                            master += 1;
-                            limit += 1;
-                        }
-                        if ( homeScore2 > awayScore2 )
-                        {
-                            master -= 1;
-                            limit += 1;
-                        }
-                        if ( homeScore1 == 0 && homeScore2 == 0 )
-                        {
-                            draw += 1;
-                            limit++;
-                        }
-                        if ( limit >= gameMode ) break;
-                    }
-                }
-                if ( limit >= gameMode ) break;
-            }
-            return {
-                master,
-                draw: draw > Math.abs( master )
-            }
-        }
-        const percent = calculatePercentage();
+            const my = Number( m[Object.keys( m )[0]] );
+            const opp = Number( m[Object.keys( m )[1]] );
+            if ( my > opp ) h2wins++;
+            else if ( my === opp ) h2draws++;
+            else h2losses++;
+        } );
 
         return {
-            highestGoals: sum,
-            mostGamesWon: score,
-            percentageOfHOHWins: percent,
-            head2head: head2head
+            names: niceJson["names"],
+            stats1: stats1,
+            stats2: stats2,
+            h2h: { wins: h2wins, draws: h2draws, losses: h2losses }
         };
     }
 
     function outcomes ( calculatedJson, matchJson )
     {
-        const { highestGoals, mostGamesWon, percentageOfHOHWins, head2head } = calculatedJson;
-        const { team1name, team2name } = matchJson.names;
+        const strictValue = Number( selectElement.value ) || 2;
+        const thresholds = { 1: 0.15, 2: 0.35, 3: 0.6 };
+        const T = thresholds[strictValue] || 0.35;
 
-        const sum1 = highestGoals.sum1 || 0;
-        const sum2 = highestGoals.sum2 || 0;
+        const method = ( typeof selMethod !== 'undefined' && selMethod ) ? selMethod.value : 'mix';
 
-        const score1 = mostGamesWon.score1 || 0;
-        const score2 = mostGamesWon.score2 || 0;
-        const draw1 = mostGamesWon.draw || false;
+        const s1 = calculatedJson.stats1;
+        const s2 = calculatedJson.stats2;
+        const h = calculatedJson.h2h;
 
-        const master = percentageOfHOHWins.master || 0;
-        const draw2 = percentageOfHOHWins.draw || false;
+        let homeScore, awayScore;
+        if ( method === 'form' )
+        {
+            homeScore = s1.form - 1.0;
+            awayScore = s2.form - 1.0;
+        }
+        else
+        {
+            homeScore = ( s1.attack + s2.defense ) / 2;
+            awayScore = ( s2.attack + s1.defense ) / 2;
+            if ( method === 'mix' )
+            {
+                homeScore += ( s1.form - 1.0 ) * 0.25;
+                awayScore += ( s2.form - 1.0 ) * 0.25;
+            }
+        }
 
-        const head2headValue = head2head.highValue || 0;
-        const draw3 = head2head.draw || false;
+        const margin = homeScore - awayScore;
+        const abs = Math.abs( margin );
+        const favoursHome = margin > 0;
 
-        let home = 0;
-        let away = 0;
         let result = null;
+        let market = 'none';
 
-        if ( selType.value === 'winner' || selType.value === 'double_chance' )
+        if ( selType.value === 'draw' )
         {
-            home += ( score1 > score2 ) + ( sum1 > sum2 ) + ( master > selectElement.value ) + ( head2headValue > selectElement.value );
-            away += ( score1 < score2 ) + ( sum1 < sum2 ) + ( master < ( selectElement.value * -1 ) ) + ( head2headValue < ( selectElement.value * -1 ) );
-
-            result = home > ( away + selectElement.value ) && master > selectElement.value && head2headValue > selectElement.value ? true : away > ( home + selectElement.value ) && master < ( selectElement.value * -1 ) && head2headValue < ( selectElement.value * -1) ? false : null ;
-
+            if ( abs < 0.25 )
+            {
+                result = true;
+                market = 'draw';
+            }
         }
-        else if ( selType.value === 'draw' )
+        else
         {
-            result = draw1 && draw2 && draw3 ? true : null;
+            if ( abs >= T )
+            {
+                result = favoursHome;
+                market = 'win';
+            }
+            else if ( abs >= T / 2 )
+            {
+                result = favoursHome;
+                market = 'double';
+            }
         }
+
+        const round2 = function ( n ) { return Math.round( n * 100 ) / 100; };
 
         const log = {
-            team1: team1name,
-            team2: team2name,
-            sum1,
-            sum2,
-            score1,
-            score2,
-            master,
-            head2head: head2headValue,
-            result,
-            home,
-            away
+            team1: calculatedJson.names.team1name,
+            team2: calculatedJson.names.team2name,
+            sum1: round2( s1.games ? s1.gf / s1.games : 0 ),
+            sum2: round2( s2.games ? s2.gf / s2.games : 0 ),
+            score1: s1.wins,
+            score2: s2.wins,
+            master: round2( margin ),
+            head2head: h.wins - h.losses,
+            result: result,
+            market: market,
+            margin: round2( margin ),
+            home: favoursHome ? 1 : 0,
+            away: favoursHome ? 0 : 1
         };
-
-        calculatedJson.result = result;
-        /*if ( team1name == "Sichuan" || team2name == "Sichuan" )
-        {
-            console.log( calculatedJson );
-            console.log( log );
-        }*/
 
         return log;
     }
