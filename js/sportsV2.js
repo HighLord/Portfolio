@@ -765,6 +765,7 @@ function myFunction ()
     button.addEventListener( 'click', () =>
     {
         if ( click === false ) { return false; }
+        totalGames = 0;
         analyse( false, 0 );
         click = false;
         stop = false;
@@ -776,6 +777,7 @@ function myFunction ()
     var amounts = 0;
     var amounted = 0;
     var countTotal = 0;
+    var totalGames = 0;                   // every game listed for the chosen sport and day
     var results = '';
     var visited = [];
     var label = false;
@@ -786,12 +788,13 @@ function myFunction ()
     const MATCH_RETRY_DELAY_MS = 2000;
     const delay = ( milliseconds ) => new Promise( ( resolve ) => setTimeout( resolve, milliseconds ) );
     const statusLine = () => ( statusNote ? '<br>' + statusNote : '' );
+    const totalLine = () => 'TOTAL GAMES : ' + ( totalGames > 0 ? totalGames : '...' ) + '<br>';
 
     function updateProgressBar ( value, max )
     {
         if ( label === false )
         {
-            document.getElementById( 'result' ).innerHTML = '<div id="status" style="width: 100%; text-align: center;"><div style="width: 100%;"><div id="progress-bar"></div></div><p id="report" style="padding: 10px;">GAMES SCANNED: ' + countTotal + '<br>PREDICTING ' + amounted + ' OF ' + amountOfBooking + ' GAMES<br>NO OF GAMES BOOKED: ' + amounts + statusLine() + '</p></div>';
+            document.getElementById( 'result' ).innerHTML = '<div id="status" style="width: 100%; text-align: center;"><div style="width: 100%;"><div id="progress-bar"></div></div><p id="report" style="padding: 10px;">' + totalLine() + 'GAMES SCANNED: ' + countTotal + '<br>PREDICTING ' + amounted + ' OF ' + amountOfBooking + ' GAMES<br>NO OF GAMES BOOKED: ' + amounts + statusLine() + '</p></div>';
             label = true;
         }
         const progressBar = document.getElementById( 'progress-bar' );
@@ -800,7 +803,7 @@ function myFunction ()
         setTimeout( () =>
         {
             progressBar.style.width = `${percentage}%`;
-            report.innerHTML = 'GAMES SCANNED: ' + countTotal + '<br>PREDICTING ' + amounted + ' OF ' + amountOfBooking + ' GAMES<br>NO OF GAMES BOOKED: ' + amounts + statusLine();
+            report.innerHTML = totalLine() + 'GAMES SCANNED: ' + countTotal + '<br>PREDICTING ' + amounted + ' OF ' + amountOfBooking + ' GAMES<br>NO OF GAMES BOOKED: ' + amounts + statusLine();
         }, 10 );
     }
     var ok = 0;
@@ -849,6 +852,7 @@ function myFunction ()
             //console.log(response);
             
             response = Object.entries( JSON.parse( response ) );
+            totalGames = response.length;
 
             async function processElements ()
             {
@@ -1538,6 +1542,10 @@ function myFunction ()
     const MAX_MATCHES_PER_TEAM = 20;      // older results say little about current form
     const RECENCY_TIER_SIZE = 5;          // matches per weight tier
     const RECENCY_TIER_WEIGHTS = [1.0, 0.7, 0.4, 0.15]; // latest 5, next 5, next 5, last 5
+    // Second weight, by how long ago a match was played (calendar months back from today).
+    // It multiplies the tier weight above, for team form, goals, tempo, common opponents and head-to-head.
+    const AGE_LIMITS_MONTHS = [3, 6, 12];
+    const AGE_WEIGHTS = [1.0, 0.75, 0.5, 0.25];  // up to 3 months, 3 to 6 months, 6 to 12 months, 1 year or older
     const FORM_PRIOR_MATCHES = 3;         // pulls thin samples towards an average team
     const MIN_MATCHES_REQUIRED = 6;       // below this per team, no pick is made
     const MIN_VENUE_MATCHES_FOR_HFA = 3;  // home and away games needed to estimate home advantage
@@ -1570,6 +1578,29 @@ function myFunction ()
     {
         const tier = Math.floor( index / RECENCY_TIER_SIZE );
         return RECENCY_TIER_WEIGHTS[Math.min( tier, RECENCY_TIER_WEIGHTS.length - 1 )];
+    }
+
+    // Weight for a match by its age. `dateSeconds` is the unix time of the match.
+    function ageWeight ( dateSeconds )
+    {
+        const monthsAgo = ( months ) =>
+        {
+            const day = new Date( Date.now() );
+            const dayOfMonth = day.getDate();
+            day.setDate( 1 );
+            day.setMonth( day.getMonth() - months );
+            const lastDay = new Date( day.getFullYear(), day.getMonth() + 1, 0 ).getDate();
+            day.setDate( Math.min( dayOfMonth, lastDay ) ); // 31 May minus 3 months is 28/29 Feb, not 3 Mar
+            return day.getTime() / 1000;
+        };
+        const tier = AGE_LIMITS_MONTHS.findIndex( ( months ) => dateSeconds >= monthsAgo( months ) );
+        return AGE_WEIGHTS[tier === -1 ? AGE_WEIGHTS.length - 1 : tier];
+    }
+
+    // Final weight of one match: its position tier times its age.
+    function matchWeight ( match, index )
+    {
+        return recencyWeight( index ) * ageWeight( match.date );
     }
 
     function weightedMean ( values, weights, priorMean, priorWeight )
@@ -1659,7 +1690,7 @@ function myFunction ()
     function teamResultForm ( matches )
     {
         const values = matches.map( ( match ) => Math.sign( goalDiff( match ) ) );
-        const weights = matches.map( ( match, index ) => recencyWeight( index ) );
+        const weights = matches.map( ( match, index ) => matchWeight( match, index ) );
         return weightedMean( values, weights, 0, FORM_PRIOR_MATCHES );
     }
 
@@ -1697,14 +1728,14 @@ function myFunction ()
     function teamStrength ( matches, homeAdvantage )
     {
         const values = matches.map( ( match ) => neutralGoalDiff( match, homeAdvantage ) );
-        const weights = matches.map( ( match, index ) => recencyWeight( index ) );
+        const weights = matches.map( ( match, index ) => matchWeight( match, index ) );
         return weightedMean( values, weights, 0, FORM_PRIOR_MATCHES );
     }
 
     function teamTempo ( matches, fallbackTotal )
     {
         const totals = matches.map( ( match ) => match.goalsFor + match.goalsAgainst );
-        const weights = matches.map( ( match, index ) => recencyWeight( index ) );
+        const weights = matches.map( ( match, index ) => matchWeight( match, index ) );
         return weightedMean( totals, weights, fallbackTotal, FORM_PRIOR_MATCHES );
     }
 
@@ -1717,7 +1748,7 @@ function myFunction ()
             matches.forEach( ( match, index ) =>
             {
                 const entry = grouped.get( match.opponent ) || { total: 0, weight: 0 };
-                const weight = recencyWeight( index );
+                const weight = matchWeight( match, index );
                 entry.total += neutralGoalDiff( match, homeAdvantage ) * weight;
                 entry.weight += weight;
                 grouped.set( match.opponent, entry );
@@ -1739,8 +1770,11 @@ function myFunction ()
     function headToHeadMargin ( headToHead, homeAdvantage )
     {
         const values = headToHead.map( ( match ) => neutralGoalDiff( match, homeAdvantage ) );
-        const weights = headToHead.map( ( match, index ) => recencyWeight( index ) );
-        return { margin: weightedMean( values, weights, 0, 0 ), count: headToHead.length };
+        const weights = headToHead.map( ( match, index ) => matchWeight( match, index ) );
+        // Old meetings also count for less in how much head-to-head is trusted overall:
+        // the count is the sum of the age weights (three recent meetings = 3, three from last year = 0.75).
+        const effectiveCount = headToHead.reduce( ( sum, match ) => sum + ageWeight( match.date ), 0 );
+        return { margin: weightedMean( values, weights, 0, 0 ), count: effectiveCount };
     }
 
     function poissonProbabilities ( lambdaHome, lambdaAway )
