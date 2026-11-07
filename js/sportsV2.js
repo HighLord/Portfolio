@@ -9,11 +9,12 @@ if ( window.onload )
 function myFunction ()
 {
     const selOdds = document.getElementById( 'mySelect5' );
-    for ( var o = 1; o <= 4.1; o += 0.1 )
+    for ( let tenths = 11; tenths <= 41; tenths++ )
     {
+        const odd = ( tenths / 10 ).toFixed( 1 ); // whole-number steps avoid floating-point drift
         const option = document.createElement( 'option' );
-        option.value = o.toFixed( 1 ); // Round to one decimal place
-        option.text = 'Less than ' + o.toFixed( 1 ) + ' Odds';
+        option.value = odd;
+        option.text = 'Less than ' + odd + ' Odds';
         selOdds.appendChild( option );
     }
 
@@ -232,6 +233,7 @@ function myFunction ()
         {
             result.innerHTML = '';
             results = "";
+            liveScoreRun++; // stops the live-score loop
             if ( liveScoreInterval )
             {
                 clearInterval( liveScoreInterval );
@@ -286,12 +288,15 @@ function myFunction ()
 
         while ( retries > 0 )
         {
+            const controller = new AbortController();
+            const timeoutId = setTimeout( () => controller.abort(), 15000 );
             try
             {
                 const response = await fetch( url,
                     {
                         method: 'GET',
                         headers: { "x-fsign": "SW9D1eZo" },
+                        signal: controller.signal
                     } );
 
                 if ( response.ok )
@@ -305,6 +310,10 @@ function myFunction ()
             catch ( error )
             {
                 console.error( error );
+            }
+            finally
+            {
+                clearTimeout( timeoutId );
             }
             retries--;
             await new Promise( ( resolve ) => setTimeout( resolve, 3000 ) );
@@ -352,6 +361,42 @@ function myFunction ()
     }
 
     let liveScoreInterval;
+    let liveScoreRun = 0;   // each displayed list gets a new id; an older loop stops when its id is stale
+    function renderEvidenceRows ( log )
+    {
+        const cell = 'style="width:35%; border: 1px solid white;"';
+        const label = 'style="width:30%; border: 1px solid white;"';
+        if ( log.model === MODEL_VERSION )
+        {
+            return `<tr><th ${label}>WIN %</th><td ${cell}>${log.score1}</td><td ${cell}>${log.score2}</td></tr>
+                    <tr><th ${label}>EXP GOALS</th><td ${cell}>${log.sum1}</td><td ${cell}>${log.sum2}</td></tr>
+                    <tr><th ${label}>MARGINS</th><td ${cell}>Head2head: ${log.head2head}</td><td ${cell}>Common opp: ${log.master}</td></tr>
+                    <tr><th ${label}>FORM</th><td ${cell}>Goals: ${log.formGoals ?? '-'}</td><td ${cell}>Results: ${log.formResults ?? '-'}</td></tr>
+                    <tr><th ${label}>DRAW %</th><td ${cell}>${log.draw}</td><td ${cell}>Games: ${log.games1}/${log.games2}</td></tr>`;
+        }
+        // Entries saved before model v2 keep their original layout.
+        return `<tr>
+                                <th style="width:30%; border: 1px solid white;">SCORE</th>
+                                <td style="width:35%; border: 1px solid white;">${log.score1}</td>
+                                <td style="width:35%; border: 1px solid white;">${log.score2}</td>
+                            </tr>
+                            <tr>
+                                <th style="width:30%; border: 1px solid white;">SUM</th>
+                                <td style="width:35%; border: 1px solid white;">${log.sum1}</td>
+                                <td style="width:35%; border: 1px solid white;">${log.sum2}</td>
+                            </tr>
+                            <tr>
+                                <th style="width:30%; border: 1px solid white;">OUTCOME</th>
+                                <td style="width:35%; border: 1px solid white;">Head2head: ${log.head2head}</td>
+                                <td style="width:35%; border: 1px solid white;">Master: ${log.master}</td>
+                            </tr>
+                            <tr>
+                                <th style="width:30%; border: 1px solid white;">${log.result}</th>
+                                <td style="width:35%; border: 1px solid white;">${log.home}</td>
+                                <td style="width:35%; border: 1px solid white;">${log.away}</td>
+                            </tr>`;
+    }
+
     async function generateResults ( array )
     {
         const odds = array.find( item => item.odds )?.odds;
@@ -363,8 +408,9 @@ function myFunction ()
         let results = '';
         let notStart = false;
         let hold = [];
+        const firstChecks = [];   // the first live-score request of every game
 
-        const validGames = array.filter( item => item.game && item.log && odds[item.game.num] ); // Only process items with functional gameOdds
+        const validGames = array.filter( item => item.game && item.log && odds?.[item.game.num] ); // Only process items with functional gameOdds
         validGames.forEach( ( item, index ) =>
         {
             if ( item.game && item.log )
@@ -391,31 +437,12 @@ function myFunction ()
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th style="width:30%; border: 1px solid white;">SCORE</th>
-                                <td style="width:35%; border: 1px solid white;">${item.log.score1}</td>
-                                <td style="width:35%; border: 1px solid white;">${item.log.score2}</td>
-                            </tr>
-                            <tr>
-                                <th style="width:30%; border: 1px solid white;">SUM</th>
-                                <td style="width:35%; border: 1px solid white;">${item.log.sum1}</td>
-                                <td style="width:35%; border: 1px solid white;">${item.log.sum2}</td>
-                            </tr>
-                            <tr>
-                                <th style="width:30%; border: 1px solid white;">OUTCOME</th>
-                                <td style="width:35%; border: 1px solid white;">Head2head: ${item.log.head2head}</td>
-                                <td style="width:35%; border: 1px solid white;">Master: ${item.log.master}</td>
-                            </tr>
-                            <tr>
-                                <th style="width:30%; border: 1px solid white;">${item.log.result}</th>
-                                <td style="width:35%; border: 1px solid white;">${item.log.home}</td>
-                                <td style="width:35%; border: 1px solid white;">${item.log.away}</td>
-                            </tr>
+                            ${renderEvidenceRows( item.log )}
                         </tbody>
                     </table>
                     <br><p id='success'></p>
                 </div>`;
-                ( async () =>
+                firstChecks.push( ( async () =>
                 {
                     const patternWinOrDraw = /win\s+or\s+draw/i;
                     const winOrDraw = patternWinOrDraw.test( item.game.statement );
@@ -477,7 +504,7 @@ function myFunction ()
                         }
                     }
                     if ( liveScores.live ) notStart = true, hold.push( item );
-                } )();
+                } )() );
             }
         } );
 
@@ -490,13 +517,13 @@ function myFunction ()
 
         result.innerHTML = results;
 
-        async function updateLiveScores ( array )
+        async function updateLiveScores ()
         {
             notStart = false
-            const validGames = hold.filter( item => item.game && item.log && odds[item.game.num] ); // Only process items with functional gameOdds
-            hold = [];
+            const validGames = [...new Set( hold )].filter( item => item.game && item.log && odds?.[item.game.num] ); // Only process items with functional gameOdds
+            const nextHold = []; // becomes the new hold only after every request below has finished
 
-            for ( const item of validGames )
+            await Promise.all( validGames.map( async ( item ) =>
             {
                 if ( item.game && item.log )
                 {
@@ -526,7 +553,7 @@ function myFunction ()
                         {
                             scoreElement.innerText = "Not yet started";
                             notStart = true;
-                            hold.push( item )
+                            nextHold.push( item )
                         } else
                         {
                             if ( winOrDraw )
@@ -562,27 +589,32 @@ function myFunction ()
                                             : `${text} <i class="fa fa-times" style="color:red;"></i>` );
                             }
                         }
-                        if ( liveScores.live ) notStart = true, hold.push( item );
+                        if ( liveScores.live ) notStart = true, nextHold.push( item );
                     }
                 }
-            }
+            } ) );
+
+            return nextHold;
         }
 
-        // Clear any existing interval before setting a new one
-        if ( liveScoreInterval )
+        // One polling loop per displayed list (a newer list or the Clear button makes this one stale).
+        // A round re-checks every game still in `hold`. The next round starts only when BOTH are true:
+        //   1. every request of the current round has finished, and
+        //   2. 20 seconds have passed since that round started.
+        // `hold` is replaced only at that moment, so rounds never overlap.
+        const runId = ++liveScoreRun;
+        ( async () =>
         {
-            clearInterval( liveScoreInterval );
-        }
+            // first round: wait for the initial request of every game and for 20 seconds
+            await Promise.allSettled( [...firstChecks, delay( 20000 )] );
 
-        // Set a new interval to update live scores every 20 seconds
-
-        liveScoreInterval = setInterval( () =>
-        {
-            if ( notStart )
+            while ( runId === liveScoreRun && hold.length > 0 && hold.some( item => document.getElementById( `score-${item.game.key}` ) ) )
             {
-                updateLiveScores( array );
+                const [nextHold] = await Promise.all( [updateLiveScores(), delay( 20000 )] );
+                if ( runId !== liveScoreRun ) return;
+                hold = nextHold;
             }
-        }, 20000 );
+        } )().catch( ( error ) => console.error( error ) );
 
         return results;
     }
@@ -748,12 +780,18 @@ function myFunction ()
     var visited = [];
     var label = false;
     var save_game = [];
+    var statusNote = '';                  // retry / rebooking message shown under the progress bar
+    const REBOOK_DELAY_MS = 3000;         // wait between booking attempts
+    const MATCH_FETCH_ATTEMPTS = 3;       // tries per match before it is skipped
+    const MATCH_RETRY_DELAY_MS = 2000;
+    const delay = ( milliseconds ) => new Promise( ( resolve ) => setTimeout( resolve, milliseconds ) );
+    const statusLine = () => ( statusNote ? '<br>' + statusNote : '' );
 
     function updateProgressBar ( value, max )
     {
         if ( label === false )
         {
-            document.getElementById( 'result' ).innerHTML = '<div id="status" style="width: 100%; text-align: center;"><div style="width: 100%;"><div id="progress-bar"></div></div><p id="report" style="padding: 10px;">GAMES SCANNED: ' + countTotal + '<br>PREDICTING ' + amounted + ' OF ' + amountOfBooking + ' GAMES<br>NO OF GAMES BOOKED: ' + amounts + '</p></div>';
+            document.getElementById( 'result' ).innerHTML = '<div id="status" style="width: 100%; text-align: center;"><div style="width: 100%;"><div id="progress-bar"></div></div><p id="report" style="padding: 10px;">GAMES SCANNED: ' + countTotal + '<br>PREDICTING ' + amounted + ' OF ' + amountOfBooking + ' GAMES<br>NO OF GAMES BOOKED: ' + amounts + statusLine() + '</p></div>';
             label = true;
         }
         const progressBar = document.getElementById( 'progress-bar' );
@@ -762,7 +800,7 @@ function myFunction ()
         setTimeout( () =>
         {
             progressBar.style.width = `${percentage}%`;
-            report.innerHTML = 'GAMES SCANNED: ' + countTotal + '<br>PREDICTING ' + amounted + ' OF ' + amountOfBooking + ' GAMES<br>NO OF GAMES BOOKED: ' + amounts + '';
+            report.innerHTML = 'GAMES SCANNED: ' + countTotal + '<br>PREDICTING ' + amounted + ' OF ' + amountOfBooking + ' GAMES<br>NO OF GAMES BOOKED: ' + amounts + statusLine();
         }, 10 );
     }
     var ok = 0;
@@ -771,11 +809,9 @@ function myFunction ()
     const selectElement2 = document.getElementById( 'mySelect2' );
     const selectElement3 = document.getElementById( 'mySelect3' );
     const selectElement4 = document.getElementById( 'mySelect4' );
-    const selMethod = document.getElementById( 'mySelect7' );
+    const selMethod = document.getElementById( 'mySelect7' ); // absent in older HTML, then DEFAULT_METHOD is used
     function analyse ( selEle, timer )
     {
-        var gameMode = 10; // fixed recent-games window (was random 20-60)
-
         amountOfBooking = selectElement2.value;
         if ( selEle !== false ) { amountOfBooking = selEle; }
         var gameTime = selectElement3.value;
@@ -786,6 +822,26 @@ function myFunction ()
         var bypass = false;
         updateProgressBar( amounted, amountOfBooking );
         var amountOfBooking2;
+
+        // Shared reset for a run that cannot continue.
+        function failRun ( message )
+        {
+            results += `<p id='error' style='padding: 5px'>${message}</p>`;
+            book = true;
+            Object.keys( dataKing ).forEach( ( key ) => delete dataKing[key] );
+            visited.splice( 0, visited.length );
+            save_game.splice( 0, save_game.length );
+            button.innerHTML = "Search";
+            clear.innerHTML = "Clear";
+            click = true;
+            result.innerHTML = results;
+            results = "";
+            label = false;
+            amounted = 0;
+            amounts = 0;
+            countTotal = 0;
+            statusNote = '';
+        }
 
         async function ajax ()
         {
@@ -821,7 +877,14 @@ function myFunction ()
                             ok = 0;
                             countTotal += 1;
                             updateProgressBar( amounted, amountOfBooking );
-                            await doSomethingWithElement( key, time, league );
+                            try
+                            {
+                                await doSomethingWithElement( key, time, league );
+                            }
+                            catch ( error )
+                            {
+                                console.error( `Skipped game ${key}:`, error ); // one bad game must not stop the scan
+                            }
                             times += 1;
                             if ( amountOfBooking > response.length ) { amountOfBooking2 = amountOfBooking; amountOfBooking = response.length; }
                             if ( times == response.length )
@@ -841,8 +904,27 @@ function myFunction ()
                         updateProgressBar( amounted, amountOfBooking );
                         setTimeout( () =>
                         {
-                            console.log(dataKing);
-                            
+                            let bookingAttempts = 0;
+                            let bookingSucceeded = false; // once true, a failure afterwards must not trigger a second booking
+
+                            // Returns true when another attempt is scheduled; false once the user pressed Stop.
+                            function scheduleRebook ()
+                            {
+                                if ( stop === true ) return false;
+                                bookingAttempts++;
+                                statusNote = `REBOOKING... ATTEMPT ${bookingAttempts}`;
+                                updateProgressBar( amounted, amountOfBooking );
+                                setTimeout( sendBooking, REBOOK_DELAY_MS );
+                                return true;
+                            }
+
+                            function sendBooking ()
+                            {
+                                if ( stop === true && bookingAttempts > 0 )
+                                {
+                                    failRun( 'Booking stopped' );
+                                    return;
+                                }
                             $.ajax
                                 ( {
                                     url: "https://webappsng.vercel.app/api/sportbooking",
@@ -855,45 +937,108 @@ function myFunction ()
                                     success:
                                         async function ( responses )
                                         {
-                                            var message = responses.message;
-                                            var innerMsg = responses.innerMsg;
-                                            if ( message == "Success" || innerMsg == "Invalid" || ( innerMsg == "selections can not be null or empty" && amountOfBooking2 != amountOfBooking ) )
+                                            statusNote = '';
+                                            try
                                             {
-                                                var odds = responses.totalOdds;
-                                                var total = responses.count;
-                                                var gamesBooked = responses.gamesBooked;
-                                                var debug = responses.debug;
-                                                amounts = total;
-                                                clickCount = 0;
-
-
-                                                Object.keys( dataKing ).forEach( function ( key )
+                                                var message = responses.message;
+                                                var innerMsg = responses.innerMsg;
+                                                if ( message == "Success" || innerMsg == "Invalid" || ( innerMsg == "selections can not be null or empty" && amountOfBooking2 != amountOfBooking ) )
                                                 {
-                                                    if ( !debug.includes( dataKing[key].key ) )
+                                                    var odds = responses.totalOdds;
+                                                    var total = responses.count;
+                                                    var gamesBooked = responses.gamesBooked;
+                                                    var debug = responses.debug;
+                                                    amounts = total;
+                                                    clickCount = 0;
+
+
+                                                    Object.keys( dataKing ).forEach( function ( key )
                                                     {
-                                                        delete dataKing[key];
-                                                    }
-                                                } );
+                                                        if ( !debug.includes( dataKing[key].key ) )
+                                                        {
+                                                            delete dataKing[key];
+                                                        }
+                                                    } );
 
-                                                if ( total < amountOfBooking && selectv2 === null && book === false && bypass === false && stop === false )
-                                                {
-                                                    amountOfBooking = parseFloat( amountOfBooking );
-                                                    var remainder = amountOfBooking - total;
-                                                    remainder = amountOfBooking + remainder;
-                                                    selectv2 = amountOfBooking;
-                                                    analyse( remainder, amountOfBooking );
-                                                    return false;
+                                                    if ( total < amountOfBooking && selectv2 === null && book === false && bypass === false && stop === false )
+                                                    {
+                                                        amountOfBooking = parseFloat( amountOfBooking );
+                                                        var remainder = amountOfBooking - total;
+                                                        remainder = amountOfBooking + remainder;
+                                                        selectv2 = amountOfBooking;
+                                                        analyse( remainder, amountOfBooking );
+                                                        return false;
+                                                    }
+                                                    else if ( total < selectv2 && book === false && bypass === false && stop === false )
+                                                    {
+                                                        amountOfBooking = parseFloat( amountOfBooking );
+                                                        var remainder = selectv2 - total;
+                                                        remainder = amountOfBooking + remainder;
+                                                        analyse( remainder, amountOfBooking );
+                                                        return false;
+                                                    }
+                                                    else if ( responses.count == 0 && bypass === false )
+                                                    {
+                                                        results += "<p id='error' style='padding: 5px'>Unable to get booking code</p>";
+                                                        book = true;
+                                                        Object.keys( dataKing ).forEach( function ( key )
+                                                        {
+                                                            delete dataKing[key];
+                                                        } );
+                                                        visited.splice( 0, visited.length );
+                                                        save_game.splice( 0, save_game.length );
+                                                        button.innerHTML = "Search";
+                                                        clear.innerHTML = "Clear";
+                                                        click = true;
+                                                        result.innerHTML = results;
+                                                        results = "";
+                                                        label = false;
+                                                        amounted = 0;
+                                                        amounts = 0;
+                                                        countTotal = 0;
+                                                        return false;
+                                                    }
+
+                                                    updateProgressBar( amounted, amountOfBooking );
+                                                    selectv2 = null;
+                                                    var shareCode = null;
+                                                    if ( responses.data && responses.data.shareCode !== undefined )
+                                                    {
+                                                        shareCode = responses.data.shareCode;
+                                                    }
+
+                                                    save_game.push( {
+                                                        odds: gamesBooked
+                                                    } );
+                                                    save_game.push( shareCode );
+                                                    bookingSucceeded = true;
+
+                                                    generateResults( save_game );
+                                                    manageGame( "save", save_game );
+                                                
+                                                    setTimeout( () => 
+                                                    {
+                                                        save_game.splice( 0, save_game.length );
+                                                        Object.keys( dataKing ).forEach( function ( key )
+                                                        {
+                                                            delete dataKing[key];
+                                                        } );
+                                                        visited.splice( 0, visited.length );
+                                                    }, 5000 );
+
+                                                    results = "";
+                                                    button.innerHTML = "Search";
+                                                    clear.innerHTML = "Clear";
+                                                    clickCount = 0;
+                                                    click = true;
+                                                    amounted = 0;
+                                                    amounts = 0;
+                                                    countTotal = 0;
+                                                    label = false;
                                                 }
-                                                else if ( total < selectv2 && book === false && bypass === false && stop === false )
+                                                else
                                                 {
-                                                    amountOfBooking = parseFloat( amountOfBooking );
-                                                    var remainder = selectv2 - total;
-                                                    remainder = amountOfBooking + remainder;
-                                                    analyse( remainder, amountOfBooking );
-                                                    return false;
-                                                }
-                                                else if ( responses.count == 0 && bypass === false )
-                                                {
+                                                    if ( scheduleRebook() ) return false;
                                                     results += "<p id='error' style='padding: 5px'>Unable to get booking code</p>";
                                                     book = true;
                                                     Object.keys( dataKing ).forEach( function ( key )
@@ -911,69 +1056,19 @@ function myFunction ()
                                                     amounted = 0;
                                                     amounts = 0;
                                                     countTotal = 0;
-                                                    return false;
                                                 }
-
-                                                updateProgressBar( amounted, amountOfBooking );
-                                                selectv2 = null;
-                                                var shareCode = null;
-                                                if ( responses.data.shareCode !== undefined )
-                                                {
-                                                    shareCode = responses.data.shareCode;
-                                                }
-
-                                                save_game.push( {
-                                                    odds: gamesBooked
-                                                } );
-                                                save_game.push( shareCode );
-
-                                                generateResults( save_game );
-                                                manageGame( "save", save_game );
-                                                
-                                                setTimeout( () => 
-                                                {
-                                                    save_game.splice( 0, save_game.length );
-                                                    Object.keys( dataKing ).forEach( function ( key )
-                                                    {
-                                                        delete dataKing[key];
-                                                    } );
-                                                    visited.splice( 0, visited.length );
-                                                }, 5000 );
-
-                                                results = "";
-                                                button.innerHTML = "Search";
-                                                clear.innerHTML = "Clear";
-                                                clickCount = 0;
-                                                click = true;
-                                                amounted = 0;
-                                                amounts = 0;
-                                                countTotal = 0;
-                                                label = false;
                                             }
-                                            else
+                                            catch ( error )
                                             {
-                                                results += "<p id='error' style='padding: 5px'>Unable to get booking code</p>";
-                                                book = true;
-                                                Object.keys( dataKing ).forEach( function ( key )
-                                                {
-                                                    delete dataKing[key];
-                                                } );
-                                                visited.splice( 0, visited.length );
-                                                save_game.splice( 0, save_game.length );
-                                                button.innerHTML = "Search";
-                                                clear.innerHTML = "Clear";
-                                                click = true;
-                                                result.innerHTML = results;
-                                                results = "";
-                                                label = false;
-                                                amounted = 0;
-                                                amounts = 0;
-                                                countTotal = 0;
+                                                console.error( error );
+                                                if ( bookingSucceeded ) failRun( 'Booking code was created but could not be displayed' );
+                                                else if ( !scheduleRebook() ) failRun( 'Unable to get booking code' );
                                             }
                                         },
                                     error:
                                         function ( response )
                                         {
+                                            if ( scheduleRebook() ) return;
                                             results += "<p id='error' style='padding: 5px'>unable to get booking code</p>";
                                             button.innerHTML = "Search";
                                             clear.innerHTML = "Clear";
@@ -993,15 +1088,18 @@ function myFunction ()
                                             countTotal = 0;
                                         }
                                 } );
+                            }
+                            sendBooking();
                         }, 1 );
                     }
                 }
             }
             async function doSomethingWithElement ( key, time, league )
             {
-                let niceJson = await sortGame( key );
+                const niceJson = await fetchGameWithRetry( key );
+                if ( niceJson === null ) return; // skipped after repeated failures
 
-                let calculatedJson = await predict( niceJson, gameMode )
+                let calculatedJson = await predict( niceJson, gameType, selMethod ? selMethod.value : DEFAULT_METHOD )
 
                 let predictedOutcome = await outcomes( calculatedJson, niceJson );
                 amounted++;
@@ -1096,9 +1194,13 @@ function myFunction ()
                     } );
                 }
             }
-            processElements();
+            processElements().catch( ( error ) =>
+            {
+                console.error( error );
+                failRun( 'The scan stopped unexpectedly, try again' );
+            } );
         }
-        ajax();
+        ajax().catch( ( error ) => console.error( error ) ); // getGames already reset the UI
     }
 
     function getGames ( game, date )
@@ -1290,6 +1392,30 @@ function myFunction ()
         } );
     }
 
+    // A failed match fetch is retried a few times, then the match is skipped so the scan keeps going.
+    async function fetchGameWithRetry ( key )
+    {
+        for ( let attempt = 1; attempt <= MATCH_FETCH_ATTEMPTS; attempt++ )
+        {
+            try
+            {
+                const gameData = await sortGame( key );
+                statusNote = '';
+                return gameData;
+            }
+            catch ( error )
+            {
+                console.error( `Game ${key}, attempt ${attempt} failed:`, error );
+                if ( stop === true || attempt === MATCH_FETCH_ATTEMPTS ) break;
+                statusNote = `RETRYING GAME DATA... ATTEMPT ${attempt + 1} OF ${MATCH_FETCH_ATTEMPTS}`;
+                updateProgressBar( amounted, amountOfBooking );
+                await delay( MATCH_RETRY_DELAY_MS );
+            }
+        }
+        statusNote = '';
+        return null;
+    }
+
     async function sortGame ( key )
     {   
         //const url = `https://d.livescore.in/x/feed/df_hh_4_${key}`;
@@ -1400,207 +1526,379 @@ function myFunction ()
     }
 
 
-    function predict ( niceJson, gameMode )
+    // -----------------------------------------------------------------------
+    // Prediction model v2 (deterministic, no randomness)
+    //
+    // Every signal is expressed as an expected goal margin (home minus away)
+    // at a neutral venue. Signals are blended, home advantage is added back,
+    // and the margin is converted into win / draw / loss probabilities.
+    // A pick is made only when its probability clears the strictness threshold.
+    // -----------------------------------------------------------------------
+    const MODEL_VERSION = 2;
+    const MAX_MATCHES_PER_TEAM = 20;      // older results say little about current form
+    const RECENCY_TIER_SIZE = 5;          // matches per weight tier
+    const RECENCY_TIER_WEIGHTS = [1.0, 0.7, 0.4, 0.15]; // latest 5, next 5, next 5, last 5
+    const FORM_PRIOR_MATCHES = 3;         // pulls thin samples towards an average team
+    const MIN_MATCHES_REQUIRED = 6;       // below this per team, no pick is made
+    const MIN_VENUE_MATCHES_FOR_HFA = 3;  // home and away games needed to estimate home advantage
+    const HFA_PRIOR_MATCHES = 20;         // shrinks the home advantage estimate towards zero
+    const COMMON_OPPONENT_MAX_WEIGHT = 0.6;
+    const COMMON_OPPONENT_PRIOR = 6;
+    const HEAD2HEAD_MAX_WEIGHT = 0.4;
+    const HEAD2HEAD_PRIOR = 8;
+    const MIN_EXPECTED_GOALS_SHARE = 0.1; // keeps an expected-goals value from reaching zero
+    const MIN_MARGIN_SPREAD = 0.5;
+    const DEFAULT_METHOD = 'mix';         // 'goals', 'form' or 'mix' (mySelect7 in the HTML)
+    const FORM_BLEND_WEIGHT = 0.3;        // share of the margin that comes from win/draw/loss form in 'mix'
+    const DOWNGRADE_WINNER_TO_DOUBLE_CHANCE = true; // winner market only, sports that have draws
+    const NO_PICK = { result: null, market: 'none' };
+    const POISSON_SPORTS = ['football', 'icehockey', 'handball'];
+    const POISSON_TAIL_SIGMAS = 6;
+    // Starting values, not yet tuned against real results. Keyed by strictness select (1 lax, 2 moderate, 3 strict).
+    const PICK_THRESHOLDS = {
+        winner: { 1: 0.50, 2: 0.56, 3: 0.64 },
+        double_chance: { 1: 0.70, 2: 0.75, 3: 0.82 },
+        draw: { 1: 0.27, 2: 0.30, 3: 0.32 }
+    };
+
+    function mean ( values )
     {
-        function matchAllTeamNames ()
+        return values.length === 0 ? 0 : values.reduce( ( sum, value ) => sum + value, 0 ) / values.length;
+    }
+
+    function recencyWeight ( index )
+    {
+        const tier = Math.floor( index / RECENCY_TIER_SIZE );
+        return RECENCY_TIER_WEIGHTS[Math.min( tier, RECENCY_TIER_WEIGHTS.length - 1 )];
+    }
+
+    function weightedMean ( values, weights, priorMean, priorWeight )
+    {
+        let weightSum = priorWeight;
+        let total = priorMean * priorWeight;
+        values.forEach( ( value, index ) =>
         {
-            const team1name = niceJson["names"]["team1name"];
-            const team2name = niceJson["names"]["team2name"];
-            const hometeams = niceJson["hometeams"];
-            const awayteams = niceJson["awayteams"];
-            const homescores = niceJson["homescores"];
-            const awayscores = niceJson["awayscores"];
-            const gameDate = niceJson["gameDate"];
-
-            let team1 = [];
-            let team2 = [];
-            let teamHeads = [];
-            const maxNumber = Math.max( hometeams.length, awayteams.length );
-
-            function addMatch ( array, homeTeam, homeScore, awayTeam, awayScore, date )
-            {
-                array.push( {
-                    [homeTeam]: homeScore,
-                    [awayTeam]: awayScore,
-                    ["date"]: date
-                } );
-            }
-
-            function addUniqueMatch ( array, homeTeam, homeScore, awayTeam, awayScore, date )
-            {
-                if ( array.findIndex( obj =>
-                    obj[homeTeam] === homeScore &&
-                    obj[awayTeam] === awayScore &&
-                    obj["date"] === date
-                ) === -1 )
-                {
-                    addMatch( array, homeTeam, homeScore, awayTeam, awayScore, date );
-                }
-            }
-
-            for ( let index = 0; index < maxNumber; index++ )
-            {
-                const homeTeam = hometeams[index];
-                const awayTeam = awayteams[index];
-                const homeScore = Number( homescores[index] );
-                const awayScore = Number( awayscores[index] );
-                const date = gameDate[index];
-
-                if ( team1name === homeTeam )
-                {
-                    if ( awayTeam !== team2name ) addMatch( team1, homeTeam, homeScore, awayTeam, awayScore, date );
-                    else addUniqueMatch( teamHeads, homeTeam, homeScore, awayTeam, awayScore, date );
-                }
-                if ( team1name === awayTeam )
-                {
-                    if ( homeTeam !== team2name ) addMatch( team1, awayTeam, awayScore, homeTeam, homeScore, date );
-                    else addUniqueMatch( teamHeads, awayTeam, awayScore, homeTeam, homeScore, date );
-                }
-                if ( team2name === homeTeam )
-                {
-                    if ( awayTeam !== team1name ) addMatch( team2, homeTeam, homeScore, awayTeam, awayScore, date );
-                    else addUniqueMatch( teamHeads, homeTeam, homeScore, awayTeam, awayScore, date );
-                }
-                if ( team2name === awayTeam )
-                {
-                    if ( homeTeam !== team1name ) addMatch( team2, awayTeam, awayScore, homeTeam, homeScore, date );
-                    else addUniqueMatch( teamHeads, awayTeam, awayScore, homeTeam, homeScore, date );
-                }
-            }
-
-            return {
-                "team1": team1,
-                "team2": team2,
-                "teamHeads": teamHeads
-            };
-        }
-        const matchJson = matchAllTeamNames();
-
-        const N = gameMode || 10;
-
-        function getStats ( matches )
-        {
-            const g = Math.min( matches.length, N );
-            let gf = 0, ga = 0, wins = 0, draws = 0, losses = 0;
-            for ( let i = 0; i < g; i++ )
-            {
-                const m = matches[i];
-                const my = Number( m[Object.keys( m )[0]] );
-                const opp = Number( m[Object.keys( m )[1]] );
-                if ( isNaN( my ) || isNaN( opp ) ) continue;
-                gf += my; ga += opp;
-                if ( my > opp ) wins++;
-                else if ( my === opp ) draws++;
-                else losses++;
-            }
-            const games = wins + draws + losses;
-            return {
-                games: games,
-                attack: games ? gf / games : 0,
-                defense: games ? ga / games : 0,
-                wins: wins, draws: draws, losses: losses,
-                form: games ? ( 3 * wins + draws ) / games : 0,
-                gf: gf, ga: ga
-            };
-        }
-
-        const stats1 = getStats( matchJson.team1 );
-        const stats2 = getStats( matchJson.team2 );
-
-        let h2wins = 0, h2draws = 0, h2losses = 0;
-        matchJson.teamHeads.slice( 0, N ).forEach( function ( m )
-        {
-            const my = Number( m[Object.keys( m )[0]] );
-            const opp = Number( m[Object.keys( m )[1]] );
-            if ( my > opp ) h2wins++;
-            else if ( my === opp ) h2draws++;
-            else h2losses++;
+            weightSum += weights[index];
+            total += value * weights[index];
         } );
+        return weightSum > 0 ? total / weightSum : priorMean;
+    }
+
+    function normalCdf ( z )
+    {
+        // Abramowitz-Stegun 26.2.17
+        const t = 1 / ( 1 + 0.2316419 * Math.abs( z ) );
+        const density = 0.3989423 * Math.exp( -z * z / 2 );
+        const tail = density * t * ( 0.3193815 + t * ( -0.3565638 + t * ( 1.781478 + t * ( -1.821256 + t * 1.330274 ) ) ) );
+        return z > 0 ? 1 - tail : tail;
+    }
+
+    function poissonPmf ( lambda, maxGoals )
+    {
+        const pmf = [Math.exp( -lambda )];
+        for ( let goals = 1; goals <= maxGoals; goals++ )
+        {
+            pmf.push( pmf[goals - 1] * lambda / goals );
+        }
+        return pmf;
+    }
+
+    // Rebuilds each team's results as plain objects seen from that team's side.
+    // Uses only the arrays produced by getTeams, which is left untouched.
+    function collectMatches ( niceJson )
+    {
+        const { team1name, team2name } = niceJson.names;
+        const { hometeams, awayteams, homescores, awayscores, gameDate } = niceJson;
+        const team1 = [];
+        const team2 = [];
+        const headToHead = [];
+        const seenHeadToHead = new Set();
+
+        for ( let index = 0; index < hometeams.length; index++ )
+        {
+            const homeTeam = hometeams[index];
+            const awayTeam = awayteams[index];
+            const homeScore = Number( homescores[index] );
+            const awayScore = Number( awayscores[index] );
+            const date = Number( gameDate[index] );
+            if ( !Number.isFinite( homeScore ) || !Number.isFinite( awayScore ) || !Number.isFinite( date ) ) continue;
+
+            const fromHome = { goalsFor: homeScore, goalsAgainst: awayScore, venue: 'home', date };
+            const fromAway = { goalsFor: awayScore, goalsAgainst: homeScore, venue: 'away', date };
+
+            const isHeadToHead = ( homeTeam === team1name && awayTeam === team2name )
+                || ( homeTeam === team2name && awayTeam === team1name );
+            if ( isHeadToHead )
+            {
+                const dedupeKey = `${date}|${homeTeam}|${homeScore}|${awayScore}`;
+                if ( seenHeadToHead.has( dedupeKey ) ) continue;
+                seenHeadToHead.add( dedupeKey );
+                headToHead.push( homeTeam === team1name ? { ...fromHome, opponent: team2name } : { ...fromAway, opponent: team2name } );
+                continue;
+            }
+
+            if ( homeTeam === team1name ) team1.push( { ...fromHome, opponent: awayTeam } );
+            else if ( awayTeam === team1name ) team1.push( { ...fromAway, opponent: homeTeam } );
+
+            if ( homeTeam === team2name ) team2.push( { ...fromHome, opponent: awayTeam } );
+            else if ( awayTeam === team2name ) team2.push( { ...fromAway, opponent: homeTeam } );
+        }
+
+        const newestFirst = ( a, b ) => b.date - a.date;
+        return {
+            team1: team1.sort( newestFirst ).slice( 0, MAX_MATCHES_PER_TEAM ),
+            team2: team2.sort( newestFirst ).slice( 0, MAX_MATCHES_PER_TEAM ),
+            headToHead: headToHead.sort( newestFirst )
+        };
+    }
+
+    const goalDiff = ( match ) => match.goalsFor - match.goalsAgainst;
+
+    // Win = 1, draw = 0, loss = -1. Venue is not adjusted: each team plays both home and away,
+    // so the effect largely cancels when the two teams are compared.
+    function teamResultForm ( matches )
+    {
+        const values = matches.map( ( match ) => Math.sign( goalDiff( match ) ) );
+        const weights = matches.map( ( match, index ) => recencyWeight( index ) );
+        return weightedMean( values, weights, 0, FORM_PRIOR_MATCHES );
+    }
+
+    // Converts result form into goal units using the typical margin of a decisive match.
+    function resultFormScale ( matches )
+    {
+        const margins = matches.map( ( match ) => Math.abs( goalDiff( match ) ) ).filter( ( margin ) => margin > 0 );
+        return margins.length === 0 ? 1 : mean( margins );
+    }
+
+    // Average extra goal margin a team earns by playing at home, pooled over both teams.
+    function estimateHomeAdvantage ( teamLists )
+    {
+        let weightedSum = 0;
+        let totalPairs = 0;
+        teamLists.forEach( ( matches ) =>
+        {
+            const home = matches.filter( ( match ) => match.venue === 'home' ).map( goalDiff );
+            const away = matches.filter( ( match ) => match.venue === 'away' ).map( goalDiff );
+            if ( home.length < MIN_VENUE_MATCHES_FOR_HFA || away.length < MIN_VENUE_MATCHES_FOR_HFA ) return;
+            const pairs = Math.min( home.length, away.length );
+            weightedSum += ( ( mean( home ) - mean( away ) ) / 2 ) * pairs;
+            totalPairs += pairs;
+        } );
+        if ( totalPairs === 0 ) return 0;
+        return ( weightedSum / totalPairs ) * ( totalPairs / ( totalPairs + HFA_PRIOR_MATCHES ) );
+    }
+
+    // Goal difference with the venue effect removed, so home and away games compare fairly.
+    function neutralGoalDiff ( match, homeAdvantage )
+    {
+        return goalDiff( match ) - ( match.venue === 'home' ? homeAdvantage : -homeAdvantage );
+    }
+
+    function teamStrength ( matches, homeAdvantage )
+    {
+        const values = matches.map( ( match ) => neutralGoalDiff( match, homeAdvantage ) );
+        const weights = matches.map( ( match, index ) => recencyWeight( index ) );
+        return weightedMean( values, weights, 0, FORM_PRIOR_MATCHES );
+    }
+
+    function teamTempo ( matches, fallbackTotal )
+    {
+        const totals = matches.map( ( match ) => match.goalsFor + match.goalsAgainst );
+        const weights = matches.map( ( match, index ) => recencyWeight( index ) );
+        return weightedMean( totals, weights, fallbackTotal, FORM_PRIOR_MATCHES );
+    }
+
+    // Compares both teams through opponents they have both played, which cancels out schedule strength.
+    function commonOpponentMargin ( team1, team2, homeAdvantage )
+    {
+        const averageByOpponent = ( matches ) =>
+        {
+            const grouped = new Map();
+            matches.forEach( ( match, index ) =>
+            {
+                const entry = grouped.get( match.opponent ) || { total: 0, weight: 0 };
+                const weight = recencyWeight( index );
+                entry.total += neutralGoalDiff( match, homeAdvantage ) * weight;
+                entry.weight += weight;
+                grouped.set( match.opponent, entry );
+            } );
+            return grouped;
+        };
+
+        const team1ByOpponent = averageByOpponent( team1 );
+        const team2ByOpponent = averageByOpponent( team2 );
+        const differences = [];
+        team1ByOpponent.forEach( ( entry1, opponent ) =>
+        {
+            const entry2 = team2ByOpponent.get( opponent );
+            if ( entry2 ) differences.push( entry1.total / entry1.weight - entry2.total / entry2.weight );
+        } );
+        return { margin: mean( differences ), count: differences.length };
+    }
+
+    function headToHeadMargin ( headToHead, homeAdvantage )
+    {
+        const values = headToHead.map( ( match ) => neutralGoalDiff( match, homeAdvantage ) );
+        const weights = headToHead.map( ( match, index ) => recencyWeight( index ) );
+        return { margin: weightedMean( values, weights, 0, 0 ), count: headToHead.length };
+    }
+
+    function poissonProbabilities ( lambdaHome, lambdaAway )
+    {
+        const maxLambda = Math.max( lambdaHome, lambdaAway );
+        const maxGoals = Math.ceil( maxLambda + POISSON_TAIL_SIGMAS * Math.sqrt( maxLambda ) ) + 3;
+        const homePmf = poissonPmf( lambdaHome, maxGoals );
+        const awayPmf = poissonPmf( lambdaAway, maxGoals );
+        let home = 0, draw = 0, away = 0;
+        for ( let homeGoals = 0; homeGoals <= maxGoals; homeGoals++ )
+        {
+            for ( let awayGoals = 0; awayGoals <= maxGoals; awayGoals++ )
+            {
+                const probability = homePmf[homeGoals] * awayPmf[awayGoals];
+                if ( homeGoals > awayGoals ) home += probability;
+                else if ( homeGoals === awayGoals ) draw += probability;
+                else away += probability;
+            }
+        }
+        const total = home + draw + away;
+        return { home: home / total, draw: draw / total, away: away / total };
+    }
+
+    function marginProbabilities ( expectedMargin, spread )
+    {
+        const home = normalCdf( expectedMargin / spread );
+        return { home, draw: 0, away: 1 - home };
+    }
+
+    function predict ( niceJson, sport, method = DEFAULT_METHOD )
+    {
+        const { team1, team2, headToHead } = collectMatches( niceJson );
+        const enoughData = team1.length >= MIN_MATCHES_REQUIRED && team2.length >= MIN_MATCHES_REQUIRED;
+        if ( !enoughData )
+        {
+            return { enoughData, matches1: team1.length, matches2: team2.length };
+        }
+
+        const homeAdvantage = estimateHomeAdvantage( [team1, team2] );
+        const formMargin = teamStrength( team1, homeAdvantage ) - teamStrength( team2, homeAdvantage );
+        const common = commonOpponentMargin( team1, team2, homeAdvantage );
+        const h2h = headToHeadMargin( headToHead, homeAdvantage );
+
+        const commonWeight = COMMON_OPPONENT_MAX_WEIGHT * common.count / ( common.count + COMMON_OPPONENT_PRIOR );
+        const h2hWeight = HEAD2HEAD_MAX_WEIGHT * h2h.count / ( h2h.count + HEAD2HEAD_PRIOR );
+        const neutralMargin = ( formMargin + commonWeight * common.margin + h2hWeight * h2h.margin )
+            / ( 1 + commonWeight + h2hWeight );
+        const allMatches = [...team1, ...team2];
+        const resultFormMargin = ( teamResultForm( team1 ) - teamResultForm( team2 ) ) * resultFormScale( allMatches );
+        let blendedMargin;
+        if ( method === 'goals' ) blendedMargin = neutralMargin;
+        else if ( method === 'form' ) blendedMargin = resultFormMargin;
+        else blendedMargin = ( 1 - FORM_BLEND_WEIGHT ) * neutralMargin + FORM_BLEND_WEIGHT * resultFormMargin;
+        const expectedMargin = blendedMargin + homeAdvantage;
+
+        const allTotals = [...team1, ...team2].map( ( match ) => match.goalsFor + match.goalsAgainst );
+        const pooledTotal = mean( allTotals );
+        const expectedTotal = ( teamTempo( team1, pooledTotal ) + teamTempo( team2, pooledTotal ) ) / 2;
+        const minimumGoals = expectedTotal * MIN_EXPECTED_GOALS_SHARE;
+        const expectedHomeGoals = Math.max( minimumGoals, ( expectedTotal + expectedMargin ) / 2 );
+        const expectedAwayGoals = Math.max( minimumGoals, ( expectedTotal - expectedMargin ) / 2 );
+
+        let probabilities;
+        if ( POISSON_SPORTS.includes( sport ) )
+        {
+            probabilities = poissonProbabilities( expectedHomeGoals, expectedAwayGoals );
+        }
+        else
+        {
+            const spread = Math.max( MIN_MARGIN_SPREAD, standardDeviation( [...team1, ...team2].map( goalDiff ) ) );
+            probabilities = marginProbabilities( expectedHomeGoals - expectedAwayGoals, spread );
+        }
 
         return {
-            names: niceJson["names"],
-            stats1: stats1,
-            stats2: stats2,
-            h2h: { wins: h2wins, draws: h2draws, losses: h2losses }
+            enoughData,
+            matches1: team1.length,
+            matches2: team2.length,
+            expectedHomeGoals,
+            expectedAwayGoals,
+            probabilities,
+            goalsMargin: neutralMargin,
+            formMargin: resultFormMargin,
+            commonMargin: common.margin,
+            headToHeadMargin: h2h.margin
         };
+    }
+
+    function standardDeviation ( values )
+    {
+        const average = mean( values );
+        return Math.sqrt( mean( values.map( ( value ) => ( value - average ) ** 2 ) ) );
+    }
+
+    // result: true = home side of the market, false = away side, null = no pick.
+    // market: 'win', 'double' or 'draw' (what was actually picked).
+    function pickResult ( market, strictness, probabilities )
+    {
+        const threshold = PICK_THRESHOLDS[market]?.[strictness];
+        if ( threshold === undefined ) return NO_PICK;
+        const { home, draw, away } = probabilities;
+
+        if ( market === 'winner' )
+        {
+            if ( home >= threshold && home > away ) return { result: true, market: 'win' };
+            if ( away >= threshold && away > home ) return { result: false, market: 'win' };
+            if ( DOWNGRADE_WINNER_TO_DOUBLE_CHANCE && draw > 0 )
+            {
+                const doubleThreshold = PICK_THRESHOLDS.double_chance[strictness];
+                const homeOrDraw = home + draw;
+                const drawOrAway = draw + away;
+                if ( homeOrDraw >= doubleThreshold && homeOrDraw > drawOrAway ) return { result: true, market: 'double' };
+                if ( drawOrAway >= doubleThreshold && drawOrAway > homeOrDraw ) return { result: false, market: 'double' };
+            }
+            return NO_PICK;
+        }
+        if ( market === 'double_chance' )
+        {
+            const homeOrDraw = home + draw;
+            const drawOrAway = draw + away;
+            if ( homeOrDraw >= threshold && homeOrDraw > drawOrAway ) return { result: true, market: 'double' };
+            if ( drawOrAway >= threshold && drawOrAway > homeOrDraw ) return { result: false, market: 'double' };
+            return NO_PICK;
+        }
+        if ( market === 'draw' ) return draw >= threshold ? { result: true, market: 'draw' } : NO_PICK;
+        return NO_PICK;
     }
 
     function outcomes ( calculatedJson, matchJson )
     {
-        const strictValue = Number( selectElement.value ) || 2;
-        const thresholds = { 1: 0.15, 2: 0.35, 3: 0.6 };
-        const T = thresholds[strictValue] || 0.35;
+        const { team1name, team2name } = matchJson.names;
+        const percent = ( probability ) => Math.round( probability * 100 );
+        const rounded = ( value ) => Math.round( value * 100 ) / 100;
 
-        const method = ( typeof selMethod !== 'undefined' && selMethod ) ? selMethod.value : 'mix';
+        const pick = calculatedJson.enoughData
+            ? pickResult( selType.value, Number( selectElement.value ), calculatedJson.probabilities )
+            : NO_PICK;
 
-        const s1 = calculatedJson.stats1;
-        const s2 = calculatedJson.stats2;
-        const h = calculatedJson.h2h;
-
-        let homeScore, awayScore;
-        if ( method === 'form' )
-        {
-            homeScore = s1.form - 1.0;
-            awayScore = s2.form - 1.0;
-        }
-        else
-        {
-            homeScore = ( s1.attack + s2.defense ) / 2;
-            awayScore = ( s2.attack + s1.defense ) / 2;
-            if ( method === 'mix' )
-            {
-                homeScore += ( s1.form - 1.0 ) * 0.25;
-                awayScore += ( s2.form - 1.0 ) * 0.25;
-            }
-        }
-
-        const margin = homeScore - awayScore;
-        const abs = Math.abs( margin );
-        const favoursHome = margin > 0;
-
-        let result = null;
-        let market = 'none';
-
-        if ( selType.value === 'draw' )
-        {
-            if ( abs < 0.25 )
-            {
-                result = true;
-                market = 'draw';
-            }
-        }
-        else
-        {
-            if ( abs >= T )
-            {
-                result = favoursHome;
-                market = 'win';
-            }
-            else if ( abs >= T / 2 )
-            {
-                result = favoursHome;
-                market = 'double';
-            }
-        }
-
-        const round2 = function ( n ) { return Math.round( n * 100 ) / 100; };
-
+        const probabilities = calculatedJson.probabilities || { home: 0, draw: 0, away: 0 };
         const log = {
-            team1: calculatedJson.names.team1name,
-            team2: calculatedJson.names.team2name,
-            sum1: round2( s1.games ? s1.gf / s1.games : 0 ),
-            sum2: round2( s2.games ? s2.gf / s2.games : 0 ),
-            score1: s1.wins,
-            score2: s2.wins,
-            master: round2( margin ),
-            head2head: h.wins - h.losses,
-            result: result,
-            market: market,
-            margin: round2( margin ),
-            home: favoursHome ? 1 : 0,
-            away: favoursHome ? 0 : 1
+            model: MODEL_VERSION,
+            team1: team1name,
+            team2: team2name,
+            score1: percent( probabilities.home ),            // win probability %
+            score2: percent( probabilities.away ),
+            sum1: rounded( calculatedJson.expectedHomeGoals || 0 ), // expected goals
+            sum2: rounded( calculatedJson.expectedAwayGoals || 0 ),
+            master: rounded( calculatedJson.commonMargin || 0 ),    // common-opponent margin
+            head2head: rounded( calculatedJson.headToHeadMargin || 0 ),
+            formGoals: rounded( calculatedJson.goalsMargin || 0 ),
+            formResults: rounded( calculatedJson.formMargin || 0 ),
+            draw: percent( probabilities.draw ),
+            games1: calculatedJson.matches1,
+            games2: calculatedJson.matches2,
+            result: pick.result,
+            market: pick.market
         };
 
+        calculatedJson.result = pick.result;
         return log;
     }
 };
