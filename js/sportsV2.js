@@ -510,12 +510,50 @@ function myFunction ()
 
         const addon = `<a href="https://www.sportybet.com?shareCode=${key}&c=ng" target="_blank">
                         <button style="float:right; background-color: orange;" class="link">Play</button></a>`;
+        // Shown only once every game of this result has been played in full (see updateDeleteButton).
+        const deleteHtml = ( typeof key === 'string' && key !== '' )
+            ? `<button id="delete-saved" style="display:none; float:right; background-color: #c0392b; margin-right: 5px;" class="link">Delete</button>` : '';
         const data = `Sportybet booking code: ${key}<br>
                         Amount of games booked: ${oddsLength}<br>
-                        Total odds: ${calcOdds.toFixed( 2 )} ${addon}`;
+                        Total odds: ${calcOdds.toFixed( 2 )} ${addon}${deleteHtml}`;
         results += `<p id='success' style='padding: 5px; margin-right: 0px; font-size: 10px'>${data}</p>`;
 
         result.innerHTML = results;
+
+        const deleteButton = document.getElementById( 'delete-saved' );
+        // Delete is offered only when no game is waiting or live (hold is empty) AND every game
+        // started at least MIN_HOURS_AFTER_KICKOFF hours ago. The second check protects against a live game being read as finished.
+        function updateDeleteButton ()
+        {
+            if ( !deleteButton ) return;
+            const startedBefore = Date.now() / 1000 - MIN_HOURS_AFTER_KICKOFF * 3600;
+            const allPlayed = validGames.length > 0 && hold.length === 0 && validGames.every( ( item ) => Number( item.game.time ) <= startedBefore );
+            deleteButton.style.display = allPlayed ? 'inline-block' : 'none';
+        }
+        if ( deleteButton )
+        {
+            deleteButton.onclick = async () =>
+            {
+                if ( !window.confirm( `Delete this saved result (${key})?\nAll ${validGames.length} of its games have been played. This cannot be undone.` ) ) return;
+                deleteButton.disabled = true;
+                deleteButton.innerText = 'Deleting...';
+                let removed = false;
+                try { removed = await manageGame( "delete", null, key ); } catch ( error ) { console.error( error ); }
+                if ( removed )
+                {
+                    liveScoreRun++; // stops the live-score loop of this result
+                    allData = [];   // the saved list is read again next time
+                    result.style.textAlign = 'left';
+                    result.innerHTML = "<p id='success' style='padding: 5px'>Result deleted.</p>";
+                }
+                else
+                {
+                    deleteButton.disabled = false;
+                    deleteButton.innerText = 'Delete';
+                    window.alert( 'Could not delete this result, try again.' );
+                }
+            };
+        }
 
         async function updateLiveScores ()
         {
@@ -603,6 +641,7 @@ function myFunction ()
         //   2. 20 seconds have passed since that round started.
         // `hold` is replaced only at that moment, so rounds never overlap.
         const runId = ++liveScoreRun;
+        Promise.allSettled( firstChecks ).then( () => { if ( runId === liveScoreRun ) updateDeleteButton(); } );
         ( async () =>
         {
             // first round: wait for the initial request of every game and for 20 seconds
@@ -613,6 +652,7 @@ function myFunction ()
                 const [nextHold] = await Promise.all( [updateLiveScores(), delay( 20000 )] );
                 if ( runId !== liveScoreRun ) return;
                 hold = nextHold;
+                updateDeleteButton();
             }
         } )().catch( ( error ) => console.error( error ) );
 
@@ -639,7 +679,9 @@ function myFunction ()
         const pin = "3728"; // Pin for secure access
 
         // Fetch saved data using jQuery AJAX
-        async function fetchData ()
+        // strict is used before a save or delete: anything other than a clean answer is an error, never "empty",
+        // because writing back after a bad read would erase every saved result.
+        async function fetchData ( strict = false )
         {
             return new Promise( ( resolve, reject ) =>
             {
@@ -650,13 +692,24 @@ function myFunction ()
                     timeout: 8000,
                     success: function ( response )
                     {
-                        if ( response.Status === "200" && response.data.trim() !== "" )
+                        try
                         {
-                            resolve( JSON.parse( response.data ) ); // return the promise with the decoded data
+                            if ( response.Status === "200" && response.data.trim() !== "" )
+                            {
+                                resolve( JSON.parse( response.data ) ); // return the promise with the decoded data
+                            }
+                            else if ( strict && response.Status !== "200" )
+                            {
+                                reject( new Error( "Saved results could not be read, Status " + response.Status ) );
+                            }
+                            else
+                            {
+                                resolve( {} ); // return with an empty object for invalid/empty data
+                            }
                         }
-                        else
+                        catch ( error )
                         {
-                            resolve( {} ); // return with an empty object for invalid/empty data
+                            reject( error );
                         }
                     },
                     error: function ( error )
@@ -696,41 +749,73 @@ function myFunction ()
 
         const now = new Date();
 
+        // Saving and deleting read the whole store, change it and write it all back. They run one at a time,
+        // and after writing the store is read again; if the change is not there (another tab wrote in between) it is redone.
+        async function changeStore ( change )
+        {
+            const previous = storeLock;
+            let release;
+            storeLock = new Promise( ( resolve ) => { release = resolve; } );
+            await previous;
+            try
+            {
+                let lastError = null;
+                for ( let attempt = 1; attempt <= STORE_ATTEMPTS; attempt++ )
+                {
+                    try
+                    {
+                        const stored = await fetchData( true );
+                        const outcome = change( stored );
+                        if ( outcome.done !== undefined ) return outcome.done;
+                        await saveData( stored );
+                        const check = await fetchData( true );
+                        if ( outcome.verify( check ) ) return true;
+                        lastError = new Error( "The change was not found after saving" );
+                    }
+                    catch ( error )
+                    {
+                        lastError = error;
+                    }
+                    console.error( `Saved results, attempt ${attempt} failed:`, lastError );
+                    if ( attempt < STORE_ATTEMPTS ) await delay( STORE_RETRY_DELAY_MS );
+                }
+                return false;
+            }
+            finally
+            {
+                release();
+            }
+        }
+
         // Perform actions
         if ( action === "save" )
         {
-            if ( filteredData.length === 0 ) return false;
-            let storedData = await fetchData();
-            let cond = false;
-            Object.values( storedData ).forEach( subArrays => 
-            {
-                const lastElement = subArrays[subArrays.length - 1];
-                const thisElement = data[data.length - 1];
-                
-                if ( lastElement === thisElement )
-                {
-                    cond = true;
-                }
-            } );
-            if ( cond === true )
-            {
-                return false;
-            }
-            storedData = storedData || {};
+            if ( !filteredData ) return false;
+            const code = filteredData[filteredData.length - 1];
             const times = filteredData
                 .filter( item => item.game && item.game.time ) // Filter only objects with a 'game' and 'time'
                 .map( item => parseInt( item.game.time, 10 ) ); // Extract the time values and convert to integers
+            if ( times.length === 0 ) return false;
 
             const largestTime = Math.max( ...times ); // Find the largest time
             const adjustedTime = new Date( ( largestTime + 3600 ) * 1000 ); // Add 1 hour to adjust for Lagos time
-            const isoString = adjustedTime.toISOString();
+            const sameCode = ( sub ) => Array.isArray( sub ) && sub[sub.length - 1] === code;
 
-
-
-            storedData[isoString] = filteredData;
-            
-            
-            await saveData( storedData );
+            return await changeStore( ( stored ) =>
+            {
+                if ( typeof code === "string" && code !== "" && Object.values( stored ).some( sameCode ) )
+                {
+                    return { done: true }; // this booking is already saved
+                }
+                // Two bookings can end with the same last kick-off. A key is never reused, or the older booking would be replaced.
+                let isoString = adjustedTime.toISOString();
+                for ( let bump = 1; stored[isoString] !== undefined; bump++ )
+                {
+                    isoString = new Date( adjustedTime.getTime() + bump ).toISOString();
+                }
+                stored[isoString] = filteredData;
+                return { verify: ( check ) => Array.isArray( check[isoString] ) && check[isoString].length === filteredData.length };
+            } );
         }
         else if ( action === "get" )
         {
@@ -754,9 +839,22 @@ function myFunction ()
                     }
                 } );
 
-                await saveData( storedData );
-                return storedData;
+                return storedData; // reading never writes: a read followed by a write could erase a result saved in between
             }
+        }
+        else if ( action === "delete" )
+        {
+            const code = lastValue; // the booking code of the result to remove
+            if ( typeof code !== "string" || code === "" ) return false;
+            const hasCode = ( sub ) => Array.isArray( sub ) && sub[sub.length - 1] === code;
+
+            return await changeStore( ( stored ) =>
+            {
+                const keys = Object.keys( stored ).filter( ( key ) => hasCode( stored[key] ) );
+                if ( keys.length === 0 ) return { done: true }; // already gone
+                keys.forEach( ( key ) => delete stored[key] );
+                return { verify: ( check ) => !Object.values( check ).some( hasCode ) };
+            } );
         }
     }
 
@@ -784,10 +882,26 @@ function myFunction ()
     var save_game = [];
     var statusNote = '';                  // retry / rebooking message shown under the progress bar
     const REBOOK_DELAY_MS = 3000;         // wait between booking attempts
-    const MATCH_FETCH_ATTEMPTS = 3;       // tries per match before it is skipped
+    const MATCH_FETCH_ATTEMPTS = 5;       // tries per match before it is skipped
+    const FEED_FETCH_ATTEMPTS = 5;        // tries for the list of games before giving up
+    const FEED_RETRY_DELAY_MS = 2000;
+    const FEED_UTC_OFFSET_HOURS = 1;      // the feed's days change at midnight in this timezone (the 1 in f_<sport>_<day>_1_en_4)
+    let runDay = null;                    // the calendar day the user asked for, kept for the whole run
+    const STORE_ATTEMPTS = 5;             // tries to read/save/delete in the saved results
+    const STORE_RETRY_DELAY_MS = 1500;
+    let storeLock = Promise.resolve();    // saving and deleting run one at a time
+    const MIN_HOURS_AFTER_KICKOFF = 3;    // a result can only be deleted once every game started at least this long ago
     const MATCH_RETRY_DELAY_MS = 2000;
     const delay = ( milliseconds ) => new Promise( ( resolve ) => setTimeout( resolve, milliseconds ) );
     const statusLine = () => ( statusNote ? '<br>' + statusNote : '' );
+    // The booking worked, only the copy in the saved list could not be stored.
+    function saveFailed ()
+    {
+        if ( result.innerHTML.includes( 'Sportybet booking code' ) )
+        {
+            result.insertAdjacentHTML( 'beforeend', "<p id='error' style='padding: 5px; font-size: 11px;'>This result could not be saved to your saved list, but the booking code above is valid.</p>" );
+        }
+    }
     const totalLine = () => 'TOTAL GAMES : ' + ( totalGames > 0 ? totalGames : '...' ) + '<br>';
 
     function updateProgressBar ( value, max )
@@ -819,6 +933,12 @@ function myFunction ()
         if ( selEle !== false ) { amountOfBooking = selEle; }
         var gameTime = selectElement3.value;
         var gameType = selectElement4.value;
+        // "today" and "tomorrow" change meaning at midnight, so the run remembers WHICH day was asked for.
+        // Every request for the list of games turns that day back into an offset from the date it is right now.
+        const feedDay = ( seconds ) => Math.floor( ( seconds + FEED_UTC_OFFSET_HOURS * 3600 ) / 86400 );
+        const dayOffsets = { "today": 0, "tomorrow": 1, "next-tomorrow": 2 };
+        const knownDay = dayOffsets.hasOwnProperty( gameTime );
+        if ( knownDay && ( selEle === false || runDay === null ) ) runDay = feedDay( Date.now() / 1000 ) + dayOffsets[gameTime];
         button.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
         times = timer;
         var book = false;
@@ -846,64 +966,9 @@ function myFunction ()
             statusNote = '';
         }
 
-        async function ajax ()
+        // Sends the booking. It is repeated every few seconds until it works or the user presses Stop.
+        function bookNow ()
         {
-            var response = await getGames( gameType, gameTime );
-            //console.log(response);
-            
-            response = Object.entries( JSON.parse( response ) );
-            totalGames = response.length;
-
-            async function processElements ()
-            {
-                let iterations = 0;
-                function oks ()
-                {
-                    result.innerHTML += "<p id='error' style='padding: 5px; font-size: 11px;'>The amount of predictions you chose has exceeded the amount of games available today</p>";
-                    times = amountOfBooking;
-                    book = true;
-                    amounted = times;
-                    updateProgressBar( amounted, amountOfBooking );
-                }
-                for ( const [key, value] of response )
-                {
-                    if ( times < amountOfBooking )
-                    {
-                        iterations++
-                        if ( response.length >= iterations )
-                        {
-                            const dataKeys = Object.keys( value );
-                            const dataValues = Object.values( value );
-                            const time = dataKeys[0];
-                            const league = dataValues[0];
-                            if ( ok > countTotal ) { bypass = true; oks(); }
-                            if ( visited.includes( key ) ) { ok++; continue; } else { visited.push( key ); }
-                            ok = 0;
-                            countTotal += 1;
-                            updateProgressBar( amounted, amountOfBooking );
-                            try
-                            {
-                                await doSomethingWithElement( key, time, league );
-                            }
-                            catch ( error )
-                            {
-                                console.error( `Skipped game ${key}:`, error ); // one bad game must not stop the scan
-                            }
-                            times += 1;
-                            if ( amountOfBooking > response.length ) { amountOfBooking2 = amountOfBooking; amountOfBooking = response.length; }
-                            if ( times == response.length )
-                            {
-                                oks();
-                            }
-                        }
-                        else
-                        {
-                            oks();
-                            break;
-                        }
-                    }
-                    if ( times == amountOfBooking )
-                    {
                         times += 1;
                         updateProgressBar( amounted, amountOfBooking );
                         setTimeout( () =>
@@ -1018,7 +1083,14 @@ function myFunction ()
                                                     bookingSucceeded = true;
 
                                                     generateResults( save_game );
-                                                    manageGame( "save", save_game );
+                                                    manageGame( "save", save_game ).then( ( saved ) =>
+                                                    {
+                                                        if ( saved === false ) saveFailed();
+                                                    } ).catch( ( error ) =>
+                                                    {
+                                                        console.error( error );
+                                                        saveFailed();
+                                                    } );
                                                 
                                                     setTimeout( () => 
                                                     {
@@ -1095,11 +1167,87 @@ function myFunction ()
                             }
                             sendBooking();
                         }, 1 );
+        }
+
+        async function ajax ()
+        {
+            var response = await getGames( gameType, knownDay ? runDay - feedDay( Date.now() / 1000 ) : gameTime, selEle !== false );
+            if ( typeof response === 'string' && response.startsWith( 'NO GAMES' ) )
+            {
+                // A first search: getGames has already shown the message. A later round, for example after midnight when every
+                // game of the chosen day has started: book the games the earlier rounds found instead of throwing them away.
+                if ( selEle !== false && Object.keys( dataKing ).length > 0 )
+                {
+                    statusNote = 'NO MORE GAMES ON THE CHOSEN DAY, BOOKING THE ONES ALREADY FOUND';
+                    book = true;
+                    times = amountOfBooking;
+                    amounted = times;
+                    bookNow();
+                }
+                return;
+            }
+            //console.log(response);
+            
+            response = Object.entries( JSON.parse( response ) );
+            totalGames = response.length;
+
+            async function processElements ()
+            {
+                let iterations = 0;
+                function oks ()
+                {
+                    result.innerHTML += "<p id='error' style='padding: 5px; font-size: 11px;'>The amount of predictions you chose has exceeded the amount of games available today</p>";
+                    times = amountOfBooking;
+                    book = true;
+                    amounted = times;
+                    updateProgressBar( amounted, amountOfBooking );
+                }
+                for ( const [key, value] of response )
+                {
+                    if ( times < amountOfBooking )
+                    {
+                        iterations++
+                        if ( response.length >= iterations )
+                        {
+                            const dataKeys = Object.keys( value );
+                            const dataValues = Object.values( value );
+                            const time = dataKeys[0];
+                            const league = dataValues[0];
+                            if ( ok > countTotal ) { bypass = true; oks(); }
+                            if ( visited.includes( key ) ) { ok++; continue; } else { visited.push( key ); }
+                            ok = 0;
+                            countTotal += 1;
+                            updateProgressBar( amounted, amountOfBooking );
+                            try
+                            {
+                                await doSomethingWithElement( key, time, league );
+                            }
+                            catch ( error )
+                            {
+                                console.error( `Skipped game ${key}:`, error ); // one bad game must not stop the scan
+                            }
+                            times += 1;
+                            if ( amountOfBooking > response.length ) { amountOfBooking2 = amountOfBooking; amountOfBooking = response.length; }
+                            if ( times == response.length )
+                            {
+                                oks();
+                            }
+                        }
+                        else
+                        {
+                            oks();
+                            break;
+                        }
+                    }
+                    if ( times == amountOfBooking )
+                    {
+                        bookNow();
                     }
                 }
             }
             async function doSomethingWithElement ( key, time, league )
             {
+                if ( Number( time ) <= Date.now() / 1000 ) return; // kicked off while the scan was running, it can no longer be booked
                 const niceJson = await fetchGameWithRetry( key );
                 if ( niceJson === null ) return; // skipped after repeated failures
 
@@ -1207,7 +1355,7 @@ function myFunction ()
         ajax().catch( ( error ) => console.error( error ) ); // getGames already reset the UI
     }
 
-    function getGames ( game, date )
+    function getGames ( game, date, keepRun )
     {
         return new Promise( ( resolve, reject ) =>
         {
@@ -1233,32 +1381,15 @@ function myFunction ()
                 "mma": 28
             };
 
-            if ( dateMapping.hasOwnProperty( date ) && gameMapping.hasOwnProperty( game ) )
+            if ( ( typeof date === "number" || dateMapping.hasOwnProperty( date ) ) && gameMapping.hasOwnProperty( game ) )
             {
-                const dateIndex = dateMapping[date];
+                const dateIndex = typeof date === "number" ? date : dateMapping[date]; // a number is a day offset from today
                 const gameIndex = gameMapping[game];
                 //https://global.flashscore.ninja/50/x/feed/f_1_0_1_en_4
-                const url = `https://api.webapps.com.ng/v2/sports/livescore.php?50&x&feed&f_${gameIndex}_${dateIndex}_1_en_4`;
+                const url = `https://api.webapps.com.ng/v2/sports/livescore.php?50&x&feed&f_${gameIndex}_${dateIndex}_${FEED_UTC_OFFSET_HOURS}_en_4`;
                 //const url = `https://d.livescore.in/x/feed/f_${gameIndex}_${dateIndex}_1_en_4`;
 
-                const controller = new AbortController();
-                const timeoutId = setTimeout( () => controller.abort(), 15000 );
-
-                fetch( url, {
-                    method: 'GET',
-                    headers: {
-                        "x-fsign": "SW9D1eZo"
-                    },
-                    signal: controller.signal
-                } )
-                    .then( response =>
-                    {
-                        if ( !response.ok )
-                        {
-                            throw new Error( `HTTP error! Status: ${response.status}` );
-                        }
-                        return response.text();
-                    } )
+                fetchFeedText( url, 'GAME LIST' )
                     .then( matches =>
                     {
                         const lines = matches.replace( /÷/g, "<br>" ).split( "<br>" );
@@ -1344,6 +1475,12 @@ function myFunction ()
                             resolve( json );
                         } else
                         {
+                            if ( keepRun )
+                            {
+                                // a later round of a run that already has games: the caller books those, nothing is reset
+                                resolve( "NO GAMES AVAILABLE FOR SPECIFIED DATE" );
+                                return;
+                            }
                             results += "<p id='error' style='padding: 5px'>NO GAMES AVAILABLE FOR SPECIFIED DATE</p>";
                             button.innerHTML = "Search";
                             clear.innerHTML = "Clear";
@@ -1387,13 +1524,49 @@ function myFunction ()
                         countTotal = 0;
                         reject( error.message );
 
-                    } )
-                    .finally( () => clearTimeout( timeoutId ) );
+                    } );
             } else
             {
                 throw new Error( "Invalid game or date." );
             }
         } );
+    }
+
+    // Fetches a feed as text. A failed try is repeated up to FEED_FETCH_ATTEMPTS times before giving up (or until Stop).
+    async function fetchFeedText ( url, label )
+    {
+        let lastError = null;
+        for ( let attempt = 1; attempt <= FEED_FETCH_ATTEMPTS; attempt++ )
+        {
+            const controller = new AbortController();
+            const timeoutId = setTimeout( () => controller.abort(), 15000 );
+            try
+            {
+                const response = await fetch( url, { method: 'GET', headers: { "x-fsign": "SW9D1eZo" }, signal: controller.signal } );
+                if ( !response.ok )
+                {
+                    throw new Error( `HTTP error! Status: ${response.status}` );
+                }
+                const text = await response.text();
+                statusNote = '';
+                return text;
+            }
+            catch ( error )
+            {
+                lastError = error;
+                console.error( `${label}, attempt ${attempt} failed:`, error );
+                if ( stop === true || attempt === FEED_FETCH_ATTEMPTS ) break;
+                statusNote = `RETRYING ${label}... ATTEMPT ${attempt + 1} OF ${FEED_FETCH_ATTEMPTS}`;
+                updateProgressBar( amounted, amountOfBooking );
+                await delay( FEED_RETRY_DELAY_MS );
+            }
+            finally
+            {
+                clearTimeout( timeoutId );
+            }
+        }
+        statusNote = '';
+        throw lastError;
     }
 
     // A failed match fetch is retried a few times, then the match is skipped so the scan keeps going.
@@ -1422,6 +1595,8 @@ function myFunction ()
 
     async function sortGame ( key )
     {   
+        const controller = new AbortController();
+        const timeoutId = setTimeout( () => controller.abort(), 15000 );
         //const url = `https://d.livescore.in/x/feed/df_hh_4_${key}`;
         const url = `https://api.webapps.com.ng/v2/sports/loadteam.php?50&x&feed&df_hh_4_${key}`;
 
@@ -1430,6 +1605,7 @@ function myFunction ()
             const response = await fetch( url, {
                 method: 'GET',
                 headers: { "x-fsign": "SW9D1eZo" },
+                signal: controller.signal,
             } );
 
             if ( !response.ok )
@@ -1526,6 +1702,10 @@ function myFunction ()
         {
             console.error( `Error fetching or processing data: ${error.message}` );
             throw error;
+        }
+        finally
+        {
+            clearTimeout( timeoutId );
         }
     }
 
