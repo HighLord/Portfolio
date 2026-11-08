@@ -881,6 +881,18 @@ function myFunction ()
     var label = false;
     var save_game = [];
     var statusNote = '';                  // retry / rebooking message shown under the progress bar
+    const MIN_CONCURRENT_SCANS = 4;       // games fetched at the same time: a random number in this range,
+    const MAX_CONCURRENT_SCANS = 10;      // re-rolled every time a scan finishes
+    const SCAN_MULTIPLIER = 3;            // scan up to this many times the games the user asked for
+    const PICK_GOAL_MULTIPLIER = 1.5;     // stop scanning once this many times the games asked for have a pick
+    var wantedGames = 0;                  // how many games the user asked to book
+    var scannedGames = 0;                 // games scanned so far in this search, across rounds
+    var scanFinished = 0;                 // the "Scanning n" counter on the status page
+    var trimmed = false;                  // true once the extra picks were cut down to wantedGames
+    var pickConfidence = {};              // game key -> probability of the pick, used to choose which picks to keep
+    var scanActive = false;               // true only while games are being scanned
+    var retryingGames = 0;                // games whose data fetch is being retried right now
+    const randomWindowSize = () => MIN_CONCURRENT_SCANS + Math.floor( Math.random() * ( MAX_CONCURRENT_SCANS - MIN_CONCURRENT_SCANS + 1 ) );
     const REBOOK_DELAY_MS = 3000;         // wait between booking attempts
     const MATCH_FETCH_ATTEMPTS = 5;       // tries per match before it is skipped
     const FEED_FETCH_ATTEMPTS = 5;        // tries for the list of games before giving up
@@ -902,22 +914,27 @@ function myFunction ()
             result.insertAdjacentHTML( 'beforeend', "<p id='error' style='padding: 5px; font-size: 11px;'>This result could not be saved to your saved list, but the booking code above is valid.</p>" );
         }
     }
-    const totalLine = () => 'TOTAL GAMES : ' + ( totalGames > 0 ? totalGames : '...' ) + '<br>';
+    const statusLines = () => 'TOTAL AVAILABLE GAMES : ' + ( totalGames > 0 ? totalGames : '...' )
+        + '<br>SCANNING ' + scanFinished + '<br>BOOKED : ' + amounts + statusLine();
 
-    function updateProgressBar ( value, max )
+    // The arguments are ignored; they are kept so the existing call sites do not change.
+    function updateProgressBar ()
     {
         if ( label === false )
         {
-            document.getElementById( 'result' ).innerHTML = '<div id="status" style="width: 100%; text-align: center;"><div style="width: 100%;"><div id="progress-bar"></div></div><p id="report" style="padding: 10px;">' + totalLine() + 'GAMES SCANNED: ' + countTotal + '<br>PREDICTING ' + amounted + ' OF ' + amountOfBooking + ' GAMES<br>NO OF GAMES BOOKED: ' + amounts + statusLine() + '</p></div>';
+            document.getElementById( 'result' ).innerHTML = '<div id="status" style="width: 100%; text-align: center;"><div style="width: 100%;"><div id="progress-bar"></div></div><p id="report" style="padding: 10px;">' + statusLines() + '</p></div>';
             label = true;
         }
         const progressBar = document.getElementById( 'progress-bar' );
         const report = document.getElementById( 'report' );
-        const percentage = ( value / max ) * 100;
+        if ( !progressBar || !report ) return;
+        const scanBudget = Math.max( 1, Math.min( Number( amountOfBooking ), totalGames || Number( amountOfBooking ) ) );
+        const pickGoal = Math.max( 1, Math.ceil( wantedGames * PICK_GOAL_MULTIPLIER ) );
+        const fraction = Math.min( 1, Math.max( scanFinished / scanBudget, Object.keys( dataKing ).length / pickGoal ) );
         setTimeout( () =>
         {
-            progressBar.style.width = `${percentage}%`;
-            report.innerHTML = totalLine() + 'GAMES SCANNED: ' + countTotal + '<br>PREDICTING ' + amounted + ' OF ' + amountOfBooking + ' GAMES<br>NO OF GAMES BOOKED: ' + amounts + statusLine();
+            progressBar.style.width = `${fraction * 100}%`;
+            report.innerHTML = statusLines();
         }, 10 );
     }
     var ok = 0;
@@ -929,8 +946,22 @@ function myFunction ()
     const selMethod = document.getElementById( 'mySelect7' ); // absent in older HTML, then DEFAULT_METHOD is used
     function analyse ( selEle, timer )
     {
-        amountOfBooking = selectElement2.value;
-        if ( selEle !== false ) { amountOfBooking = selEle; }
+        if ( selEle === false )
+        {
+            // A fresh search. The scan budget is larger than what the user asked for, because not every
+            // game makes the cut; the extra picks are trimmed after booking.
+            wantedGames = Number( selectElement2.value );
+            amountOfBooking = Math.ceil( wantedGames * SCAN_MULTIPLIER );
+            scannedGames = 0;
+            scanFinished = 0;
+            retryingGames = 0;
+            trimmed = false;
+            pickConfidence = {};
+        }
+        else
+        {
+            amountOfBooking = selEle;
+        }
         var gameTime = selectElement3.value;
         var gameType = selectElement4.value;
         // "today" and "tomorrow" change meaning at midnight, so the run remembers WHICH day was asked for.
@@ -1029,21 +1060,26 @@ function myFunction ()
                                                         }
                                                     } );
 
-                                                    if ( total < amountOfBooking && selectv2 === null && book === false && bypass === false && stop === false )
+                                                    // More games survived than the user asked for: keep the most confident ones and book again.
+                                                    if ( !trimmed && total > wantedGames )
                                                     {
-                                                        amountOfBooking = parseFloat( amountOfBooking );
-                                                        var remainder = amountOfBooking - total;
-                                                        remainder = amountOfBooking + remainder;
-                                                        selectv2 = amountOfBooking;
-                                                        analyse( remainder, amountOfBooking );
+                                                        trimmed = true;
+                                                        amounts = 0;
+                                                        Object.keys( dataKing )
+                                                            .sort( ( first, second ) => ( pickConfidence[dataKing[second].key] || 0 ) - ( pickConfidence[dataKing[first].key] || 0 ) )
+                                                            .slice( wantedGames )
+                                                            .forEach( ( gameKey ) => delete dataKing[gameKey] );
+                                                        statusNote = `KEEPING THE BEST ${wantedGames} GAMES`;
+                                                        bookNow();
                                                         return false;
                                                     }
-                                                    else if ( total < selectv2 && book === false && bypass === false && stop === false )
+
+                                                    // Fewer games survived than the user asked for: scan more and book again.
+                                                    if ( total < wantedGames && book === false && bypass === false && stop === false && scannedGames < totalGames )
                                                     {
-                                                        amountOfBooking = parseFloat( amountOfBooking );
-                                                        var remainder = selectv2 - total;
-                                                        remainder = amountOfBooking + remainder;
-                                                        analyse( remainder, amountOfBooking );
+                                                        trimmed = false;
+                                                        const additionalScans = Math.ceil( ( wantedGames - total ) * SCAN_MULTIPLIER );
+                                                        analyse( scannedGames + additionalScans, scannedGames );
                                                         return false;
                                                     }
                                                     else if ( responses.count == 0 && bypass === false )
@@ -1191,160 +1227,198 @@ function myFunction ()
             response = Object.entries( JSON.parse( response ) );
             totalGames = response.length;
 
+            // Streaming scan. Several games are fetched at once and a finished fetch immediately frees a
+            // slot for the next game. Only the network fetch overlaps. Finished games are committed one at a
+            // time in feed order, so game numbers and booking order match a one-by-one scan exactly.
             async function processElements ()
             {
-                let iterations = 0;
-                function oks ()
+                if ( amountOfBooking > response.length ) { amountOfBooking2 = amountOfBooking; amountOfBooking = response.length; }
+
+                const launched = [];      // games sent for scanning, in feed order
+                let commitIndex = 0;      // next entry of `launched` to commit
+                let nextToLaunch = 0;     // next position in `response`
+                let inFlight = 0;
+                let windowSize = randomWindowSize();
+                let finished = false;
+                const pickGoal = Math.ceil( wantedGames * PICK_GOAL_MULTIPLIER );
+
+                function hasMoreToLaunch ()
                 {
-                    result.innerHTML += "<p id='error' style='padding: 5px; font-size: 11px;'>The amount of predictions you chose has exceeded the amount of games available today</p>";
-                    times = amountOfBooking;
-                    book = true;
-                    amounted = times;
-                    updateProgressBar( amounted, amountOfBooking );
+                    while ( nextToLaunch < response.length && visited.includes( response[nextToLaunch][0] ) ) nextToLaunch++;
+                    return nextToLaunch < response.length;
                 }
-                for ( const [key, value] of response )
+
+                function finish ( note = '' )
                 {
-                    if ( times < amountOfBooking )
-                    {
-                        iterations++
-                        if ( response.length >= iterations )
-                        {
-                            const dataKeys = Object.keys( value );
-                            const dataValues = Object.values( value );
-                            const time = dataKeys[0];
-                            const league = dataValues[0];
-                            if ( ok > countTotal ) { bypass = true; oks(); }
-                            if ( visited.includes( key ) ) { ok++; continue; } else { visited.push( key ); }
-                            ok = 0;
-                            countTotal += 1;
-                            updateProgressBar( amounted, amountOfBooking );
-                            try
-                            {
-                                await doSomethingWithElement( key, time, league );
-                            }
-                            catch ( error )
-                            {
-                                console.error( `Skipped game ${key}:`, error ); // one bad game must not stop the scan
-                            }
-                            times += 1;
-                            if ( amountOfBooking > response.length ) { amountOfBooking2 = amountOfBooking; amountOfBooking = response.length; }
-                            if ( times == response.length )
-                            {
-                                oks();
-                            }
-                        }
-                        else
-                        {
-                            oks();
-                            break;
-                        }
-                    }
-                    if ( times == amountOfBooking )
-                    {
-                        bookNow();
-                    }
+                    if ( finished ) return;
+                    finished = true;
+                    scanActive = false;
+                    if ( launched.length === commitIndex && !hasMoreToLaunch() ) book = true; // every game has been scanned, so no further rounds
+                    statusNote = note || ( book && Object.keys( dataKing ).length < wantedGames ? 'NO MORE GAMES TO SCAN, BOOKING THE ONES FOUND' : '' );
+                    bookNow();
                 }
-            }
-            async function doSomethingWithElement ( key, time, league )
-            {
-                if ( Number( time ) <= Date.now() / 1000 ) return; // kicked off while the scan was running, it can no longer be booked
-                const niceJson = await fetchGameWithRetry( key );
-                if ( niceJson === null ) return; // skipped after repeated failures
 
-                let calculatedJson = await predict( niceJson, gameType, selMethod ? selMethod.value : DEFAULT_METHOD )
-
-                let predictedOutcome = await outcomes( calculatedJson, niceJson );
-                amounted++;
-
-                if ( predictedOutcome.result !== null )
+                function launchNext ()
                 {
-                    return new Promise( ( resolve ) =>
+                    const [key, value] = response[nextToLaunch++];
+                    const entry = { key, time: Object.keys( value )[0], league: Object.values( value )[0], done: false, niceJson: null };
+                    launched.push( entry );
+                    inFlight++;
+                    scanGame( entry );
+                }
+
+                async function scanGame ( entry )
+                {
+                    try
                     {
-                        var homeT = niceJson["names"]["team1name"];
-                        var awayT = niceJson["names"]["team2name"];
-                        let outcome = null;
-                        let statement = null;
-                        switch ( gameType )
-                        {
-                            case "football":
-                            case "icehockey":
-                            case "handball":
-                                if ( selType.value === "draw" )
-                                {
-                                    outcome = "Draw";
-                                    statement = `${homeT} to draw ${awayT}`;
-                                    break;
-                                }
-                                else if ( selType.value === "winner" )
-                                {
-                                    if ( predictedOutcome.market === "double" )
-                                    {
-                                        outcome = predictedOutcome.result ? "Home or Draw" : "Draw or Away";
-                                        statement = outcome === "Home or Draw" ? `${homeT} to win or draw ${awayT}` : `${awayT} to win or draw ${homeT}`;
-                                    }
-                                    else
-                                    {
-                                        outcome = predictedOutcome.result ? "Home" : "Away";
-                                        statement = outcome === "Home" ? `${homeT} to win ${awayT}` : `${awayT} to win ${homeT}`;
-                                    }
-                                    break;
-                                }
-                                else if ( selType.value === "double_chance" )
+                        // A game that has already kicked off can no longer be booked, so it is not fetched.
+                        if ( Number( entry.time ) > Date.now() / 1000 ) entry.niceJson = await fetchGameWithRetry( entry.key );
+                    }
+                    catch ( error )
+                    {
+                        console.error( `Skipped game ${entry.key}:`, error );
+                    }
+                    entry.done = true;
+                    inFlight--;
+                    if ( finished ) return; // a late result from a scan that has already ended
+                    scanFinished++;
+                    windowSize = randomWindowSize();
+                    advance();
+                }
+
+                // Turns one finished scan into a pick. Runs one game at a time, never concurrently.
+                function commitGame ( entry )
+                {
+                    const { key, time, league, niceJson } = entry;
+                    if ( niceJson === null ) return;                          // the fetch failed, or the game had started
+                    if ( Number( time ) <= Date.now() / 1000 ) return;        // kicked off while the scan was running
+
+                    const calculatedJson = predict( niceJson, gameType, selMethod ? selMethod.value : DEFAULT_METHOD );
+                    const predictedOutcome = outcomes( calculatedJson, niceJson );
+                    amounted++;
+                    if ( predictedOutcome.result === null ) return;
+
+                    const homeT = niceJson["names"]["team1name"];
+                    const awayT = niceJson["names"]["team2name"];
+                    let outcome = null;
+                    let statement = null;
+                    switch ( gameType )
+                    {
+                        case "football":
+                        case "icehockey":
+                        case "handball":
+                            if ( selType.value === "draw" )
+                            {
+                                outcome = "Draw";
+                                statement = `${homeT} to draw ${awayT}`;
+                                break;
+                            }
+                            else if ( selType.value === "winner" )
+                            {
+                                if ( predictedOutcome.market === "double" )
                                 {
                                     outcome = predictedOutcome.result ? "Home or Draw" : "Draw or Away";
                                     statement = outcome === "Home or Draw" ? `${homeT} to win or draw ${awayT}` : `${awayT} to win or draw ${homeT}`;
                                 }
+                                else
+                                {
+                                    outcome = predictedOutcome.result ? "Home" : "Away";
+                                    statement = outcome === "Home" ? `${homeT} to win ${awayT}` : `${awayT} to win ${homeT}`;
+                                }
                                 break;
-                            case "basketball":
-                            case "tennis":
-                            case "baseball":
-                            case "boxing":
-                            case "americanfootball":
-                            case "tabletennis":
-                            case "cricket":
-                            case "darts":
-                            case "volleyball":
-                            case "badminton":
-                            case "mma":
-                                outcome = predictedOutcome.result ? "Home" : "Away";
-                                statement = outcome === "Home" ? `${homeT} to win ${awayT}` : `${awayT} to win ${homeT}`;
-                                break;
-                            default:
-                                break;
-                        }
-                        const date = new Date( time * 1000 );
-                        const options = { hour: '2-digit', minute: '2-digit', hour12: true };
-                        const formattedTime = date.toLocaleTimeString( 'en-US', options );
+                            }
+                            else if ( selType.value === "double_chance" )
+                            {
+                                outcome = predictedOutcome.result ? "Home or Draw" : "Draw or Away";
+                                statement = outcome === "Home or Draw" ? `${homeT} to win or draw ${awayT}` : `${awayT} to win or draw ${homeT}`;
+                            }
+                            break;
+                        case "basketball":
+                        case "tennis":
+                        case "baseball":
+                        case "boxing":
+                        case "americanfootball":
+                        case "tabletennis":
+                        case "cricket":
+                        case "darts":
+                        case "volleyball":
+                        case "badminton":
+                        case "mma":
+                            outcome = predictedOutcome.result ? "Home" : "Away";
+                            statement = outcome === "Home" ? `${homeT} to win ${awayT}` : `${awayT} to win ${homeT}`;
+                            break;
+                        default:
+                            break;
+                    }
+                    const formattedTime = new Date( time * 1000 ).toLocaleTimeString( 'en-US', { hour: '2-digit', minute: '2-digit', hour12: true } );
 
-                        var data =
-                        {
-                            "key": key,
-                            "home": homeT,
-                            "away": awayT,
-                            "time": formattedTime,
-                            "outcome": outcome,
-                            "gameNo": ( times + 1 )
-                        };
-                        dataKing["NO" + times] = data;
+                    dataKing["NO" + times] = {
+                        "key": key,
+                        "home": homeT,
+                        "away": awayT,
+                        "time": formattedTime,
+                        "outcome": outcome,
+                        "gameNo": ( times + 1 )
+                    };
+                    pickConfidence[key] = pickProbability( calculatedJson.probabilities, predictedOutcome );
 
-                        const game = {
-                            num: times + 1,
-                            key,
-                            time,
-                            league,
-                            statement
-                        };
-
-                        save_game.push( {
-                            game: game,
-                            log: predictedOutcome
-                        } );
-
-                        updateProgressBar( amounted, amountOfBooking );
-                        resolve();
-                        return false;
+                    save_game.push( {
+                        game: { num: times + 1, key, time, league, statement },
+                        log: predictedOutcome
                     } );
                 }
+
+                // Commits finished games in order, decides whether to stop, and starts new scans.
+                function advance ()
+                {
+                    if ( finished ) return;
+                    try
+                    {
+                        while ( commitIndex < launched.length && launched[commitIndex].done )
+                        {
+                            const entry = launched[commitIndex++];
+                            try
+                            {
+                                commitGame( entry );
+                            }
+                            catch ( error )
+                            {
+                                console.error( `Skipped game ${entry.key}:`, error ); // one bad game must not stop the scan
+                            }
+                            visited.push( entry.key );
+                            countTotal += 1;
+                            times += 1;
+                            scannedGames += 1;
+                            if ( Object.keys( dataKing ).length >= pickGoal ) { finish(); return; }
+                        }
+
+                        if ( times >= amountOfBooking ) { finish(); return; }
+                        if ( stop === true )
+                        {
+                            if ( launched.length === commitIndex ) finish();
+                            return;
+                        }
+
+                        // Never launch more games than the scan budget still allows.
+                        while ( inFlight < windowSize && times + ( launched.length - commitIndex ) < amountOfBooking && hasMoreToLaunch() )
+                        {
+                            launchNext();
+                        }
+                        updateProgressBar();
+
+                        if ( launched.length === commitIndex && !hasMoreToLaunch() ) finish();
+                    }
+                    catch ( error )
+                    {
+                        console.error( error );
+                        finished = true;
+                        scanActive = false;
+                        failRun( 'The scan stopped unexpectedly, try again' );
+                    }
+                }
+
+                scanActive = true;
+                advance();
             }
             processElements().catch( ( error ) =>
             {
@@ -1570,26 +1644,39 @@ function myFunction ()
     }
 
     // A failed match fetch is retried a few times, then the match is skipped so the scan keeps going.
+    function refreshRetryNote ()
+    {
+        if ( scanActive ) statusNote = retryingGames > 0 ? `RETRYING ${retryingGames} GAME${retryingGames === 1 ? '' : 'S'}...` : '';
+    }
+
     async function fetchGameWithRetry ( key )
     {
+        let counted = false;
+        const leave = () =>
+        {
+            if ( counted ) retryingGames--;
+            counted = false;
+            refreshRetryNote();
+        };
         for ( let attempt = 1; attempt <= MATCH_FETCH_ATTEMPTS; attempt++ )
         {
             try
             {
                 const gameData = await sortGame( key );
-                statusNote = '';
+                leave();
                 return gameData;
             }
             catch ( error )
             {
                 console.error( `Game ${key}, attempt ${attempt} failed:`, error );
-                if ( stop === true || attempt === MATCH_FETCH_ATTEMPTS ) break;
-                statusNote = `RETRYING GAME DATA... ATTEMPT ${attempt + 1} OF ${MATCH_FETCH_ATTEMPTS}`;
-                updateProgressBar( amounted, amountOfBooking );
+                if ( stop === true || scanActive === false || attempt === MATCH_FETCH_ATTEMPTS ) break;
+                if ( !counted ) { counted = true; retryingGames++; }
+                refreshRetryNote();
+                updateProgressBar();
                 await delay( MATCH_RETRY_DELAY_MS );
             }
         }
-        statusNote = '';
+        leave();
         return null;
     }
 
@@ -2080,6 +2167,15 @@ function myFunction ()
         }
         if ( market === 'draw' ) return draw >= threshold ? { result: true, market: 'draw' } : NO_PICK;
         return NO_PICK;
+    }
+
+    // Probability of the side that was actually picked; used to choose which picks to keep when there are extras.
+    function pickProbability ( probabilities, pick )
+    {
+        const { home, draw, away } = probabilities;
+        if ( pick.market === 'double' ) return pick.result ? home + draw : draw + away;
+        if ( pick.market === 'draw' ) return draw;
+        return pick.result ? home : away;
     }
 
     function outcomes ( calculatedJson, matchJson )
