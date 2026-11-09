@@ -231,6 +231,7 @@ function myFunction() {
                 values.away = Number(words[i + 1]); // Value after "DF"
             } else if (words[i] === "DI") {
                 if (words[i + 1] === "0") {
+                    //alert("Live score feed is not available for this game. Please check the official website for live updates.");
                     values.live = true;
                 }
             }
@@ -258,7 +259,7 @@ function myFunction() {
                 if (response.ok) {
                     const matches = await response.text();
                     const lines = matches.replace(/¬/g, '÷').split('÷');
-
+                    console.log(lines);
                     return parseLine(lines);
                 }
             }
@@ -350,6 +351,7 @@ function myFunction() {
                     const justDraw = patternJustDraw.test(item.game.statement);
 
                     let liveScores = await checkLiveScores(item.game.key);
+                    console.log(liveScores);
 
                     let text = `${liveScores.home}:${liveScores.away}`;
                     // If the result is false and home score is greater than away score, reverse the score
@@ -360,7 +362,7 @@ function myFunction() {
                     // Get the result element (assumed it has the ID format 'score-[gameKey]')
                     const scoreElement = document.getElementById(`score-${item.game.key}`);
 
-                    if (liveScores.currenttime < item.game.time || liveScores.home == null && liveScores.away == null) {
+                    if (liveScores.currenttime < item.game.time) {
                         scoreElement.innerText = "Not yet started";
                         hold.push(item);
                         notStart = true;
