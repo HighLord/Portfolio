@@ -311,39 +311,7 @@ function myFunction() {
 
     let liveScoreInterval;
     let liveScoreRun = 0;   // each displayed list gets a new id; an older loop stops when its id is stale
-    function renderEvidenceRows(log) {
-        const cell = 'style="width:35%; border: 1px solid white;"';
-        const label = 'style="width:30%; border: 1px solid white;"';
-        if (log.model === MODEL_VERSION) {
-            return `<tr><th ${label}>WIN %</th><td ${cell}>${log.score1}</td><td ${cell}>${log.score2}</td></tr>
-                    <tr><th ${label}>EXP GOALS</th><td ${cell}>${log.sum1}</td><td ${cell}>${log.sum2}</td></tr>
-                    <tr><th ${label}>MARGINS</th><td ${cell}>Head2head: ${log.head2head}</td><td ${cell}>Common opp: ${log.master}</td></tr>
-                    <tr><th ${label}>FORM</th><td ${cell}>Goals: ${log.formGoals ?? '-'}</td><td ${cell}>Results: ${log.formResults ?? '-'}</td></tr>
-                    <tr><th ${label}>DRAW %</th><td ${cell}>${log.draw}</td><td ${cell}>Games: ${log.games1}/${log.games2}</td></tr>`;
-        }
-        // Entries saved before model v2 keep their original layout.
-        return `<tr>
-                                <th style="width:30%; border: 1px solid white;">SCORE</th>
-                                <td style="width:35%; border: 1px solid white;">${log.score1}</td>
-                                <td style="width:35%; border: 1px solid white;">${log.score2}</td>
-                            </tr>
-                            <tr>
-                                <th style="width:30%; border: 1px solid white;">SUM</th>
-                                <td style="width:35%; border: 1px solid white;">${log.sum1}</td>
-                                <td style="width:35%; border: 1px solid white;">${log.sum2}</td>
-                            </tr>
-                            <tr>
-                                <th style="width:30%; border: 1px solid white;">OUTCOME</th>
-                                <td style="width:35%; border: 1px solid white;">Head2head: ${log.head2head}</td>
-                                <td style="width:35%; border: 1px solid white;">Master: ${log.master}</td>
-                            </tr>
-                            <tr>
-                                <th style="width:30%; border: 1px solid white;">${log.result}</th>
-                                <td style="width:35%; border: 1px solid white;">${log.home}</td>
-                                <td style="width:35%; border: 1px solid white;">${log.away}</td>
-                            </tr>`;
-    }
-
+    
     async function generateResults(array) {
         const odds = array.find(item => item.odds)?.odds;
         const oddsLength = odds ? Object.keys(odds).length : 0;
@@ -371,19 +339,7 @@ function myFunction() {
                     ${item.game.league}<br>
                     ${item.game.statement}<br>
                     Livescores: <span id="score-${item.game.key}">Loading...</span><br>
-                    <a href="https://www.livescore.in/match/${item.game.key}/#/h2h/overall" target="_blank"><button style="z-index: 9999;" class="link">Link</button></a>
-                    <table class="popup" style="width:100%; border-collapse: collapse; font-size: 8px; text-align: left;">
-                        <thead>
-                            <tr>
-                                <th style="width:30%; border: 1px solid white;">TEAMS</th>
-                                <th style="width:35%; border: 1px solid white;">${item.log.team1}</th>
-                                <th style="width:35%; border: 1px solid white;">${item.log.team2}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${renderEvidenceRows(item.log)}
-                        </tbody>
-                    </table>
+                    <a href="https://www.livescore.in/match/${item.game.key}/#/h2h/overall" target="_blank"><button style="z-index: 9999;" class="link">Link</button></a>                    
                     <br><p id='success'></p>
                 </div>`;
                 firstChecks.push((async () => {
@@ -449,7 +405,7 @@ function myFunction() {
                         <button style="float:right; background-color: orange;" class="link">Play</button></a>`;
         // Shown only once every game of this result has been played in full (see updateDeleteButton).
         const deleteHtml = (typeof key === 'string' && key !== '')
-            ? `<button id="delete-saved" style="display:none; float:right; background-color: #c0392b; margin-right: 5px;" class="link">Delete</button>` : '';
+            ? `<button id="delete-saved" style="display:none; float:right; background-color: #c0392b; margin-right: 2px;" class="link">Delete</button>` : '';
         const data = `Sportybet booking code: ${key}<br>
                         Amount of games booked: ${oddsLength}<br>
                         Total odds: ${calcOdds.toFixed(2)} ${addon}${deleteHtml}`;
