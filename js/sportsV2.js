@@ -362,7 +362,7 @@ function myFunction() {
                     // Get the result element (assumed it has the ID format 'score-[gameKey]')
                     const scoreElement = document.getElementById(`score-${item.game.key}`);
 
-                    if (liveScores.currenttime < item.game.time) {
+                    if (liveScores.currenttime < item.game.time || (liveScores.home == null && liveScores.away == null)) {
                         scoreElement.innerText = "Not yet started";
                         hold.push(item);
                         notStart = true;
