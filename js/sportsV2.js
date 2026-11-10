@@ -341,6 +341,14 @@ function myFunction() {
         const firstChecks = [];   // the first live-score request of every game
 
         const validGames = array.filter(item => item.game && item.log && odds?.[item.game.num]); // Only process items with functional gameOdds
+        // Order the display by the user's chosen sort. The booking's game number and odds are
+        // untouched; only the order shown and the 1,2,3... numbering follow the sort.
+        const sortOrder = (document.getElementById('sortOrder') || {}).value;
+        if (sortOrder === 'time') {
+            validGames.sort((a, b) => Number(a.game.time) - Number(b.game.time));      // soonest kick-off first
+        } else if (sortOrder === 'odds') {
+            validGames.sort((a, b) => (odds[a.game.num] || Infinity) - (odds[b.game.num] || Infinity)); // lowest odds first
+        }
         validGames.forEach((item, index) => {
             if (item.game && item.log) {
                 const gameOdds = odds[item.game.num];
