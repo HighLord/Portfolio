@@ -230,7 +230,7 @@ function myFunction() {
             } else if (words[i] === "DH") {
                 values.away = Number(words[i + 1]); // Value after "DF"
             } else if (words[i] === "DI") {
-                if (words[i + 1] === "0") {
+                if (words[i + 1] !== "-1") {
                     //alert("Live score feed is not available for this game. Please check the official website for live updates.");
                     values.live = true;
                 }
