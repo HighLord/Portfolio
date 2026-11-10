@@ -259,7 +259,6 @@ function myFunction() {
                 if (response.ok) {
                     const matches = await response.text();
                     const lines = matches.replace(/¬/g, '÷').split('÷');
-                    console.log(lines);
                     return parseLine(lines);
                 }
             }
@@ -312,7 +311,23 @@ function myFunction() {
 
     let liveScoreInterval;
     let liveScoreRun = 0;   // each displayed list gets a new id; an older loop stops when its id is stale
-    
+
+    // Shows one game's live score with a check, cross or spinner, coloured by whether the
+    // pick is currently winning, drawing or losing. Used by both the first display and the
+    // polling loop, so the logic lives in exactly one place.
+    function renderLiveScore(scoreElement, liveScores, text, item) {
+        const winOrDraw = /win\s+or\s+draw/i.test(item.game.statement);
+        const justDraw = /(?<!win\s+or\s+)draw/i.test(item.game.statement);
+        const homeSideWins = (liveScores.home > liveScores.away && item.log.result) || (liveScores.home < liveScores.away && !item.log.result);
+        const drawn = liveScores.home == liveScores.away;
+        const correct = winOrDraw ? (homeSideWins || drawn) : justDraw ? drawn : homeSideWins;
+        scoreElement.innerHTML = (liveScores.live)
+            ? `${text} <i class="fa fa-spinner fa-spin" style="${correct ? 'color:#1dda13;' : 'color:red;'}"></i>`
+            : (correct
+                ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
+                : `${text} <i class="fa fa-times" style="color:red;"></i>`);
+    }
+
     async function generateResults(array) {
         const odds = array.find(item => item.odds)?.odds;
         const oddsLength = odds ? Object.keys(odds).length : 0;
@@ -344,14 +359,7 @@ function myFunction() {
                     <br><p id='success'></p>
                 </div>`;
                 firstChecks.push((async () => {
-                    const patternWinOrDraw = /win\s+or\s+draw/i;
-                    const winOrDraw = patternWinOrDraw.test(item.game.statement);
-
-                    const patternJustDraw = /(?<!win\s+or\s+)draw/i;
-                    const justDraw = patternJustDraw.test(item.game.statement);
-
                     let liveScores = await checkLiveScores(item.game.key);
-                    console.log(liveScores);
 
                     let text = `${liveScores.home}:${liveScores.away}`;
                     // If the result is false and home score is greater than away score, reverse the score
@@ -368,35 +376,7 @@ function myFunction() {
                         notStart = true;
                     }
                     else {
-                        if (winOrDraw) {
-                            scoreElement.innerHTML =
-                                (liveScores.live)
-                                    ? `${text} <i class="fa fa-spinner fa-spin" style="${(liveScores.home > liveScores.away && item.log.result) || (liveScores.home < liveScores.away && !item.log.result) || (liveScores.home == liveScores.away)
-                                        ? 'color:#1dda13;' : 'color:red;'}"></i>`
-                                    : ((liveScores.home > liveScores.away && item.log.result) || (liveScores.home < liveScores.away && !item.log.result) || (liveScores.home == liveScores.away)
-                                        ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
-                                        : `${text} <i class="fa fa-times" style="color:red;"></i>`);
-
-                        }
-                        else if (justDraw) {
-                            scoreElement.innerHTML =
-                                (liveScores.live)
-                                    ? `${text} <i class="fa fa-spinner fa-spin" style="${(liveScores.home == liveScores.away)
-                                        ? 'color:#1dda13;' : 'color:red;'}"></i>`
-                                    : ((liveScores.home == liveScores.away)
-                                        ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
-                                        : `${text} <i class="fa fa-times" style="color:red;"></i>`);
-
-                        }
-                        else {
-                            scoreElement.innerHTML =
-                                (liveScores.live)
-                                    ? `${text} <i class="fa fa-spinner fa-spin" style="${(liveScores.home > liveScores.away && item.log.result) || (liveScores.home < liveScores.away && !item.log.result)
-                                        ? 'color:#1dda13;' : 'color:red;'}"></i>`
-                                    : ((liveScores.home > liveScores.away && item.log.result) || (liveScores.home < liveScores.away && !item.log.result)
-                                        ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
-                                        : `${text} <i class="fa fa-times" style="color:red;"></i>`);
-                        }
+                        renderLiveScore(scoreElement, liveScores, text, item);
                     }
                     if (liveScores.live) notStart = true, hold.push(item);
                 })());
@@ -452,12 +432,6 @@ function myFunction() {
 
             await Promise.all(validGames.map(async (item) => {
                 if (item.game && item.log) {
-                    const patternWinOrDraw = /win\s+or\s+draw/i;
-                    const winOrDraw = patternWinOrDraw.test(item.game.statement);
-
-                    const patternJustDraw = /(?<!win\s+or\s+)draw/i;
-                    const justDraw = patternJustDraw.test(item.game.statement);
-
                     let liveScores = await checkLiveScores(item.game.key);
 
                     let text = `${liveScores.home}:${liveScores.away}`;
@@ -477,35 +451,7 @@ function myFunction() {
                             notStart = true;
                             nextHold.push(item)
                         } else {
-                            if (winOrDraw) {
-                                scoreElement.innerHTML =
-                                    (liveScores.live)
-                                        ? `${text} <i class="fa fa-spinner fa-spin" style="${(liveScores.home > liveScores.away && item.log.result) || (liveScores.home < liveScores.away && !item.log.result) || (liveScores.home == liveScores.away)
-                                            ? 'color:#1dda13;' : 'color:red;'}"></i>`
-                                        : ((liveScores.home > liveScores.away && item.log.result) || (liveScores.home < liveScores.away && !item.log.result) || (liveScores.home == liveScores.away)
-                                            ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
-                                            : `${text} <i class="fa fa-times" style="color:red;"></i>`);
-
-                            }
-                            else if (justDraw) {
-                                scoreElement.innerHTML =
-                                    (liveScores.live)
-                                        ? `${text} <i class="fa fa-spinner fa-spin" style="${(liveScores.home == liveScores.away)
-                                            ? 'color:#1dda13;' : 'color:red;'}"></i>`
-                                        : ((liveScores.home == liveScores.away)
-                                            ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
-                                            : `${text} <i class="fa fa-times" style="color:red;"></i>`);
-
-                            }
-                            else {
-                                scoreElement.innerHTML =
-                                    (liveScores.live)
-                                        ? `${text} <i class="fa fa-spinner fa-spin" style="${(liveScores.home > liveScores.away && item.log.result) || (liveScores.home < liveScores.away && !item.log.result)
-                                            ? 'color:#1dda13;' : 'color:red;'}"></i>`
-                                        : ((liveScores.home > liveScores.away && item.log.result) || (liveScores.home < liveScores.away && !item.log.result)
-                                            ? `${text} <i class="fa fa-check" style="color:#1dda13;"></i>`
-                                            : `${text} <i class="fa fa-times" style="color:red;"></i>`);
-                            }
+                            renderLiveScore(scoreElement, liveScores, text, item);
                         }
                         if (liveScores.live) notStart = true, nextHold.push(item);
                     }
@@ -780,6 +726,21 @@ function myFunction() {
     }
     var ok = 0;
 
+    // Clears the shared run state every error / stop path uses. Kept in one place so the
+    // near-identical reset blocks don't drift out of sync.
+    function resetRunState() {
+        Object.keys(dataKing).forEach((key) => delete dataKing[key]);
+        visited.splice(0, visited.length);
+        save_game.splice(0, save_game.length);
+        button.innerHTML = "Search";
+        clear.innerHTML = "Clear";
+        click = true;
+        label = false;
+        amounted = 0;
+        amounts = 0;
+        countTotal = 0;
+    }
+
     const selectElement = document.getElementById("mySelect");
     const selectElement2 = document.getElementById('mySelect2');
     const selectElement3 = document.getElementById('mySelect3');
@@ -819,18 +780,9 @@ function myFunction() {
         function failRun(message) {
             results += `<p id='error' style='padding: 5px'>${message}</p>`;
             book = true;
-            Object.keys(dataKing).forEach((key) => delete dataKing[key]);
-            visited.splice(0, visited.length);
-            save_game.splice(0, save_game.length);
-            button.innerHTML = "Search";
-            clear.innerHTML = "Clear";
-            click = true;
+            resetRunState();
             result.innerHTML = results;
             results = "";
-            label = false;
-            amounted = 0;
-            amounts = 0;
-            countTotal = 0;
             statusNote = '';
         }
 
@@ -910,20 +862,9 @@ function myFunction() {
                                             else if (responses.count == 0 && bypass === false) {
                                                 results += "<p id='error' style='padding: 5px'>Unable to get booking code</p>";
                                                 book = true;
-                                                Object.keys(dataKing).forEach(function (key) {
-                                                    delete dataKing[key];
-                                                });
-                                                visited.splice(0, visited.length);
-                                                save_game.splice(0, save_game.length);
-                                                button.innerHTML = "Search";
-                                                clear.innerHTML = "Clear";
-                                                click = true;
+                                                resetRunState();
                                                 result.innerHTML = results;
                                                 results = "";
-                                                label = false;
-                                                amounted = 0;
-                                                amounts = 0;
-                                                countTotal = 0;
                                                 return false;
                                             }
 
@@ -970,20 +911,9 @@ function myFunction() {
                                             if (scheduleRebook()) return false;
                                             results += "<p id='error' style='padding: 5px'>Unable to get booking code</p>";
                                             book = true;
-                                            Object.keys(dataKing).forEach(function (key) {
-                                                delete dataKing[key];
-                                            });
-                                            visited.splice(0, visited.length);
-                                            save_game.splice(0, save_game.length);
-                                            button.innerHTML = "Search";
-                                            clear.innerHTML = "Clear";
-                                            click = true;
+                                            resetRunState();
                                             result.innerHTML = results;
                                             results = "";
-                                            label = false;
-                                            amounted = 0;
-                                            amounts = 0;
-                                            countTotal = 0;
                                         }
                                     }
                                     catch (error) {
@@ -996,21 +926,10 @@ function myFunction() {
                                 function (response) {
                                     if (scheduleRebook()) return;
                                     results += "<p id='error' style='padding: 5px'>unable to get booking code</p>";
-                                    button.innerHTML = "Search";
-                                    clear.innerHTML = "Clear";
-                                    click = true;
-                                    Object.keys(dataKing).forEach(function (key) {
-                                        delete dataKing[key];
-                                    });
-                                    visited.splice(0, visited.length);
-                                    save_game.splice(0, save_game.length);
+                                    book = true;
+                                    resetRunState();
                                     result.innerHTML = results;
                                     results = "";
-                                    book = true;
-                                    label = false;
-                                    amounted = 0;
-                                    amounts = 0;
-                                    countTotal = 0;
                                 }
                         });
                 }
@@ -1032,8 +951,6 @@ function myFunction() {
                 }
                 return;
             }
-            //console.log(response);
-
             response = Object.entries(JSON.parse(response));
             totalGames = response.length;
 
@@ -1308,14 +1225,6 @@ function myFunction() {
                         const json = JSON.stringify(shuffledLeagues);
 
                         if (json !== '{}') {
-                            /*let jsonData = {
-                                "QBmdDh9C": {
-                                    "Today : 03:00 PM": "EUROPE: Euro"
-                                }
-                            };
-                            jsonData = JSON.stringify(jsonData);
- 
-                            resolve(jsonData);*/
                             resolve(json);
                         } else {
                             if (keepRun) {
@@ -1324,21 +1233,10 @@ function myFunction() {
                                 return;
                             }
                             results += "<p id='error' style='padding: 5px'>NO GAMES AVAILABLE FOR SPECIFIED DATE</p>";
-                            button.innerHTML = "Search";
-                            clear.innerHTML = "Clear";
-                            click = true;
-                            Object.keys(dataKing).forEach(function (key) {
-                                delete dataKing[key];
-                            });
-                            visited.splice(0, visited.length);
-                            save_game.splice(0, save_game.length);
+                            book = true;
+                            resetRunState();
                             result.innerHTML = results;
                             results = "";
-                            book = true;
-                            label = false;
-                            amounted = 0;
-                            amounts = 0;
-                            countTotal = 0;
                             resolve("NO GAMES AVAILABLE FOR SPECIFIED DATE");
                         }
                     })
@@ -1346,21 +1244,10 @@ function myFunction() {
 
                         console.error(error.message);
                         results += "<p id='error' style='padding: 5px'>" + error.message + "</p>";
-                        button.innerHTML = "Search";
-                        clear.innerHTML = "Clear";
-                        click = true;
-                        Object.keys(dataKing).forEach(function (key) {
-                            delete dataKing[key];
-                        });
-                        visited.splice(0, visited.length);
-                        save_game.splice(0, save_game.length);
+                        book = true;
+                        resetRunState();
                         result.innerHTML = results;
                         results = "";
-                        book = true;
-                        label = false;
-                        amounted = 0;
-                        amounts = 0;
-                        countTotal = 0;
                         reject(error.message);
 
                     });
@@ -1484,7 +1371,6 @@ function myFunction() {
 
                 for (let i = 0; i < lines.length; i++) {
                     const line = lines[i];
-                    //console.log( line );
 
                     if (line.includes('Last matches')) {
                         count += 1;
