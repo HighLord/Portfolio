@@ -1620,6 +1620,8 @@ function myFunction() {
     }
 
     // Compares both teams through opponents they have both played, which cancels out schedule strength.
+    // Each shared opponent is weighted by recency: the comparison is only as fresh as the older of the two
+    // teams' meetings with that opponent, so a recent shared opponent counts for more than an old one.
     function commonOpponentMargin(team1, team2, homeAdvantage) {
         const averageByOpponent = (matches) => {
             const grouped = new Map();
@@ -1636,11 +1638,18 @@ function myFunction() {
         const team1ByOpponent = averageByOpponent(team1);
         const team2ByOpponent = averageByOpponent(team2);
         const differences = [];
+        const weights = [];
         team1ByOpponent.forEach((entry1, opponent) => {
             const entry2 = team2ByOpponent.get(opponent);
-            if (entry2) differences.push(entry1.total / entry1.weight - entry2.total / entry2.weight);
+            if (!entry2) return;
+            differences.push(entry1.total / entry1.weight - entry2.total / entry2.weight);
+            // Capped at 1 so an opponent met several times does not count as more than one opponent.
+            weights.push(Math.min(1, entry1.weight, entry2.weight));
         });
-        return { margin: mean(differences), count: differences.length };
+        // As with head-to-head, the count is the sum of the weights (three recent shared opponents = about 3,
+        // three old ones = much less), so stale evidence is also trusted less overall.
+        const effectiveCount = weights.reduce((sum, weight) => sum + weight, 0);
+        return { margin: weightedMean(differences, weights, 0, 0), count: effectiveCount };
     }
 
     function headToHeadMargin(headToHead, homeAdvantage) {
