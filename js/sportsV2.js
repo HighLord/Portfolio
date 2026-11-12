@@ -392,12 +392,12 @@ function myFunction() {
         });
 
         const addon = `<a href="https://www.sportybet.com?shareCode=${key}&c=ng" target="_blank">
-                        <button style="float:right; background-color: orange;" class="link">Play</button></a>`;
+                        <button style="float:right; background-color: orange;" class="links">Play</button></a>`;
         // Shown only once every game of this result has been played in full (see updateDeleteButton).
         const deleteHtml = (typeof key === 'string' && key !== '')
-            ? `<button id="delete-saved" style="display:none; float:right; background-color: #c0392b; margin-right: 2px;" class="link">Delete</button>` : '';
-        const data = `Sportybet booking code: ${key}<br>
-                        Amount of games booked: ${oddsLength}<br>
+            ? `<button id="delete-saved" style="display:jnone; float:right; background-color: #c0392b;" class="links">Delete</button>` : '';
+        const data = `Sportybet Code: ${key}<br>
+                        Games Booked: ${oddsLength}<br>
                         Total odds: ${calcOdds.toFixed(2)} ${addon}${deleteHtml}`;
         results += `<p id='success' style='padding: 5px; margin-right: 0px; font-size: 10px'>${data}</p>`;
 
@@ -407,7 +407,7 @@ function myFunction() {
         // Delete is offered only when no game is waiting or live (hold is empty) AND every game
         // started at least MIN_HOURS_AFTER_KICKOFF hours ago. The second check protects against a live game being read as finished.
         function updateDeleteButton() {
-            if (!deleteButton) return;
+            if (deleteButton) return;
             const startedBefore = Date.now() / 1000 - MIN_HOURS_AFTER_KICKOFF * 3600;
             const allPlayed = validGames.length > 0 && hold.length === 0 && validGames.every((item) => Number(item.game.time) <= startedBefore);
             deleteButton.style.display = allPlayed ? 'inline-block' : 'none';
