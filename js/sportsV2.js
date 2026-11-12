@@ -395,7 +395,7 @@ function myFunction() {
                         <button style="float:right; background-color: orange;" class="links">Play</button></a>`;
         // Shown only once every game of this result has been played in full (see updateDeleteButton).
         const deleteHtml = (typeof key === 'string' && key !== '')
-            ? `<button id="delete-saved" style="display:jnone; float:right; background-color: #c0392b;" class="links">Delete</button>` : '';
+            ? `<button id="delete-saved" style="display:none; float:right; background-color: #c0392b;" class="links">Delete</button>` : '';
         const data = `Sportybet Code: ${key}<br>
                         Games Booked: ${oddsLength}<br>
                         Total odds: ${calcOdds.toFixed(2)} ${addon}${deleteHtml}`;
@@ -407,7 +407,7 @@ function myFunction() {
         // Delete is offered only when no game is waiting or live (hold is empty) AND every game
         // started at least MIN_HOURS_AFTER_KICKOFF hours ago. The second check protects against a live game being read as finished.
         function updateDeleteButton() {
-            if (deleteButton) return;
+            if (!deleteButton) return;
             const startedBefore = Date.now() / 1000 - MIN_HOURS_AFTER_KICKOFF * 3600;
             const allPlayed = validGames.length > 0 && hold.length === 0 && validGames.every((item) => Number(item.game.time) <= startedBefore);
             deleteButton.style.display = allPlayed ? 'inline-block' : 'none';
