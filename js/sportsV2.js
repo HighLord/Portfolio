@@ -1020,7 +1020,7 @@ function myFunction() {
                     if (niceJson === null) return;                          // the fetch failed, or the game had started
                     if (Number(time) <= Date.now() / 1000) return;        // kicked off while the scan was running
 
-                    const calculatedJson = predict(niceJson, gameType, selMethod ? selMethod.value : DEFAULT_METHOD);
+                    const calculatedJson = predict(niceJson, gameType, selMethod ? selMethod.value : DEFAULT_METHOD, Number(time));
                     const predictedOutcome = outcomes(calculatedJson, niceJson);
                     amounted++;
                     if (predictedOutcome.result === null) return;
@@ -1327,11 +1327,28 @@ function myFunction() {
         return null;
     }
 
+    // Competition data for one match. It can only improve predictions, so every failure just returns null.
+    async function fetchMatchMeta(key) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), MATCHDATA_TIMEOUT_MS);
+        try {
+            const response = await fetch(`${MATCHDATA_URL}?id=${encodeURIComponent(key)}`, { signal: controller.signal });
+            if (!response.ok) return null;
+            const data = await response.json();
+            return data && data.ok ? data : null;
+        } catch (error) {
+            return null;
+        } finally {
+            clearTimeout(timeoutId);
+        }
+    }
+
     async function sortGame(key) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 15000);
         //const url = `https://d.livescore.in/x/feed/df_hh_4_${key}`;
         const url = `https://api.webapps.com.ng/v2/sports/loadteam.php?50&x&feed&df_hh_4_${key}`;
+        const metaPromise = fetchMatchMeta(key); // runs in parallel; never rejects, resolves to null on any failure
 
         try {
             const response = await fetch(url, {
@@ -1415,9 +1432,11 @@ function myFunction() {
                 };
             };
 
+            const meta = await metaPromise;
             return {
                 names: getNames(),
                 ...getTeams(),
+                meta,
             };
 
         } catch (error) {
@@ -1452,8 +1471,45 @@ function myFunction() {
     const HFA_PRIOR_MATCHES = 20;         // shrinks the home advantage estimate towards zero
     const COMMON_OPPONENT_MAX_WEIGHT = 0.6;
     const COMMON_OPPONENT_PRIOR = 6;
-    const HEAD2HEAD_MAX_WEIGHT = 0.4;
-    const HEAD2HEAD_PRIOR = 8;
+    const HEAD2HEAD_MAX_WEIGHT = 1.0;     // a single recent meeting already carries a third of the form weight
+    const HEAD2HEAD_PRIOR = 2;
+    // Largest goal margin a single match may count for. A 12-0 against a minnow says little more than a 3-0.
+    // Only for low-scoring sports; in basketball or handball a 3-goal margin is normal, so no cap there.
+    const MARGIN_CAP_BY_SPORT = { football: 3, icehockey: 3 };
+    // Teams that share no opponents (different leagues or competitions) cannot be compared through form alone,
+    // so their expected margin is pulled towards zero. Full trust needs this many shared opponents.
+    const SHARED_OPPONENTS_FOR_FULL_TRUST = 4;
+    const MIN_LINK_TRUST = 0.5;
+    // Competition-aware data from matchdata.php (optional; the model works without it).
+    const MATCHDATA_URL = 'https://api.webapps.com.ng/v2/sports/matchdata.php';
+    const MATCHDATA_TIMEOUT_MS = 8000;
+    // Football only: goals a tier-2 team's margin is worth less than a tier-1 team's, per tier below the top flight.
+    const LEVEL_MARGIN_PER_TIER = 0.4;
+    // Two teams whose latest league matches are in the same competition count as at least this many shared opponents.
+    const SAME_LEAGUE_LINK_COUNT = 3;
+    // Team-specific venue form: the home team's home results and the away team's away results.
+    const VENUE_PRIOR_MATCHES = 4;        // pseudo-matches pulling venue form towards the team's overall strength
+    const VENUE_FORM_WEIGHT = 0.4;        // share of the expected margin that comes from venue form
+    const MIN_MATCH_DATE_SECONDS = new Date('2023-01-01').getTime() / 1000; // same cut-off as getTeams
+    // Rest days: a small penalty for a team that played less than REST_DAYS_FULL days before kick-off. No bonus for long rest.
+    const REST_DAYS_FULL = 4;             // this much rest or more: no penalty
+    const REST_DAYS_MAX_PENALTY = 2;      // this little rest or less: the full penalty
+    // Share of the expected total goals lost at full penalty (about 0.14 goals in football).
+    // Low-scoring sports use 0.05; basketball and other high-scoring sports use far less, as 5% of a 220-point total is huge.
+    const REST_MAX_PENALTY_SHARE_BY_SPORT = { football: 0.05, icehockey: 0.05, handball: 0.05 };
+    const REST_MAX_PENALTY_SHARE_DEFAULT = 0.01;
+    // Conflict veto: when the like-for-like signals (shared opponents, head-to-head) point to the other side from the pick,
+    // the pick needs a higher probability. The strictness thresholds are untouched; the boost is added on top.
+    const CONFLICT_MIN_COMMON_COUNT = 1.5;  // effective shared opponents needed for that signal to count
+    const CONFLICT_MIN_H2H_COUNT = 0.6;     // effective head-to-head meetings needed for that signal to count
+    const CONFLICT_MARGIN_SHARE = 0.15;     // a signal counts only above this share of the expected total goals (about 0.4 in football)
+    const CONFLICT_BOOST_PER_SIGNAL = 0.06;
+    const CONFLICT_BOOST_MAX = 0.12;
+    // Per-team draw rates (sports that can end level). Poisson models tend to underestimate draws.
+    const DRAW_PRIOR_MATCHES = 6;         // pseudo-matches pulling a team's draw rate towards the pooled rate
+    const DRAW_POISSON_SHARE = 0.5;       // final draw = this share of the Poisson draw + the rest from the teams' draw rates
+    const DRAW_MIN = 0.05;
+    const DRAW_MAX = 0.5;
     const MIN_EXPECTED_GOALS_SHARE = 0.1; // keeps an expected-goals value from reaching zero
     const MIN_MARGIN_SPREAD = 0.5;
     const DEFAULT_METHOD = 'mix';         // 'goals', 'form' or 'mix' (mySelect7 in the HTML)
@@ -1495,7 +1551,7 @@ function myFunction() {
 
     // Final weight of one match: its position tier times its age.
     function matchWeight(match, index) {
-        return recencyWeight(index) * ageWeight(match.date);
+        return recencyWeight(index) * ageWeight(match.date) * (match.competitionWeight ?? 1);
     }
 
     function weightedMean(values, weights, priorMean, priorWeight) {
@@ -1526,7 +1582,27 @@ function myFunction() {
 
     // Rebuilds each team's results as plain objects seen from that team's side.
     // Uses only the arrays produced by getTeams, which is left untouched.
-    function collectMatches(niceJson) {
+    // Shrinks a lopsided score so the margin is at most `cap`, keeping the winner and the loser's goals sensible.
+    function capMargin(goalsFor, goalsAgainst, cap) {
+        if (goalsFor - goalsAgainst > cap) return { goalsFor: goalsAgainst + cap, goalsAgainst };
+        if (goalsAgainst - goalsFor > cap) return { goalsFor, goalsAgainst: goalsFor + cap };
+        return { goalsFor, goalsAgainst };
+    }
+
+    // Lookup of competition info by date|home|away, built from the matchdata.php lists.
+    function buildMetaLookup(meta) {
+        const lookup = new Map();
+        if (!meta || !meta.overall) return lookup;
+        const lists = [meta.overall.home, meta.overall.away, meta.overall.h2h, meta.homeOnly, meta.awayOnly];
+        lists.forEach((list) => (list || []).forEach((m) => {
+            lookup.set(`${m.date}|${m.home}|${m.away}`, { weight: m.weight, tier: m.tier, code: m.code, type: m.type });
+        }));
+        return lookup;
+    }
+
+    function collectMatches(niceJson, sport) {
+        const metaLookup = buildMetaLookup(niceJson.meta);
+        const marginCap = MARGIN_CAP_BY_SPORT[sport] ?? Infinity;
         const { team1name, team2name } = niceJson.names;
         const { hometeams, awayteams, homescores, awayscores, gameDate } = niceJson;
         const team1 = [];
@@ -1542,8 +1618,17 @@ function myFunction() {
             const date = Number(gameDate[index]);
             if (!Number.isFinite(homeScore) || !Number.isFinite(awayScore) || !Number.isFinite(date)) continue;
 
-            const fromHome = { goalsFor: homeScore, goalsAgainst: awayScore, venue: 'home', date };
-            const fromAway = { goalsFor: awayScore, goalsAgainst: homeScore, venue: 'away', date };
+            const cappedHome = capMargin(homeScore, awayScore, marginCap);
+            const info = metaLookup.get(`${date}|${homeTeam}|${awayTeam}`);
+            const comp = {
+                competitionWeight: info && Number.isFinite(info.weight) ? info.weight : 1,
+                code: info ? info.code : null,
+                type: info ? info.type : null,
+                // Division adjustment, football only. Missing info means tier 1, so no change.
+                levelPenalty: sport === 'football' && info && info.tier ? LEVEL_MARGIN_PER_TIER * (info.tier - 1) : 0
+            };
+            const fromHome = { goalsFor: cappedHome.goalsFor, goalsAgainst: cappedHome.goalsAgainst, venue: 'home', date, ...comp };
+            const fromAway = { goalsFor: cappedHome.goalsAgainst, goalsAgainst: cappedHome.goalsFor, venue: 'away', date, ...comp };
 
             const isHeadToHead = (homeTeam === team1name && awayTeam === team2name)
                 || (homeTeam === team2name && awayTeam === team1name);
@@ -1551,7 +1636,13 @@ function myFunction() {
                 const dedupeKey = `${date}|${homeTeam}|${homeScore}|${awayScore}`;
                 if (seenHeadToHead.has(dedupeKey)) continue;
                 seenHeadToHead.add(dedupeKey);
+                // Both sides played this match in the same competition, so there is no division gap to correct.
+                fromHome.levelPenalty = 0;
+                fromAway.levelPenalty = 0;
                 headToHead.push(homeTeam === team1name ? { ...fromHome, opponent: team2name } : { ...fromAway, opponent: team2name });
+                // The meeting also counts in each team's own form; it is the most relevant match either of them played.
+                team1.push(homeTeam === team1name ? { ...fromHome, opponent: team2name } : { ...fromAway, opponent: team2name });
+                team2.push(homeTeam === team2name ? { ...fromHome, opponent: team1name } : { ...fromAway, opponent: team1name });
                 continue;
             }
 
@@ -1563,10 +1654,50 @@ function myFunction() {
         }
 
         const newestFirst = (a, b) => b.date - a.date;
+        const team1Sorted = team1.sort(newestFirst).slice(0, MAX_MATCHES_PER_TEAM);
+        const team2Sorted = team2.sort(newestFirst).slice(0, MAX_MATCHES_PER_TEAM);
+
+        // Venue-only lists from matchdata.php (they go deeper than the Overall list).
+        // venue 'home': rows of the team's home section; venue 'away': rows of the team's away section.
+        const venueFromMeta = (rows, teamName, otherName, venue) => {
+            const isHome = venue === 'home';
+            const seen = new Set();
+            const list = [];
+            (rows || []).forEach((m) => {
+                if ((isHome ? m.home : m.away) !== teamName) return;
+                const date = Number(m.date), homeGoals = Number(m.homeGoals), awayGoals = Number(m.awayGoals);
+                if (!Number.isFinite(date) || !Number.isFinite(homeGoals) || !Number.isFinite(awayGoals)) return;
+                if (date < MIN_MATCH_DATE_SECONDS) return;
+                const dedupeKey = `${date}|${m.home}|${m.away}`;
+                if (seen.has(dedupeKey)) return;
+                seen.add(dedupeKey);
+                const capped = capMargin(homeGoals, awayGoals, marginCap);
+                const opponent = isHome ? m.away : m.home;
+                list.push({
+                    goalsFor: isHome ? capped.goalsFor : capped.goalsAgainst,
+                    goalsAgainst: isHome ? capped.goalsAgainst : capped.goalsFor,
+                    venue, date, opponent,
+                    competitionWeight: Number.isFinite(m.weight) ? m.weight : 1,
+                    code: m.code ?? null,
+                    type: m.type ?? null,
+                    levelPenalty: sport === 'football' && m.tier && opponent !== otherName ? LEVEL_MARGIN_PER_TIER * (m.tier - 1) : 0
+                });
+            });
+            return list.sort(newestFirst).slice(0, MAX_MATCHES_PER_TEAM);
+        };
+        const meta = niceJson.meta;
+        let team1Home = venueFromMeta(meta && meta.homeOnly, team1name, team2name, 'home');
+        let team2Away = venueFromMeta(meta && meta.awayOnly, team2name, team1name, 'away');
+        // Without matchdata.php, use the venue split of the Overall list.
+        if (team1Home.length === 0) team1Home = team1Sorted.filter((match) => match.venue === 'home');
+        if (team2Away.length === 0) team2Away = team2Sorted.filter((match) => match.venue === 'away');
+
         return {
-            team1: team1.sort(newestFirst).slice(0, MAX_MATCHES_PER_TEAM),
-            team2: team2.sort(newestFirst).slice(0, MAX_MATCHES_PER_TEAM),
-            headToHead: headToHead.sort(newestFirst)
+            team1: team1Sorted,
+            team2: team2Sorted,
+            headToHead: headToHead.sort(newestFirst),
+            team1Home,
+            team2Away
         };
     }
 
@@ -1604,13 +1735,36 @@ function myFunction() {
 
     // Goal difference with the venue effect removed, so home and away games compare fairly.
     function neutralGoalDiff(match, homeAdvantage) {
-        return goalDiff(match) - (match.venue === 'home' ? homeAdvantage : -homeAdvantage);
+        return goalDiff(match) - (match.levelPenalty ?? 0) - (match.venue === 'home' ? homeAdvantage : -homeAdvantage);
     }
 
     function teamStrength(matches, homeAdvantage) {
         const values = matches.map((match) => neutralGoalDiff(match, homeAdvantage));
         const weights = matches.map((match, index) => matchWeight(match, index));
         return weightedMean(values, weights, 0, FORM_PRIOR_MATCHES);
+    }
+
+    // Competition- and recency-weighted goal margin of a team at one venue, pulled towards `prior`.
+    // The margin is the raw one (it includes the venue effect), less any division adjustment.
+    function venueStrength(matches, prior) {
+        const values = matches.map((match) => goalDiff(match) - (match.levelPenalty ?? 0));
+        const weights = matches.map((match, index) => matchWeight(match, index));
+        return weightedMean(values, weights, prior, VENUE_PRIOR_MATCHES);
+    }
+
+    // Days between the team's latest earlier match and kick-off (matches are newest first), or null if unknown.
+    function restDaysBefore(matches, kickoff) {
+        if (!Number.isFinite(kickoff)) return null;
+        const previous = matches.find((match) => match.date < kickoff);
+        return previous ? (kickoff - previous.date) / 86400 : null;
+    }
+
+    // Goals a tired team loses. Less than REST_DAYS_FULL days of rest costs a little, up to the cap at REST_DAYS_MAX_PENALTY.
+    function restPenalty(restDays, expectedTotal, sport) {
+        if (restDays === null) return 0;
+        const share = REST_MAX_PENALTY_SHARE_BY_SPORT[sport] ?? REST_MAX_PENALTY_SHARE_DEFAULT;
+        const shortfall = Math.min(1, Math.max(0, (REST_DAYS_FULL - restDays) / (REST_DAYS_FULL - REST_DAYS_MAX_PENALTY)));
+        return share * expectedTotal * shortfall;
     }
 
     function teamTempo(matches, fallbackTotal) {
@@ -1620,6 +1774,8 @@ function myFunction() {
     }
 
     // Compares both teams through opponents they have both played, which cancels out schedule strength.
+    // Each shared opponent is weighted by recency: the comparison is only as fresh as the older of the two
+    // teams' meetings with that opponent, so a recent shared opponent counts for more than an old one.
     function commonOpponentMargin(team1, team2, homeAdvantage) {
         const averageByOpponent = (matches) => {
             const grouped = new Map();
@@ -1636,11 +1792,18 @@ function myFunction() {
         const team1ByOpponent = averageByOpponent(team1);
         const team2ByOpponent = averageByOpponent(team2);
         const differences = [];
+        const weights = [];
         team1ByOpponent.forEach((entry1, opponent) => {
             const entry2 = team2ByOpponent.get(opponent);
-            if (entry2) differences.push(entry1.total / entry1.weight - entry2.total / entry2.weight);
+            if (!entry2) return;
+            differences.push(entry1.total / entry1.weight - entry2.total / entry2.weight);
+            // Capped at 1 so an opponent met several times does not count as more than one opponent.
+            weights.push(Math.min(1, entry1.weight, entry2.weight));
         });
-        return { margin: mean(differences), count: differences.length };
+        // As with head-to-head, the count is the sum of the weights (three recent shared opponents = about 3,
+        // three old ones = much less), so stale evidence is also trusted less overall.
+        const effectiveCount = weights.reduce((sum, weight) => sum + weight, 0);
+        return { margin: weightedMean(differences, weights, 0, 0), count: effectiveCount };
     }
 
     function headToHeadMargin(headToHead, homeAdvantage) {
@@ -1650,6 +1813,25 @@ function myFunction() {
         // the count is the sum of the age weights (three recent meetings = 3, three from last year = 0.75).
         const effectiveCount = headToHead.reduce((sum, match) => sum + ageWeight(match.date), 0);
         return { margin: weightedMean(values, weights, 0, 0), count: effectiveCount };
+    }
+
+    // A team's share of matches that ended level, competition- and recency-weighted, pulled towards the pooled rate.
+    function teamDrawRate(matches, pooledRate) {
+        const values = matches.map((match) => (match.goalsFor === match.goalsAgainst ? 1 : 0));
+        const weights = matches.map((match, index) => matchWeight(match, index));
+        return weightedMean(values, weights, pooledRate, DRAW_PRIOR_MATCHES);
+    }
+
+    // Mixes the Poisson draw probability with the two teams' own draw rates, then rescales home and away to keep the total at 1.
+    function blendDrawRates(poisson, team1, team2) {
+        const isDraw = (match) => (match.goalsFor === match.goalsAgainst ? 1 : 0);
+        const pooledRate = mean([...team1, ...team2].map(isDraw));
+        const matchupRate = (teamDrawRate(team1, pooledRate) + teamDrawRate(team2, pooledRate)) / 2;
+        const blended = DRAW_POISSON_SHARE * poisson.draw + (1 - DRAW_POISSON_SHARE) * matchupRate;
+        const draw = Math.min(DRAW_MAX, Math.max(DRAW_MIN, blended));
+        const decisive = poisson.home + poisson.away;
+        const scale = decisive > 0 ? (1 - draw) / decisive : 0;
+        return { home: poisson.home * scale, draw, away: poisson.away * scale };
     }
 
     function poissonProbabilities(lambdaHome, lambdaAway) {
@@ -1675,8 +1857,8 @@ function myFunction() {
         return { home, draw: 0, away: 1 - home };
     }
 
-    function predict(niceJson, sport, method = DEFAULT_METHOD) {
-        const { team1, team2, headToHead } = collectMatches(niceJson);
+    function predict(niceJson, sport, method = DEFAULT_METHOD, kickoff = null) {
+        const { team1, team2, headToHead, team1Home, team2Away } = collectMatches(niceJson, sport);
         const enoughData = team1.length >= MIN_MATCHES_REQUIRED && team2.length >= MIN_MATCHES_REQUIRED;
         if (!enoughData) {
             return { enoughData, matches1: team1.length, matches2: team2.length };
@@ -1697,18 +1879,35 @@ function myFunction() {
         if (method === 'goals') blendedMargin = neutralMargin;
         else if (method === 'form') blendedMargin = resultFormMargin;
         else blendedMargin = (1 - FORM_BLEND_WEIGHT) * neutralMargin + FORM_BLEND_WEIGHT * resultFormMargin;
-        const expectedMargin = blendedMargin + homeAdvantage;
+        // Teams with no shared opponents are judged against different schedules, so trust the margin less.
+        // Teams whose latest league matches are in the same competition are connected even with few shared opponents.
+        // Cups and friendlies do not count: they are exactly where unrelated leagues meet.
+        const latestLeagueCode = (matches) => (matches.find((match) => match.type === 'league' && match.code) || {}).code || null;
+        const code1 = latestLeagueCode(team1);
+        const sameLeague = code1 !== null && code1 === latestLeagueCode(team2);
+        const connectionCount = sameLeague ? Math.max(common.count, SAME_LEAGUE_LINK_COUNT) : common.count;
+        const linkTrust = MIN_LINK_TRUST + (1 - MIN_LINK_TRUST) * Math.min(1, connectionCount / SHARED_OPPONENTS_FOR_FULL_TRUST);
+        const currentMargin = blendedMargin * linkTrust + homeAdvantage;
+        // Team-specific venue form. Each venue strength already contains the home effect once for each side,
+        // so one pooled home advantage is taken out again to keep the match margin on the same footing.
+        const homeVenueStrength = venueStrength(team1Home, teamStrength(team1, homeAdvantage) + homeAdvantage);
+        const awayVenueStrength = venueStrength(team2Away, teamStrength(team2, homeAdvantage) - homeAdvantage);
+        const venueMargin = homeVenueStrength - awayVenueStrength - homeAdvantage;
+        let expectedMargin = (1 - VENUE_FORM_WEIGHT) * currentMargin + VENUE_FORM_WEIGHT * venueMargin * linkTrust;
 
         const allTotals = [...team1, ...team2].map((match) => match.goalsFor + match.goalsAgainst);
         const pooledTotal = mean(allTotals);
         const expectedTotal = (teamTempo(team1, pooledTotal) + teamTempo(team2, pooledTotal)) / 2;
+        const restHome = restDaysBefore(team1, kickoff);
+        const restAway = restDaysBefore(team2, kickoff);
+        expectedMargin += restPenalty(restAway, expectedTotal, sport) - restPenalty(restHome, expectedTotal, sport);
         const minimumGoals = expectedTotal * MIN_EXPECTED_GOALS_SHARE;
         const expectedHomeGoals = Math.max(minimumGoals, (expectedTotal + expectedMargin) / 2);
         const expectedAwayGoals = Math.max(minimumGoals, (expectedTotal - expectedMargin) / 2);
 
         let probabilities;
         if (POISSON_SPORTS.includes(sport)) {
-            probabilities = poissonProbabilities(expectedHomeGoals, expectedAwayGoals);
+            probabilities = blendDrawRates(poissonProbabilities(expectedHomeGoals, expectedAwayGoals), team1, team2);
         }
         else {
             const spread = Math.max(MIN_MARGIN_SPREAD, standardDeviation([...team1, ...team2].map(goalDiff)));
@@ -1725,6 +1924,12 @@ function myFunction() {
             goalsMargin: neutralMargin,
             formMargin: resultFormMargin,
             commonMargin: common.margin,
+            linkTrust,
+            venueMargin,
+            restDays: { home: restHome, away: restAway },
+            commonCount: common.count,
+            h2hCount: h2h.count,
+            expectedTotal,
             headToHeadMargin: h2h.margin
         };
     }
@@ -1736,28 +1941,47 @@ function myFunction() {
 
     // result: true = home side of the market, false = away side, null = no pick.
     // market: 'win', 'double' or 'draw' (what was actually picked).
-    function pickResult(market, strictness, probabilities) {
+    // Extra probability a pick on each side needs. A signal that favours the home side argues against an away pick,
+    // and the other way round. Draw picks are exempt (pickResult does not use the boost for them).
+    function conflictBoosts(calculated) {
+        const boosts = { home: 0, away: 0 };
+        const minMargin = CONFLICT_MARGIN_SHARE * (calculated.expectedTotal || 0);
+        const signals = [
+            { margin: calculated.commonMargin, count: calculated.commonCount, minCount: CONFLICT_MIN_COMMON_COUNT },
+            { margin: calculated.headToHeadMargin, count: calculated.h2hCount, minCount: CONFLICT_MIN_H2H_COUNT }
+        ];
+        signals.forEach(({ margin, count, minCount }) => {
+            if (!(count >= minCount) || !Number.isFinite(margin) || Math.abs(margin) <= minMargin) return;
+            if (margin > 0) boosts.away += CONFLICT_BOOST_PER_SIGNAL;
+            else boosts.home += CONFLICT_BOOST_PER_SIGNAL;
+        });
+        boosts.home = Math.min(boosts.home, CONFLICT_BOOST_MAX);
+        boosts.away = Math.min(boosts.away, CONFLICT_BOOST_MAX);
+        return boosts;
+    }
+
+    function pickResult(market, strictness, probabilities, boosts = { home: 0, away: 0 }) {
         const threshold = PICK_THRESHOLDS[market]?.[strictness];
         if (threshold === undefined) return NO_PICK;
         const { home, draw, away } = probabilities;
 
         if (market === 'winner') {
-            if (home >= threshold && home > away) return { result: true, market: 'win' };
-            if (away >= threshold && away > home) return { result: false, market: 'win' };
+            if (home >= threshold + boosts.home && home > away) return { result: true, market: 'win' };
+            if (away >= threshold + boosts.away && away > home) return { result: false, market: 'win' };
             if (DOWNGRADE_WINNER_TO_DOUBLE_CHANCE && draw > 0) {
                 const doubleThreshold = PICK_THRESHOLDS.double_chance[strictness];
                 const homeOrDraw = home + draw;
                 const drawOrAway = draw + away;
-                if (homeOrDraw >= doubleThreshold && homeOrDraw > drawOrAway) return { result: true, market: 'double' };
-                if (drawOrAway >= doubleThreshold && drawOrAway > homeOrDraw) return { result: false, market: 'double' };
+                if (homeOrDraw >= doubleThreshold + boosts.home && homeOrDraw > drawOrAway) return { result: true, market: 'double' };
+                if (drawOrAway >= doubleThreshold + boosts.away && drawOrAway > homeOrDraw) return { result: false, market: 'double' };
             }
             return NO_PICK;
         }
         if (market === 'double_chance') {
             const homeOrDraw = home + draw;
             const drawOrAway = draw + away;
-            if (homeOrDraw >= threshold && homeOrDraw > drawOrAway) return { result: true, market: 'double' };
-            if (drawOrAway >= threshold && drawOrAway > homeOrDraw) return { result: false, market: 'double' };
+            if (homeOrDraw >= threshold + boosts.home && homeOrDraw > drawOrAway) return { result: true, market: 'double' };
+            if (drawOrAway >= threshold + boosts.away && drawOrAway > homeOrDraw) return { result: false, market: 'double' };
             return NO_PICK;
         }
         if (market === 'draw') return draw >= threshold ? { result: true, market: 'draw' } : NO_PICK;
@@ -1778,7 +2002,7 @@ function myFunction() {
         const rounded = (value) => Math.round(value * 100) / 100;
 
         const pick = calculatedJson.enoughData
-            ? pickResult(selType.value, Number(selectElement.value), calculatedJson.probabilities)
+            ? pickResult(selType.value, Number(selectElement.value), calculatedJson.probabilities, conflictBoosts(calculatedJson))
             : NO_PICK;
 
         const probabilities = calculatedJson.probabilities || { home: 0, draw: 0, away: 0 };
@@ -1795,6 +2019,7 @@ function myFunction() {
             formGoals: rounded(calculatedJson.goalsMargin || 0),
             formResults: rounded(calculatedJson.formMargin || 0),
             draw: percent(probabilities.draw),
+            trust: rounded(calculatedJson.linkTrust ?? 1),   // 1 = teams are well connected through shared opponents
             games1: calculatedJson.matches1,
             games2: calculatedJson.matches2,
             result: pick.result,
